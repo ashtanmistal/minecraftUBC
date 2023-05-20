@@ -3,34 +3,25 @@
 import math
 import os
 
+import amulet
+import numpy as np
+import pylas
+from PIL import Image
+from amulet.api.block import Block
+from amulet.api.chunk import Chunk
+from amulet.utils.world_utils import block_coords_to_chunk_coords
+
 # This is a simple Python script that transforms a chunk (16m x 16m) of data and transforms it into a Minecraft chunk.
 # It processes the entire chunk but breaks it down into meter-by-meter blocks.
-
-import amulet
-from PIL import Image
-from PIL import Resampling
-from amulet.api.block import Block
-from amulet.utils.world_utils import block_coords_to_chunk_coords
-from amulet_nbt import StringTag, IntTag
-from amulet.api.chunk import Chunk
-from amulet.api.errors import ChunkLoadError, ChunkDoesNotExist
-import matplotlib.pyplot as plt
-import numpy as np
-
-import pylas
 
 # load the level
 level = amulet.load_level("UBC")  # TODO replace with path to the Minecraft world folder
 game_version = ("java", (1, 19, 4))
 
 # coordinates of what we want to set as 0,0
-# {"coordinates":[[[-123.24741269459518,49.265497418209144],[-123.24745768052215,49.274492527936644],[-123.23371015526665,49.27452115209688],[-123.23366766847829,49.265526033342084],[-123.24741269459518,49.265497418209144]]],"type":"Polygon"}
 x_offset = 482000
-height_offset = 0  # pretty sure we don't need to change the height but it does depend on the minimum / maximum height of the chunk
-z_offset = 5457000
-lat_to_m = 111111  # 1 degree of latitude is 111111 meters
-long_to_m = 111111  # 1 degree of longitude is 111111 meters
-# TODO double check that scaling... do NOT want to mess that up
+y_offset = 5457000
+z_offset = -10
 
 allowed_blocks = {
     "grass block": Block("minecraft", "grass_block"),
@@ -87,25 +78,7 @@ for block, block_object in allowed_blocks.items():
         texture = Image.open(texture_location + "/" + block_object.base_name + "_top.png")
 
     # get the average rgb value for the whole texture
-    texture_average_rgb[block] = texture.resize((1, 1), resample=Resampling.BILINEAR).getpixel((0, 0))
-
-# now let's perform a texture gradient analysis for the Minecraft textures. If the LiDAR data has enough points,
-# this is what we'll use to determine the block type. (otherwise we'll just use the average rgb value)
-
-# first, we need to get the texture gradients for each texture
-# texture_gradients = {}
-#
-# for block, block_object in allowed_blocks.items():
-#     texture = Image.open(texture_location + "/" + block_object.base_name + ".png")
-#     # calculate the gradient for each pixel: Following Leung and Malik (2001)
-#
-#     # calculate the first derivative of the Gaussian in the x direction using Sobel operator
-#     kernel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]) / 8
-#     # calculate the first derivative of the Gaussian in the y direction using Sobel operator
-#     kernel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]]) / 8
-#
-
-# we won't do the above for now; we'll just use the average rgb value for each texture. We'll come back to this later if we can.
+    texture_average_rgb[block] = texture.resize((1, 1), resample=Image.BILINEAR).getpixel((0, 0))[0:3]
 
 rotation_degrees = 29.5
 rotation = math.radians(rotation_degrees)
@@ -137,7 +110,9 @@ for ds in datasets:
     blue = np.append(blue, ds.blue)
 
 # apply the inverse rotation matrix to the x and y coordinates
-
+x = x - x_offset
+y = y - y_offset
+z = z - z_offset
 x, y, z = np.matmul(inverse_rotation_matrix, np.array([x, y, z]))
 
 # next we need to iterate over these chunks.
@@ -154,7 +129,11 @@ blue = blue.astype(int)
 
 # sort by x, then y, then z. the colors should be sorted in the same way.
 sort_indices = np.lexsort((z, y, x))
-x, y, z, red, green, blue = x[sort_indices], y[sort_indices], z[sort_indices], red[sort_indices], green[sort_indices], blue[sort_indices]
+x, y, z, red, green, blue = x[sort_indices], y[sort_indices], z[sort_indices], red[sort_indices], green[sort_indices], \
+blue[sort_indices]
+
+
+# remove data points that are above 256m
 
 # Next, the script that we will be using to transform the chunk into a Minecraft chunk.
 # Data will be passed in as an array of data points to be treated as LIDAR data.
@@ -169,25 +148,28 @@ def setBlocksInChunk(stick_data, chunk):
     # break up by the z coordinate into 1m blocks
     # sort by z
     sort_indices = np.argsort(z)
-    x, y, z, red, green, blue = x[sort_indices], y[sort_indices], z[sort_indices], red[sort_indices], green[sort_indices], blue[sort_indices]
+    x, y, z, red, green, blue = x[sort_indices], y[sort_indices], z[sort_indices], red[sort_indices], green[
+        sort_indices], blue[sort_indices]
     cur_z = math.floor(z[0])
     while cur_z < math.ceil(z[-1]):
         # get the data points that are in this block
         block_indices = np.where((z >= cur_z) & (z < cur_z + 1))
-        block_data = np.array([x[block_indices], y[block_indices], z[block_indices], red[block_indices], green[block_indices], blue[block_indices]])
+        block_data = np.array(
+            [x[block_indices], y[block_indices], z[block_indices], red[block_indices], green[block_indices],
+             blue[block_indices]])
         # get the average rgb value for this block
         block_average_rgb = np.average(block_data, axis=1)
         # compare with the closest average rgb value for each block
-        closest_block = min(texture_average_rgb, key=lambda x: np.linalg.norm(texture_average_rgb[x] - block_average_rgb))
+        closest_block = min(texture_average_rgb,
+                            key=lambda x: np.linalg.norm(texture_average_rgb[x] - block_average_rgb))
 
         # place the block in the chunk
-        chunk_offset_x = math.floor(x[0]) - chunk.x * 16
-        chunk_offset_y = math.floor(y[0]) - chunk.z * 16
+        chunk_offset_x = x[0] - chunk.x * 16
+        chunk_offset_y = y[0] - chunk.z * 16
         # Minecraft uses a different coordinate system than we do. We need to flip the y and z coordinates.
 
         # chunk[chunk_offset_x, math.floor(y[0]), chunk_offset_z] = closest_block
         cur_z += 1
-
 
 
 def transformChunk(data, cx, cy):
@@ -196,26 +178,49 @@ def transformChunk(data, cx, cy):
     # as there's likely to be more than one block per stick, we want to place all of them.
 
     x, y, z, red, green, blue = data
-
+    x, y, z = np.floor(x), np.floor(y), np.floor(z)
     # get the chunk coordinates (minimum x, minimum z)
     chunk = Chunk(math.floor(cx), math.floor(cy))
 
-    # populate the chunk with blocks by matching the data points to the blocks
-    for i in range(0, 16):
-        for j in range(0, 16):
-            # get the data points that are in this stick
-            stick_indices = np.where((x >= cx + i) & (x < cx + i + 1) & (y >= cy + j) & (y < cy + j + 1))
-            stick_data = np.array([x[stick_indices], y[stick_indices], z[stick_indices], red[stick_indices], green[stick_indices], blue[stick_indices]])
-            setBlocksInChunk(stick_data, chunk)
+    # now group together the data points that have the same x, y, and z coordinates
+    # average the rgb values for each group
+    # compare with the rgb values for each Minecraft block texture, and choose the closest one
+    # place the block in the chunk (can set it all at once)
+    unique_x, x_indices = np.unique(x, return_inverse=True)
+    unique_y, y_indices = np.unique(y, return_inverse=True)
+    unique_z, z_indices = np.unique(z, return_inverse=True)
 
+    avg_red = np.zeros((len(unique_x), len(unique_y), len(unique_z)))
+    avg_green = np.zeros((len(unique_x), len(unique_y), len(unique_z)))
+    avg_blue = np.zeros((len(unique_x), len(unique_y), len(unique_z)))
+
+    for i, j, k in np.ndindex(avg_red.shape):
+        mask = (x_indices == i) & (y_indices == j) & (z_indices == k)
+        avg_red[i, j, k] = np.average(red[mask])
+        avg_green[i, j, k] = np.average(green[mask])
+        avg_blue[i, j, k] = np.average(blue[mask])
+
+    # compare with the rgb values for each Minecraft block texture, and choose the closest one
+    # place the block in the chunk (can set it all at once)
+    closest_block = np.zeros((len(unique_x), len(unique_y), len(unique_z)))
+    for i, j, k in np.ndindex(closest_block.shape):
+        closest_block[i, j, k] = min(texture_average_rgb, key=lambda x: np.linalg.norm(
+            texture_average_rgb[x] - np.array([avg_red[i, j, k], avg_green[i, j, k], avg_blue[i, j, k]])))
+
+    # place the block in the chunk
+    chunk_coords_x, chunk_coords_z = block_coords_to_chunk_coords(unique_x, unique_y)
+    chunk_coords_y = unique_z
+    # Minecraft uses a different coordinate system than we do. We need to flip the y and z coordinates.
+
+    # flip the closest_block y and z coordinates
+    closest_block = np.flip(closest_block, axis=1)
+
+    chunk[chunk_coords_x, chunk_coords_y, chunk_coords_z] = closest_block
 
     level.put_chunk(chunk, "minecraft:overworld")
     chunk.changed = True
     level.save()
 
-
-def After():
-    level.close()
 
 # now we need to iterate over the chunks. We'll do this by iterating over the x and y coordinates of the chunks.
 
@@ -223,5 +228,9 @@ for cx in range(min_x, max_x, 16):
     for cy in range(min_y, max_y, 16):
         # get the data points that are in this chunk
         chunk_indices = np.where((x >= cx) & (x < cx + 16) & (y >= cy) & (y < cy + 16))
-        chunk_data = np.array([x[chunk_indices], y[chunk_indices], z[chunk_indices], red[chunk_indices], green[chunk_indices], blue[chunk_indices]], cx, cy)
-        transformChunk(chunk_data)
+        chunk_data = np.array(
+            [x[chunk_indices], y[chunk_indices], z[chunk_indices], red[chunk_indices], green[chunk_indices],
+             blue[chunk_indices]], cx, cy)
+        transformChunk(chunk_data, cx, cy)
+
+level.close()

@@ -21,7 +21,7 @@ game_version = ("java", (1, 19, 4))
 # coordinates of what we want to set as 0,0
 x_offset = 482000
 y_offset = 5457000
-z_offset = -10
+z_offset = 55
 
 allowed_blocks = {
     "grass block": Block("minecraft", "grass_block"),

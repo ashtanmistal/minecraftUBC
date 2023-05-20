@@ -2,6 +2,7 @@
 # author: Ashtan Mistal
 import math
 import os
+import time
 
 import amulet
 import numpy as np
@@ -14,8 +15,9 @@ from amulet.utils.world_utils import block_coords_to_chunk_coords
 # This is a simple Python script that transforms a chunk (16m x 16m) of data and transforms it into a Minecraft chunk.
 # It processes the entire chunk but breaks it down into meter-by-meter blocks.
 
+start_time = time.time()
 # load the level
-level = amulet.load_level("UBC")  # TODO replace with path to the Minecraft world folder
+level = amulet.load_level("world/UBC")  # TODO replace with path to the Minecraft world folder
 game_version = ("java", (1, 19, 4))
 
 # coordinates of what we want to set as 0,0
@@ -73,12 +75,12 @@ texture_average_rgb = {}
 
 for block, block_object in allowed_blocks.items():
     try:
-        texture = Image.open(texture_location + "/" + block_object.base_name + ".png")
+        texture = Image.open(texture_location + "/" + block_object.base_name + ".png").convert("RGB")
     except FileNotFoundError:
-        texture = Image.open(texture_location + "/" + block_object.base_name + "_top.png")
+        texture = Image.open(texture_location + "/" + block_object.base_name + "_top.png").convert("RGB")
 
     # get the average rgb value for the whole texture
-    texture_average_rgb[block] = texture.resize((1, 1), resample=Image.BILINEAR).getpixel((0, 0))[0:3]
+    texture_average_rgb[block] = texture.resize((1, 1), resample=Image.BILINEAR).getpixel((0, 0))
 
 rotation_degrees = 29.5
 rotation = math.radians(rotation_degrees)
@@ -89,11 +91,15 @@ inverse_rotation_matrix = np.array([[math.cos(rotation), math.sin(rotation), 0],
 # the files we want to look at are in the "LiDAR LAS Data/las/" folder. We want to care only about the files that
 # end in ".las" (not ".laz").
 
+print("done computing average rgb values for textures", time.time() - start_time)
+
 # load the data
 datasets = []
 for filename in os.listdir("LiDAR LAS Data/las/"):
     if filename.endswith(".las"):
         datasets.append(pylas.read("LiDAR LAS Data/las/" + filename))
+
+print("done loading data", time.time() - start_time)
 
 x = np.array([])
 y = np.array([])
@@ -115,6 +121,8 @@ y = y - y_offset
 z = z - z_offset
 x, y, z = np.matmul(inverse_rotation_matrix, np.array([x, y, z]))
 
+print("done applying rotation matrix", time.time() - start_time)
+
 # next we need to iterate over these chunks.
 min_x, min_y, min_z = np.floor(np.min(x)), np.floor(np.min(y)), np.floor(np.min(z))
 max_x, max_y, max_z = np.ceil(np.max(x)), np.ceil(np.max(y)), np.ceil(np.max(z))
@@ -132,44 +140,13 @@ sort_indices = np.lexsort((z, y, x))
 x, y, z, red, green, blue = x[sort_indices], y[sort_indices], z[sort_indices], red[sort_indices], green[sort_indices], \
 blue[sort_indices]
 
+print("done sorting data", time.time() - start_time)
+
 
 # remove data points that are above 256m
 
 # Next, the script that we will be using to transform the chunk into a Minecraft chunk.
 # Data will be passed in as an array of data points to be treated as LIDAR data.
-
-def setBlocksInChunk(stick_data, chunk):
-    x, y, z, red, green, blue = stick_data
-    # break up by the z coordinate (1m blocks)
-    # get the average rgb value for each block
-    # compare with the closest average rgb value for each block
-    # return the block type
-
-    # break up by the z coordinate into 1m blocks
-    # sort by z
-    sort_indices = np.argsort(z)
-    x, y, z, red, green, blue = x[sort_indices], y[sort_indices], z[sort_indices], red[sort_indices], green[
-        sort_indices], blue[sort_indices]
-    cur_z = math.floor(z[0])
-    while cur_z < math.ceil(z[-1]):
-        # get the data points that are in this block
-        block_indices = np.where((z >= cur_z) & (z < cur_z + 1))
-        block_data = np.array(
-            [x[block_indices], y[block_indices], z[block_indices], red[block_indices], green[block_indices],
-             blue[block_indices]])
-        # get the average rgb value for this block
-        block_average_rgb = np.average(block_data, axis=1)
-        # compare with the closest average rgb value for each block
-        closest_block = min(texture_average_rgb,
-                            key=lambda x: np.linalg.norm(texture_average_rgb[x] - block_average_rgb))
-
-        # place the block in the chunk
-        chunk_offset_x = x[0] - chunk.x * 16
-        chunk_offset_y = y[0] - chunk.z * 16
-        # Minecraft uses a different coordinate system than we do. We need to flip the y and z coordinates.
-
-        # chunk[chunk_offset_x, math.floor(y[0]), chunk_offset_z] = closest_block
-        cur_z += 1
 
 
 def transformChunk(data, cx, cy):
@@ -233,4 +210,8 @@ for cx in range(min_x, max_x, 16):
              blue[chunk_indices]], cx, cy)
         transformChunk(chunk_data, cx, cy)
 
+print("done transforming chunks", time.time() - start_time)
+
 level.close()
+
+print("done", time.time() - start_time)

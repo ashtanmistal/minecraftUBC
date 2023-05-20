@@ -8,7 +8,7 @@ import os
 
 import amulet
 from PIL import Image
-from PIL.Image import Resampling
+from PIL import Resampling
 from amulet.api.block import Block
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from amulet_nbt import StringTag, IntTag
@@ -20,8 +20,8 @@ import numpy as np
 import pylas
 
 # load the level
-# level = amulet.load_level("UBC")  # TODO replace with path to the Minecraft world folder
-# game_version = ("java", (1, 19, 4))
+level = amulet.load_level("UBC")  # TODO replace with path to the Minecraft world folder
+game_version = ("java", (1, 19, 4))
 
 # coordinates of what we want to set as 0,0
 # {"coordinates":[[[-123.24741269459518,49.265497418209144],[-123.24745768052215,49.274492527936644],[-123.23371015526665,49.27452115209688],[-123.23366766847829,49.265526033342084],[-123.24741269459518,49.265497418209144]]],"type":"Polygon"}
@@ -141,31 +141,87 @@ for ds in datasets:
 x, y, z = np.matmul(inverse_rotation_matrix, np.array([x, y, z]))
 
 # next we need to iterate over these chunks.
+min_x, min_y, min_z = np.floor(np.min(x)), np.floor(np.min(y)), np.floor(np.min(z))
+max_x, max_y, max_z = np.ceil(np.max(x)), np.ceil(np.max(y)), np.ceil(np.max(z))
+
+# convert rgb from 0-65535 to 0-255
+red = red / 256
+green = green / 256
+blue = blue / 256
+red = red.astype(int)
+green = green.astype(int)
+blue = blue.astype(int)
+
+# sort by x, then y, then z. the colors should be sorted in the same way.
+sort_indices = np.lexsort((z, y, x))
+x, y, z, red, green, blue = x[sort_indices], y[sort_indices], z[sort_indices], red[sort_indices], green[sort_indices], blue[sort_indices]
 
 # Next, the script that we will be using to transform the chunk into a Minecraft chunk.
 # Data will be passed in as an array of data points to be treated as LIDAR data.
 
-# def transformChunk(data):
-#     # We will break it up into 16 1m x 1m "sticks" that span the entire chunk.
-#     # Whatever data is in that stick tells is what blocks to place in that stick.
-#     # as there's likely to be more than one block per stick, we want to place all of them.
-#
-#     x = data.x
-#     height = data.z
-#     y = data.y
-#
-#     # TODO find out if the color values are stored individually or as a single value
-#     rgb = data.rgb
-#
-#     # get the chunk coordinates (minimum x, minimum z)
-#     chunk = Chunk(math.floor(cx), math.floor(cy))
-#
-#     # TODO populate the chunk with blocks
-#
-#     level.put_chunk(chunk, "minecraft:overworld")
-#     chunk.changed = True
-#     level.save()
-#
-#
-# def After():
-#     level.close()
+def setBlocksInChunk(stick_data, chunk):
+    x, y, z, red, green, blue = stick_data
+    # break up by the z coordinate (1m blocks)
+    # get the average rgb value for each block
+    # compare with the closest average rgb value for each block
+    # return the block type
+
+    # break up by the z coordinate into 1m blocks
+    # sort by z
+    sort_indices = np.argsort(z)
+    x, y, z, red, green, blue = x[sort_indices], y[sort_indices], z[sort_indices], red[sort_indices], green[sort_indices], blue[sort_indices]
+    cur_z = math.floor(z[0])
+    while cur_z < math.ceil(z[-1]):
+        # get the data points that are in this block
+        block_indices = np.where((z >= cur_z) & (z < cur_z + 1))
+        block_data = np.array([x[block_indices], y[block_indices], z[block_indices], red[block_indices], green[block_indices], blue[block_indices]])
+        # get the average rgb value for this block
+        block_average_rgb = np.average(block_data, axis=1)
+        # compare with the closest average rgb value for each block
+        closest_block = min(texture_average_rgb, key=lambda x: np.linalg.norm(texture_average_rgb[x] - block_average_rgb))
+
+        # place the block in the chunk
+        chunk_offset_x = math.floor(x[0]) - chunk.x * 16
+        chunk_offset_y = math.floor(y[0]) - chunk.z * 16
+        # Minecraft uses a different coordinate system than we do. We need to flip the y and z coordinates.
+
+        # chunk[chunk_offset_x, math.floor(y[0]), chunk_offset_z] = closest_block
+        cur_z += 1
+
+
+
+def transformChunk(data, cx, cy):
+    # We will break it up into 16 1m x 1m "sticks" that span the entire chunk.
+    # Whatever data is in that stick tells is what blocks to place in that stick.
+    # as there's likely to be more than one block per stick, we want to place all of them.
+
+    x, y, z, red, green, blue = data
+
+    # get the chunk coordinates (minimum x, minimum z)
+    chunk = Chunk(math.floor(cx), math.floor(cy))
+
+    # populate the chunk with blocks by matching the data points to the blocks
+    for i in range(0, 16):
+        for j in range(0, 16):
+            # get the data points that are in this stick
+            stick_indices = np.where((x >= cx + i) & (x < cx + i + 1) & (y >= cy + j) & (y < cy + j + 1))
+            stick_data = np.array([x[stick_indices], y[stick_indices], z[stick_indices], red[stick_indices], green[stick_indices], blue[stick_indices]])
+            setBlocksInChunk(stick_data, chunk)
+
+
+    level.put_chunk(chunk, "minecraft:overworld")
+    chunk.changed = True
+    level.save()
+
+
+def After():
+    level.close()
+
+# now we need to iterate over the chunks. We'll do this by iterating over the x and y coordinates of the chunks.
+
+for cx in range(min_x, max_x, 16):
+    for cy in range(min_y, max_y, 16):
+        # get the data points that are in this chunk
+        chunk_indices = np.where((x >= cx) & (x < cx + 16) & (y >= cy) & (y < cy + 16))
+        chunk_data = np.array([x[chunk_indices], y[chunk_indices], z[chunk_indices], red[chunk_indices], green[chunk_indices], blue[chunk_indices]], cx, cy)
+        transformChunk(chunk_data)

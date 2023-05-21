@@ -27,20 +27,14 @@ allowed_blocks = {
     "grass block": Block("minecraft", "grass_block"),
     "dirt": Block("minecraft", "dirt"),
     "dirt path": Block("minecraft", "dirt_path"),
-    "sand": Block("minecraft", "sand"),
-    "gravel": Block("minecraft", "gravel"),
     "stone": Block("minecraft", "stone"),
-    "stone bricks": Block("minecraft", "stone_bricks"),
+    "sandstone": Block("minecraft", "sandstone"),
     "polished blackstone": Block("minecraft", "polished_blackstone"),
     "granite": Block("minecraft", "granite"),
     "cut sandstone": Block("minecraft", "cut_sandstone"),
     "cut red sandstone": Block("minecraft", "cut_red_sandstone"),
-    "quartz block": Block("minecraft", "quartz_block"),
     "spruce log": Block("minecraft", "spruce_log"),
     "oak log": Block("minecraft", "oak_log"),
-    "oak planks": Block("minecraft", "oak_planks"),
-    "spruce planks": Block("minecraft", "spruce_planks"),
-    "birch planks": Block("minecraft", "birch_planks"),
     "oak leaves": Block("minecraft", "oak_leaves"),
     "spruce leaves": Block("minecraft", "spruce_leaves"),
     "white concrete": Block("minecraft", "white_concrete"),
@@ -59,9 +53,7 @@ allowed_blocks = {
     "purple concrete": Block("minecraft", "purple_concrete"),
     "magenta concrete": Block("minecraft", "magenta_concrete"),
     "pink concrete": Block("minecraft", "pink_concrete"),
-    "bricks": Block("minecraft", "bricks"),
     "mud": Block("minecraft", "mud"),
-    "nether bricks": Block("minecraft", "nether_bricks"),
 }
 
 # next we need to get the textures for each Minecraft block, and get the average rgb value for each texture
@@ -197,7 +189,7 @@ def performDatasetTransformation(ds):
         level.save()
         print("done with chunk", cx, " ", cy, time.time() - start_time)
 
-    print("done transforming chunks", time.time() - start_time)
+    # print("done transforming chunks", time.time() - start_time)
 
 
 # datasets = []
@@ -206,6 +198,7 @@ for filename in os.listdir("LiDAR LAS Data/las/"):
         ds = pylas.read("LiDAR LAS Data/las/" + filename)
         level = amulet.load_level("world/UBC")
         performDatasetTransformation(ds)
+        print("done transforming chunks for", filename, time.time() - start_time)
         level.close()
 # for ds in datasets:
 #     level = amulet.load_level("world/UBC")

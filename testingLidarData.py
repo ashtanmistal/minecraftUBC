@@ -71,6 +71,6 @@ class_data = data.classification
 # plt.show()
 
 
-indices = np.where(class_data == 5)
+indices = np.where(class_data == 9)
 plt.scatter(x[indices], y[indices], s=0.1, c='green')
 plt.show()

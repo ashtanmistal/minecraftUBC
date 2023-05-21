@@ -16,7 +16,7 @@ from amulet_nbt import StringTag
 
 start_time = time.time()
 # load the level
-level = amulet.load_level("world/UBC")
+# level = amulet.load_level("world/UBC")
 game_version = ("java", (1, 19, 4))
 
 # coordinates of whatever we want to set as 0,0
@@ -123,55 +123,39 @@ def transformChunk(data):
     # compare with the rgb values for each Minecraft block texture, and choose the closest one
     # place the block in the chunk
     # remove any data points that are classified as noise (7)
-    noise_indices = np.where(labels == 7)
-    x = np.delete(x, noise_indices)
-    y = np.delete(y, noise_indices)
-    z = np.delete(z, noise_indices)
-    red = np.delete(red, noise_indices)
-    green = np.delete(green, noise_indices)
-    blue = np.delete(blue, noise_indices)
-    labels = np.delete(labels, noise_indices)
+    noise_indices = np.where(labels == 7)[0]
+    blue, green, labels, red, x, y, z = deleteIndices(blue, green, labels, noise_indices, red, x, y, z)
 
     # 5 is high vegetation by the looks of it. That should be placed as leaves.
     # if g > r || b then it's probably a leaf block else, it's probably a log block. Can just use spruce log for now.
-    vegetation_indices = np.where(labels == 5)
+    vegetation_indices = np.where(labels == 5)[0]
     # place leaves
-    for i in vegetation_indices:
-        if green[i] > red[i] and green[i] > blue[i]:
-            # place leaves
-            block = allowed_blocks["spruce leaves"]
-        else:
-            # place log
-            block = Block("minecraft", "spruce_log", properties={"facing": StringTag("up")})
-        level.set_version_block(x[i].astype(int), y[i].astype(int), z[i].astype(int), "minecraft:overworld", game_version, block)
+    if len(vegetation_indices) != 0:
+        for i in vegetation_indices:
+            if green[i] > red[i] and green[i] > blue[i]:
+                # place leaves
+                block = allowed_blocks["spruce leaves"]
+            else:
+                # place log
+                block = Block("minecraft", "spruce_log", properties={"facing": StringTag("up")})
+            level.set_version_block(x[i].astype(int), y[i].astype(int), z[i].astype(int), "minecraft:overworld",
+                                    game_version, block)
 
     # remove the vegetation indices from the data
-    x = np.delete(x, vegetation_indices)
-    y = np.delete(y, vegetation_indices)
-    z = np.delete(z, vegetation_indices)
-    red = np.delete(red, vegetation_indices)
-    green = np.delete(green, vegetation_indices)
-    blue = np.delete(blue, vegetation_indices)
-    labels = np.delete(labels, vegetation_indices)
+    blue, green, labels, red, x, y, z = deleteIndices(blue, green, labels, vegetation_indices, red, x, y, z)
 
     # 3 is low vegetation. This can be moss blocks, as that has an equal texture on all sides.
-    moss_indices = np.where(labels == 3)
+    moss_indices = np.where(labels == 3)[0]
     for i in moss_indices:
         block = allowed_blocks["moss block"]
-        level.set_version_block(x[i].astype(int), y[i].astype(int), z[i].astype(int), "minecraft:overworld", game_version, block)
+        level.set_version_block(x[i].astype(int), y[i].astype(int), z[i].astype(int), "minecraft:overworld",
+                                game_version, block)
 
     # remove the moss indices from the data
-    x = np.delete(x, moss_indices)
-    y = np.delete(y, moss_indices)
-    z = np.delete(z, moss_indices)
-    red = np.delete(red, moss_indices)
-    green = np.delete(green, moss_indices)
-    blue = np.delete(blue, moss_indices)
-    labels = np.delete(labels, moss_indices)
+    blue, green, labels, red, x, y, z = deleteIndices(blue, green, labels, moss_indices, red, x, y, z)
 
     # now all that's left is, well, everything else! So that'll be the stuff below where we want to pick what block
     # to place based on the average rgb value.
-
 
     unique_x, x_indices = np.unique(x, return_index=True)
     unique_y, y_indices = np.unique(y, return_index=True)
@@ -203,6 +187,17 @@ def transformChunk(data):
         #       avg_blue[i, j, k], "and texture", mapped_texture)
 
 
+def deleteIndices(blue, green, labels, noise_indices, red, x, y, z):
+    x = np.delete(x, noise_indices)
+    y = np.delete(y, noise_indices)
+    z = np.delete(z, noise_indices)
+    red = np.delete(red, noise_indices)
+    green = np.delete(green, noise_indices)
+    blue = np.delete(blue, noise_indices)
+    labels = np.delete(labels, noise_indices)
+    return blue, green, labels, red, x, y, z
+
+
 def performDatasetTransformation(ds):
     x = ds.x
     y = ds.y
@@ -215,6 +210,7 @@ def performDatasetTransformation(ds):
     x = x - x_offset
     y = y - y_offset
     z = z - z_offset
+    print("performing rotation matrix multiplication")
     x, y, z = np.matmul(inverse_rotation_matrix, np.array([x, y, z]))
 
     print("done applying rotation matrix", time.time() - start_time)
@@ -241,7 +237,8 @@ def performDatasetTransformation(ds):
 
     # remove data points that are above 256m
     indices = np.where(z < 256)
-    x, y, z, red, green, blue, labels = x[indices], y[indices], z[indices], red[indices], green[indices], blue[indices], labels[
+    x, y, z, red, green, blue, labels = x[indices], y[indices], z[indices], red[indices], green[indices], blue[indices], \
+    labels[
         indices]
 
     # Next, the script that we will be using to transform the chunk into a Minecraft chunk.
@@ -264,13 +261,15 @@ def performDatasetTransformation(ds):
 
 
 # datasets = []
+level = amulet.load_level("world/UBC")
+print("done loading level", time.time() - start_time)
 for filename in os.listdir("LiDAR LAS Data/las/"):
     if filename.endswith(".las"):
         ds = pylas.read("LiDAR LAS Data/las/" + filename)
-        level = amulet.load_level("world/UBC")
         performDatasetTransformation(ds)
         print("done transforming chunks for", filename, time.time() - start_time)
-        level.close()
+        break  # for now, just do one dataset
+level.close()
 # for ds in datasets:
 #     level = amulet.load_level("world/UBC")
 #     performDatasetTransformation(ds)

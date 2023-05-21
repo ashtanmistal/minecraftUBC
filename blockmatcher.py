@@ -9,6 +9,7 @@ import numpy as np
 import pylas
 from PIL import Image
 from amulet.api.block import Block
+from amulet_nbt import StringTag
 
 # This is a simple Python script that transforms a chunk (16m x 16m) of data and transforms it into a Minecraft chunk.
 # It processes the entire chunk but breaks it down into meter-by-meter blocks.
@@ -25,6 +26,7 @@ z_offset = 55
 
 allowed_blocks = {
     "grass block": Block("minecraft", "grass_block"),
+    "moss block": Block("minecraft", "moss_block"),
     "dirt": Block("minecraft", "dirt"),
     "dirt path": Block("minecraft", "dirt_path"),
     "stone": Block("minecraft", "stone"),
@@ -55,6 +57,11 @@ allowed_blocks = {
     "pink concrete": Block("minecraft", "pink_concrete"),
     "mud": Block("minecraft", "mud"),
 }
+
+# set the persistent tags for leaves to true to prevent them from decaying
+for block in allowed_blocks.values():
+    if block.base_name.endswith("leaves"):
+        block.properties["persistent"] = True
 
 # next we need to get the textures for each Minecraft block, and get the average rgb value for each texture
 texture_location = "resources/block"
@@ -94,7 +101,17 @@ def transformChunk(data):
     # Whatever data is in that stick tells is what blocks to place in that stick.
     # as there's likely to be more than one block per stick, we want to place all of them.
 
-    x, y, z, red, green, blue = data
+    # Labels:
+    # 1. Unclassified;
+    # 2. Bare - earth and low grass;
+    # 3. Low vegetation(height < 2m);
+    # 4. High vegetation(height > 2m);
+    # 5. Water;
+    # 6. Buildings;
+    # 7. Other;
+    # 8. Noise(noise points, blunders, outliners, etc)
+
+    x, y, z, red, green, blue, labels = data
 
     if len(x) == 0 or len(y) == 0 or len(z) == 0:
         return
@@ -105,6 +122,57 @@ def transformChunk(data):
     # average the rgb values for each group
     # compare with the rgb values for each Minecraft block texture, and choose the closest one
     # place the block in the chunk
+    # remove any data points that are classified as noise (7)
+    noise_indices = np.where(labels == 7)
+    x = np.delete(x, noise_indices)
+    y = np.delete(y, noise_indices)
+    z = np.delete(z, noise_indices)
+    red = np.delete(red, noise_indices)
+    green = np.delete(green, noise_indices)
+    blue = np.delete(blue, noise_indices)
+    labels = np.delete(labels, noise_indices)
+
+    # 5 is high vegetation by the looks of it. That should be placed as leaves.
+    # if g > r || b then it's probably a leaf block else, it's probably a log block. Can just use spruce log for now.
+    vegetation_indices = np.where(labels == 5)
+    # place leaves
+    for i in vegetation_indices:
+        if green[i] > red[i] and green[i] > blue[i]:
+            # place leaves
+            block = allowed_blocks["spruce leaves"]
+        else:
+            # place log
+            block = Block("minecraft", "spruce_log", properties={"facing": StringTag("up")})
+        level.set_version_block(x[i].astype(int), y[i].astype(int), z[i].astype(int), "minecraft:overworld", game_version, block)
+
+    # remove the vegetation indices from the data
+    x = np.delete(x, vegetation_indices)
+    y = np.delete(y, vegetation_indices)
+    z = np.delete(z, vegetation_indices)
+    red = np.delete(red, vegetation_indices)
+    green = np.delete(green, vegetation_indices)
+    blue = np.delete(blue, vegetation_indices)
+    labels = np.delete(labels, vegetation_indices)
+
+    # 3 is low vegetation. This can be moss blocks, as that has an equal texture on all sides.
+    moss_indices = np.where(labels == 3)
+    for i in moss_indices:
+        block = allowed_blocks["moss block"]
+        level.set_version_block(x[i].astype(int), y[i].astype(int), z[i].astype(int), "minecraft:overworld", game_version, block)
+
+    # remove the moss indices from the data
+    x = np.delete(x, moss_indices)
+    y = np.delete(y, moss_indices)
+    z = np.delete(z, moss_indices)
+    red = np.delete(red, moss_indices)
+    green = np.delete(green, moss_indices)
+    blue = np.delete(blue, moss_indices)
+    labels = np.delete(labels, moss_indices)
+
+    # now all that's left is, well, everything else! So that'll be the stuff below where we want to pick what block
+    # to place based on the average rgb value.
+
+
     unique_x, x_indices = np.unique(x, return_index=True)
     unique_y, y_indices = np.unique(y, return_index=True)
     unique_z, z_indices = np.unique(z, return_index=True)
@@ -114,6 +182,7 @@ def transformChunk(data):
     avg_blue = np.zeros((len(unique_x), len(unique_y), len(unique_z)))
 
     for i, j, k in np.ndindex(avg_red.shape):
+
         # For each unique x, y, z coordinate, we want to get the average rgb value for all the data points that have
         # that coordinate. Red, green, and blue are all one-dimensional arrays.
         matching_indices = np.where((x == unique_x[i]) & (y == unique_y[j]) & (z == unique_z[k]))
@@ -141,6 +210,7 @@ def performDatasetTransformation(ds):
     red = ds.red
     green = ds.green
     blue = ds.blue
+    labels = ds.classification
     # apply the inverse rotation matrix to the x and y coordinates
     x = x - x_offset
     y = y - y_offset
@@ -163,15 +233,16 @@ def performDatasetTransformation(ds):
 
     # sort by x, then y, then z. the colors should be sorted in the same way.
     sort_indices = np.lexsort((z, y, x))
-    x, y, z, red, green, blue = x[sort_indices], y[sort_indices], z[sort_indices], red[sort_indices], green[
+    x, y, z, red, green, blue, labels = x[sort_indices], y[sort_indices], z[sort_indices], red[sort_indices], green[
         sort_indices], \
-        blue[sort_indices]
+        blue[sort_indices], labels[sort_indices]
 
     print("done sorting data", time.time() - start_time)
 
     # remove data points that are above 256m
     indices = np.where(z < 256)
-    x, y, z, red, green, blue = x[indices], y[indices], z[indices], red[indices], green[indices], blue[indices]
+    x, y, z, red, green, blue, labels = x[indices], y[indices], z[indices], red[indices], green[indices], blue[indices], labels[
+        indices]
 
     # Next, the script that we will be using to transform the chunk into a Minecraft chunk.
     # Data will be passed in as an array of data points to be treated as LIDAR data.
@@ -184,7 +255,7 @@ def performDatasetTransformation(ds):
             chunk_indices = np.where((x >= cx) & (x < cx + 16) & (y >= cy) & (y < cy + 16))
             chunk_data = np.array(
                 [x[chunk_indices], y[chunk_indices], z[chunk_indices], red[chunk_indices], green[chunk_indices],
-                 blue[chunk_indices]])
+                 blue[chunk_indices], labels[chunk_indices]])
             transformChunk(chunk_data)
         level.save()
         print("done with chunk", cx, " ", cy, time.time() - start_time)

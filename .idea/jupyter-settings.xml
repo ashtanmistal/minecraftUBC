@@ -1,8 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JupyterPersistentConnectionParameters">
+    <option name="knownRemoteServers">
+      <list>
+        <JupyterConnectionParameters>
+          <option name="authType" value="notebook" />
+          <option name="token" value="b089921c6f044a78065ee7e577b19b7b0065ab5501ea106b" />
+          <option name="urlString" value="http://localhost:8888" />
+          <authParams2>
+            <map>
+              <entry key="token" value="b089921c6f044a78065ee7e577b19b7b0065ab5501ea106b" />
+            </map>
+          </authParams2>
+        </JupyterConnectionParameters>
+      </list>
+    </option>
     <option name="moduleParameters">
       <map>
+        <entry key="$USER_HOME$/Documents/Ashtan/School - No Onedrive/cpsc330-2022s/.idea/cpsc330-2022s.iml">
+          <value>
+            <JupyterConnectionParameters>
+              <option name="authType" value="notebook" />
+              <option name="token" value="b089921c6f044a78065ee7e577b19b7b0065ab5501ea106b" />
+              <option name="urlString" value="http://localhost:8888" />
+              <authParams2>
+                <map>
+                  <entry key="token" value="b089921c6f044a78065ee7e577b19b7b0065ab5501ea106b" />
+                </map>
+              </authParams2>
+            </JupyterConnectionParameters>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../2022S/CPSC330/cpsc330-2022s/.idea/cpsc330-2022s.iml">
+          <value>
+            <JupyterConnectionParameters>
+              <option name="authType" value="notebook" />
+              <option name="token" value="aa8e7fa2276285bb478c552145088eabbcb4968a24268415" />
+              <option name="urlString" value="http://localhost:8888" />
+              <authParams2>
+                <map>
+                  <entry key="token" value="aa8e7fa2276285bb478c552145088eabbcb4968a24268415" />
+                </map>
+              </authParams2>
+            </JupyterConnectionParameters>
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../../2022W2/CPSC425/a1/.idea/a1.iml">
           <value>
             <JupyterConnectionParameters>

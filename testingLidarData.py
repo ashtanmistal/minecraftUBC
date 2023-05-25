@@ -5,7 +5,7 @@ import pylas
 import matplotlib.pyplot as plt
 
 # load the data
-data = pylas.read("LiDAR LAS Data/las/481000_5456000.las")
+data = pylas.read("LiDAR LAS Data/las/481000_5458000.las")
 
 x, y, z = data.x, data.y, data.z
 rgb = data.red, data.green, data.blue
@@ -64,13 +64,17 @@ class_data = data.classification
 # z = z[indices]
 # class_data = class_data[indices]
 #
-# colors = ['red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white', 'black']
+colors = ['red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white', 'black', 'orange']
 # for i in range(8):
 #     indices = np.where(class_data == i)
 #     plt.scatter(x[indices], y[indices], s=0.1, c=colors[i])
 # plt.show()
 
 
-indices = np.where(class_data == 9)
-plt.scatter(x[indices], y[indices], s=0.1, c='green')
+fig, ax = plt.subplots(3, 3, figsize=(50, 50))
+fig.suptitle('LiDAR Data')
+for i in range(9):
+    indices = np.where(class_data == i+1)
+    ax[i // 3, i % 3].scatter(x[indices], y[indices], s=0.1, c=colors[i])
+    ax[i // 3, i % 3].set_title(f'Class {i+1}')
 plt.show()

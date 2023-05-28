@@ -3,6 +3,7 @@
 import math
 import os
 import time
+from tqdm import tqdm
 
 import amulet
 import numpy as np
@@ -11,20 +12,18 @@ from PIL import Image
 from amulet.api.block import Block
 from amulet_nbt import StringTag
 
-
 # This is a simple Python script that transforms a chunk (16m x 16m) of data and transforms it into a Minecraft chunk.
 # It processes the entire chunk but breaks it down into meter-by-meter blocks.
 
 start_time = time.time()
 # load the level
-level = amulet.load_level("world/UBC")
+# level = amulet.load_level("world/UBC")
 game_version = ("java", (1, 19, 4))
 
 # coordinates of whatever we want to set as 0,0
 x_offset = 480000
 y_offset = 5455000
 z_offset = 55
-
 
 allowed_blocks = {  # class 2. Looks like these are roads and stuff
     "dirt": Block("minecraft", "dirt"),
@@ -244,7 +243,7 @@ def perform_dataset_transformation(ds):
     max_x = np.ceil(max_x / 16) * 16
     max_y = np.ceil(max_y / 16) * 16
 
-    for cx in range(min_x.astype(int), max_x.astype(int), 16):
+    for cx in tqdm(range(min_x.astype(int), max_x.astype(int), 16)):
         for cy in range(min_y.astype(int), max_y.astype(int), 16):
             # get the data points that are in this chunk
             chunk_indices = np.where((x >= cx) & (x < cx + 16) & (y >= cy) & (y < cy + 16))
@@ -252,16 +251,19 @@ def perform_dataset_transformation(ds):
                 [x[chunk_indices], y[chunk_indices], z[chunk_indices], red[chunk_indices], green[chunk_indices],
                  blue[chunk_indices], labels[chunk_indices]])
             transform_chunk(chunk_data)
-        print("done with chunk range for x =", cx, time.time() - start_time)
-    print("done transforming chunks", time.time() - start_time)
 
 
+finished_datasets = ["480000_5455000", "480000_5456000", "480000_5457000",
+                     "481000_5454000", "481000_5455000", "481000_5456000", "481000_5457000", "481000_5458000",
+                     "482000_5454000", "482000_5455000", "482000_5456000", "482000_5457000"]
 datasets = []
 level = amulet.load_level("world/UBC")
 print("done loading level", time.time() - start_time)
 for filename in os.listdir("LiDAR LAS Data/las/"):
-    if filename.endswith(".las"):
+    if filename.endswith(".las") and not filename[:-4] in finished_datasets:
+        # as we've already processed it
         dataset = pylas.read("LiDAR LAS Data/las/" + filename)
+        print("transforming chunks for", filename, time.time() - start_time)
         perform_dataset_transformation(dataset)
         print("done transforming chunks for", filename, time.time() - start_time)
 #         break  # for now, just do one dataset

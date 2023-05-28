@@ -147,5 +147,5 @@ Reaching out to the UBC Minecraft Club may be a good idea for this, as they may 
 
 ## Other Work
 
-- **Website**. A website is required to host the world file and provide information about the project. This is not a priority, however, and will be done once the project is complete. Currently assigned to Ashtan Mistal.
+- **Website**. A website is required to provide information about the project. This is not a priority, however, and will be done once the project is complete. Currently assigned to Ashtan Mistal.
 - **Project advertisement**. This is a priority to get volunteers for the manual work. Currently assigned to everyone interested.

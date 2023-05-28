@@ -34,8 +34,7 @@ The project will be built in a 1:1 scale, meaning that 1 block in Minecraft will
 - Exterior of all buildings on campus will be built in a 1:1 scale, using transformed LiDAR data from the UBC Campus.
 - Foliage and roads will also be generated using this LiDAR data.
 - Orthographic imagery will be used to select the color palette for the buildings.
-- Building interiors will be created by gathering floor plans from various UBC websites, and compiled into an organized document. See [the Excel file](/planning/UBC%20Minecraft%20Project%20-%20Building%20Floor%20Plans.xlsx) for more information.
-[//]: # (TODO make the excel file a proper link once it is added to the Github repo)
+- Building interiors will be created by gathering floor plans from various UBC websites, and compiled into an organized document. See [the spreadsheet](https://docs.google.com/spreadsheets/d/16vR1eYbdkNVdfTgkR4nw5c2QBYRDDq_WJ4L-AfOAfrM/edit?usp=sharing) for more information.
 - Once the automated work is done, the project will be opened up to the public for manual work. This will include lots of WorldEdit work to fill in holes in the world in areas that the LiDAR data did not capture (i.e. under trees, inside buildings, etc.), as well as adding water features, and other aesthetic features. See the [Work to be done](#work-to-be-done) section for more information.
 - The project will be hosted on a server that is accessible to all UBC students during building. A world download will be provided once the project is completed, and the server will be publicly accessible as long as funding permits.
 

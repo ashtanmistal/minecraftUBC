@@ -6,4 +6,4 @@ The project will be built in a 1:1 scale, meaning that 1 block in Minecraft will
 
 The project works by manipulating LiDAR data (available [here](https://opendata.vancouver.ca/explore/dataset/lidar-2022/information/)) into Minecaft blocks after a series of coordinate transformations and rotations. 
 
-Read more about the project and its current progress in the [planning documentation](#/planning/planning.md). 
+Read more about the project and its current progress in the [planning documentation](https://github.com/ashtanmistal/minecraftUBC/blob/master/planning/planning.md). 

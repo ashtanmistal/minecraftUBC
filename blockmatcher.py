@@ -3,27 +3,28 @@
 import math
 import os
 import time
-from tqdm import tqdm
 
 import amulet
 import numpy as np
 import pylas
 from PIL import Image
 from amulet.api.block import Block
+from amulet.api.chunk import Chunk
+from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
+from amulet.utils.world_utils import block_coords_to_chunk_coords
 from amulet_nbt import StringTag
+from tqdm import tqdm
 
 # This is a simple Python script that transforms a chunk (16m x 16m) of data and transforms it into a Minecraft chunk.
 # It processes the entire chunk but breaks it down into meter-by-meter blocks.
 
 start_time = time.time()
-# load the level
-# level = amulet.load_level("world/UBC")
 game_version = ("java", (1, 19, 4))
 
 # coordinates of whatever we want to set as 0,0
 x_offset = 480000
 y_offset = 5455000
-z_offset = 55
+z_offset = 59
 
 allowed_blocks = {  # class 2. Looks like these are roads and stuff
     "dirt": Block("minecraft", "dirt"),
@@ -42,35 +43,12 @@ allowed_trees = {  # class 5
 }
 
 allowed_building_blocks = {  # class 6
-    # "polished blackstone": Block("minecraft", "polished_blackstone"),
-    # "white concrete": Block("minecraft", "white_concrete"),
-    # "light gray concrete": Block("minecraft", "light_gray_concrete"),
-    # "gray concrete": Block("minecraft", "gray_concrete"),
-    # "black concrete": Block("minecraft", "black_concrete"),
-    # "brown concrete": Block("minecraft", "brown_concrete"),
-    # "red concrete": Block("minecraft", "red_concrete"),
-    # "orange concrete": Block("minecraft", "orange_concrete"),
-    # "yellow concrete": Block("minecraft", "yellow_concrete"),
-    # "lime concrete": Block("minecraft", "lime_concrete"),
-    # "green concrete": Block("minecraft", "green_concrete"),
-    # "cyan concrete": Block("minecraft", "cyan_concrete"),
-    # "light blue concrete": Block("minecraft", "light_blue_concrete"),
-    # "blue concrete": Block("minecraft", "blue_concrete"),
-    # "purple concrete": Block("minecraft", "purple_concrete"),
-    # "magenta concrete": Block("minecraft", "magenta_concrete"),
-    # "pink concrete": Block("minecraft", "pink_concrete"),
-    # let's change from concrete to the blocks that are actually used in the buildings
     "bricks": Block("minecraft", "bricks"),
-    "mud bricks": Block("minecraft", "mud_bricks"),
-    "nether bricks": Block("minecraft", "nether_bricks"),
     # that should cover the reds
     "block of iron": Block("minecraft", "iron_block"),
     "stone bricks": Block("minecraft", "stone_bricks"),
     "deepslate tiles": Block("minecraft", "deepslate_tiles"),
-    # that should cover the grays
     "oak planks": Block("minecraft", "oak_planks"),
-    # that should cover the wood... this isn't really used in many places and I do want to significantly limit the
-    # number of blocks that are used
 }
 
 # next we need to get the textures for each Minecraft block, and get the average rgb value for each texture
@@ -95,14 +73,14 @@ if __name__ == '__main__':
     allowed_building_blocks_texture = {block: get_average_rgb(block_object) for block, block_object in
                                        allowed_building_blocks.items()}
     print("done computing average rgb values for textures", time.time() - start_time)
-    rotation_degrees = 30.5
+    rotation_degrees = 28.000
     rotation = math.radians(rotation_degrees)
     inverse_rotation_matrix = np.array([[math.cos(rotation), math.sin(rotation), 0],
                                         [-math.sin(rotation), math.cos(rotation), 0],
                                         [0, 0, 1]])
 
 
-def transform_chunk(data):
+def transform_chunk(data, level):
     # We will break it up into 16 1m x 1m "sticks" that span the entire chunk.
     # Whatever data is in that stick tells is what blocks to place in that stick.
     # as there's likely to be more than one block per stick, we want to place all of them.
@@ -120,7 +98,6 @@ def transform_chunk(data):
     if len(x) == 0 or len(y) == 0 or len(z) == 0:
         return  # no need to save if there's no data
     x, y, z = np.floor(x), np.floor(y), np.floor(z)
-    # get the chunk coordinates (minimum x, minimum z)
 
     # now group together the data points that have the same x, y, and z coordinates
     # average the rgb values for each group
@@ -130,6 +107,17 @@ def transform_chunk(data):
     unique_x, x_indices = np.unique(x, return_index=True)
     unique_y, y_indices = np.unique(y, return_index=True)
     unique_z, z_indices = np.unique(z, return_index=True)
+
+    cx, cz = block_coords_to_chunk_coords(np.min(unique_x), np.min(unique_y))
+    new_chunk = False
+    try:
+        chunk = level.get_chunk(cx, cz, "minecraft:overworld")
+    except ChunkDoesNotExist:
+        chunk = Chunk(cx, cz)
+        new_chunk = True
+    except ChunkLoadError:
+        print("Chunk load error at", cx, cz)
+        raise ChunkLoadError
 
     for i, j, k in np.ndindex(len(unique_x), len(unique_y), len(unique_z)):
 
@@ -146,29 +134,36 @@ def transform_chunk(data):
         if avg_class == 2:
             mapped_texture = min(allowed_blocks_texture, key=lambda g: np.linalg.norm(
                 allowed_blocks_texture[g] - np.array([avg_red, avg_green, avg_blue])))
-            # now we need to get from the name to the actual Block object
             selected_block = allowed_blocks[mapped_texture]
         elif avg_class == 3:
             mapped_texture = min(allowed_vegetation_texture, key=lambda g: np.linalg.norm(
                 allowed_vegetation_texture[g] - np.array([avg_red, avg_green, avg_blue])))
-            # now we need to get from the name to the actual Block object
             selected_block = allowed_vegetation[mapped_texture]
         elif avg_class == 5:
+            # de-noise the trees a bit. If the number of points is too small, then we should ignore it
+            if matching_indices[0].size < 3:
+                continue
             mapped_texture = min(allowed_trees_texture, key=lambda g: np.linalg.norm(
                 allowed_trees_texture[g] - np.array([avg_red, avg_green, avg_blue])))
-            # now we need to get from the name to the actual Block object
             selected_block = allowed_trees[mapped_texture]
         elif avg_class == 6:
             mapped_texture = min(allowed_building_blocks_texture, key=lambda g: np.linalg.norm(
                 allowed_building_blocks_texture[g] - np.array(
                     [avg_red, avg_green, avg_blue])))
-            # now we need to get from the name to the actual Block object
             selected_block = allowed_building_blocks[mapped_texture]
         else:
             selected_block = Block("minecraft", "air")
-        level.set_version_block(unique_x[i].astype(int), unique_z[k].astype(int), unique_y[j].astype(int),
-                                "minecraft:overworld", game_version, selected_block)
-    level.save()
+        # block_id = level.block_palette.get_add_block(selected_block)
+        offset_x = unique_x[i] - 16 * cx
+        offset_y = unique_y[j] - 16 * cz
+        universal_block, universal_block_entity, universal_extra = level.translation_manager.get_version("java", (
+            1, 19, 4)).block.to_universal(selected_block)
+        block_id = level.block_palette.get_add_block(universal_block)
+        chunk.blocks[offset_x.astype(int), unique_z[k].astype(int), offset_y.astype(int)] = block_id
+    if new_chunk:
+        level.put_chunk(chunk, "minecraft:overworld")
+    chunk.changed = True
+    # level.save()
 
 
 def delete_indices(blue, green, labels, noise_indices, red, x, y, z):
@@ -183,6 +178,7 @@ def delete_indices(blue, green, labels, noise_indices, red, x, y, z):
 
 
 def perform_dataset_transformation(ds):
+    level = amulet.load_level("world/UBC")
     x = ds.x
     y = ds.y
     z = ds.z
@@ -250,14 +246,17 @@ def perform_dataset_transformation(ds):
             chunk_data = np.array(
                 [x[chunk_indices], y[chunk_indices], z[chunk_indices], red[chunk_indices], green[chunk_indices],
                  blue[chunk_indices], labels[chunk_indices]])
-            transform_chunk(chunk_data)
+            transform_chunk(chunk_data, level)
+    level.save()
+    level.close()
 
 
-finished_datasets = ["480000_5455000", "480000_5456000", "480000_5457000",
-                     "481000_5454000", "481000_5455000", "481000_5456000", "481000_5457000", "481000_5458000",
-                     "482000_5454000", "482000_5455000", "482000_5456000", "482000_5457000"]
+finished_datasets = []
+# finished_datasets = ["480000_5455000", "480000_5456000", "480000_5457000",
+#                      "481000_5454000", "481000_5455000", "481000_5456000", "481000_5457000", "481000_5458000",
+#                      "482000_5454000", "482000_5455000", "482000_5456000", "482000_5457000"]
 datasets = []
-level = amulet.load_level("world/UBC")
+
 print("done loading level", time.time() - start_time)
 for filename in os.listdir("LiDAR LAS Data/las/"):
     if filename.endswith(".las") and not filename[:-4] in finished_datasets:
@@ -267,18 +266,3 @@ for filename in os.listdir("LiDAR LAS Data/las/"):
         perform_dataset_transformation(dataset)
         print("done transforming chunks for", filename, time.time() - start_time)
 #         break  # for now, just do one dataset
-
-# dataset = pylas.read("LiDAR LAS Data/las/481000_5456000.las")
-# perform_dataset_transformation(dataset)
-# print("done transforming chunks for", "481000_5456000.las", time.time() - start_time)
-
-
-# for ds in datasets:
-#     level = amulet.load_level("world/UBC")
-#     performDatasetTransformation(ds)
-#     level.close()
-
-# level.close() # given this method removes temporary files, it may be a good idea to call this after each dataset is
-# processed, and then reopen it for the next dataset.
-
-# print("done", time.time() - start_time)

@@ -56,7 +56,7 @@ The current project team consists of:
 ## Project Deliverables
 
 - A Minecraft world file that contains the UBC Vancouver Campus, in a 1:1 scale.
-- A Python-based tool that can be used to transform LiDAR data into Minecraft blocks.
+- A Python-based tool that can be used to transform LiDAR data into Minecraft blocks. (done)
 - A Python-based tool that can be used to transform orthographic imagery into a dictionary of Minecraft blocks by object recognition and color matching.
 - A Python-based tool that can be used to transform floor plans into a WorldEdit schematic file.
 
@@ -76,14 +76,14 @@ Current project communication is on Discord with the project leads and will be t
 
 This section outlines the work that needs to be done to complete the project. the specific assignments for tasks requiring multiple people will be done on a spreadsheet, and will be linked under each subsection once it is created.
 
-## LiDAR Data Transformation
+## LiDAR Data Transformation (done)
 
 Assigned to: Ashtan Mistal
 
 This work primarily involves the following tasks:
 - Calculating the rotation of UBC's roads from true north to be used as a rotation matrix for the LiDAR data. _(Current status: done)_
 - Calculating the height offset of the LiDAR data such that the sea level corresponds to the current world generation height in the superflat world. _(Current status: done)_
-- Writing a script to transform the LiDAR data into a Minecraft world file. _(Current status: Done; waiting for rotation matrix and height offset calculations to be completed. Third iteration of transformation is completed but fixes above are desired.)_
+- Writing a script to transform the LiDAR data into a Minecraft world file. _(Current status: Done)
   - This tool first de-noises the LiDAR data by removing all points that are unclassified, classified as noise, or are otherwise uninteresting for the transformation requirements. 
   - It then transforms the LiDAR data using the rotation matrix. 
   - It then separates the LiDAR data into chunks based on the chunk size of the Minecraft world.

@@ -81,8 +81,8 @@ This section outlines the work that needs to be done to complete the project. th
 Assigned to: Ashtan Mistal
 
 This work primarily involves the following tasks:
-- Calculating the rotation of UBC's roads from true north to be used as a rotation matrix for the LiDAR data. _(Current status: Almost complete)_
-- Calculating the height offset of the LiDAR data such that the sea level corresponds to the current world generation height in the superflat world. _(Current status: Almost complete)_
+- Calculating the rotation of UBC's roads from true north to be used as a rotation matrix for the LiDAR data. _(Current status: done)_
+- Calculating the height offset of the LiDAR data such that the sea level corresponds to the current world generation height in the superflat world. _(Current status: done)_
 - Writing a script to transform the LiDAR data into a Minecraft world file. _(Current status: Done; waiting for rotation matrix and height offset calculations to be completed. Third iteration of transformation is completed but fixes above are desired.)_
   - This tool first de-noises the LiDAR data by removing all points that are unclassified, classified as noise, or are otherwise uninteresting for the transformation requirements. 
   - It then transforms the LiDAR data using the rotation matrix. 

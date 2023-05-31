@@ -1,4 +1,4 @@
-# blockmatcher.py
+# lidar-to-minecraft.py
 # author: Ashtan Mistal
 import math
 import os
@@ -167,32 +167,20 @@ def transform_chunk(data, level):
 
 
 def delete_indices(blue, green, labels, noise_indices, red, x, y, z):
-    x = np.delete(x, noise_indices)
-    y = np.delete(y, noise_indices)
-    z = np.delete(z, noise_indices)
-    red = np.delete(red, noise_indices)
-    green = np.delete(green, noise_indices)
-    blue = np.delete(blue, noise_indices)
+    x, y, z = np.delete(x, noise_indices), np.delete(y, noise_indices), np.delete(z, noise_indices)
+    red, green, blue = np.delete(red, noise_indices), np.delete(green, noise_indices), np.delete(blue, noise_indices)
     labels = np.delete(labels, noise_indices)
     return blue, green, labels, red, x, y, z
 
 
 def perform_dataset_transformation(ds):
     level = amulet.load_level("world/UBC")
-    x = ds.x
-    y = ds.y
-    z = ds.z
-    red = ds.red
-    green = ds.green
-    blue = ds.blue
-    labels = ds.classification
+    x, y, z, red, green, blue, labels = ds.x, ds.y, ds.z, ds.red, ds.green, ds.blue, ds.classification
     # denoise: remove all labels that are not 2, 3, 5, or 6
     noise_indices = np.where((labels == 1) | (labels == 9) | (labels == 7) | (labels == 4) | (labels == 8))
     blue, green, labels, red, x, y, z = delete_indices(blue, green, labels, noise_indices, red, x, y, z)
-    # apply the inverse rotation matrix to the x and y coordinates
-    x = x - x_offset
-    y = y - y_offset
-    z = z - z_offset
+    # apply the inverse rotation matrix to the x and y coordinates, but first apply the offset
+    x, y, z = x - x_offset, y - y_offset, z - z_offset
 
     print("Done denoising", time.time() - start_time)
     x, y, z = np.matmul(inverse_rotation_matrix, np.array([x, y, z]))
@@ -200,12 +188,7 @@ def perform_dataset_transformation(ds):
     print("done applying rotation matrix", time.time() - start_time)
 
     # convert rgb from 0-65535 to 0-255
-    red = red / 256
-    green = green / 256
-    blue = blue / 256
-    red = red.astype(int)
-    green = green.astype(int)
-    blue = blue.astype(int)
+    red, green, blue = (red / 256).astype(int), (green / 256).astype(int), (blue / 256).astype(int)
 
     # sort by x, then y, then z. the colors should be sorted in the same way.
     sort_indices = np.lexsort((z, y, x))
@@ -233,11 +216,9 @@ def perform_dataset_transformation(ds):
 
     # now we need to iterate over the chunks. We'll do this by iterating over the x and y coordinates of the chunks
 
-    # round min and max to the lower and upper 16s and set as integers
-    min_x = np.floor(min_x / 16) * 16
-    min_y = np.floor(min_y / 16) * 16
-    max_x = np.ceil(max_x / 16) * 16
-    max_y = np.ceil(max_y / 16) * 16
+    # round min and max to the lower and upper 16s and set as integers (quantize to chunks to avoid setting multiple
+    # chunks during a single operation)
+    min_x, min_y, max_x, max_y = np.floor(min_x), np.floor(min_y), np.ceil(max_x), np.ceil(max_y)
 
     for cx in tqdm(range(min_x.astype(int), max_x.astype(int), 16)):
         for cy in range(min_y.astype(int), max_y.astype(int), 16):

@@ -23,7 +23,7 @@ Written by: Ashtan Mistal
 
 ## Project Description
 
-The UBC Minecraft Project is a project that aims to recreate the UBC Vancouver Campus inside a Minecraft world, in a 1:1 scale. The project is currently a collaboration between Ashtan Mistal and the UBC Electrical Engineering Student Society (EECE Student Society). 
+The UBC Minecraft Project is a project that aims to recreate the UBC Vancouver Campus inside a Minecraft world, in a 1:1 scale. The project is currently a collaboration between Ashtan Mistal and the UBC Electrical and Computer Engineering Student Society.
 
 The project will be hosted on a server that is accessible to all UBC students, and will be used as a platform for students to explore the campus, and a potential for event hosting once it is completed. The project will allow students new to UBC to explore the campus and get a feel for the campus before they arrive, and will allow students who are currently studying at UBC to explore the campus in a new way. 
 

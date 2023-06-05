@@ -12,7 +12,7 @@ Read more about the project and its current progress in the [planning documentat
 
 ![image](https://github.com/ashtanmistal/minecraftUBC/assets/70030490/91dda6d4-b54b-4fef-9cfa-6297f8112a3c)
 
-Render of the world using Avoyd. 
+Render of north campus using Avoyd.
 
 ![2023-05-26_17 12 32](https://github.com/ashtanmistal/minecraftUBC/assets/70030490/98a55ca9-cf15-44cd-8613-39d2ebf50792)
 

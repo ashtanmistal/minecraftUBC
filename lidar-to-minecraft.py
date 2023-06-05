@@ -241,7 +241,6 @@ datasets = []
 print("done loading level", time.time() - start_time)
 for filename in os.listdir("LiDAR LAS Data/las/"):
     if filename.endswith(".las") and not filename[:-4] in finished_datasets:
-        # as we've already processed it
         dataset = pylas.read("LiDAR LAS Data/las/" + filename)
         print("transforming chunks for", filename, time.time() - start_time)
         perform_dataset_transformation(dataset)

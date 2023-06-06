@@ -17,3 +17,8 @@ Render of north campus using Avoyd.
 ![2023-05-26_17 12 32](https://github.com/ashtanmistal/minecraftUBC/assets/70030490/98a55ca9-cf15-44cd-8613-39d2ebf50792)
 
 Screenshot of the IKB / Koerner Library area. 
+
+
+## Current Progress
+
+As of 2023-06-06, I'm working on utilizing a mean shift clustering algorithm to pinpoint the centroid of trees in order to place tree trunks, using a similar method as outlined in [this research paper](https://doi.org/10.3390/rs15051241). Afterwards, I'll be re-assessing the color and texture mapping approach used for matching a given building to a block pallete. The world will then be de-hollowed and then released to the public on a server, where the interiors of buildings will be built by hand (aided by floor plans, 3d scans, and photos where available). 

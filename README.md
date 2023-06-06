@@ -10,6 +10,8 @@ Read more about the project and its current progress in the [planning documentat
 
 ## Screenshots and Renders
 
+The below screenshots and renders is after processing the LiDAR data into Minecraft blocks. No additional blocks have been placed. These screenshots will be updated as progress allows.
+
 ![image](https://github.com/ashtanmistal/minecraftUBC/assets/70030490/91dda6d4-b54b-4fef-9cfa-6297f8112a3c)
 
 Render of north campus using Avoyd.

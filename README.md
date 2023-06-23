@@ -23,4 +23,10 @@ Screenshot of the IKB / Koerner Library area.
 
 ## Current Progress
 
-As of 2023-06-06, I'm working on utilizing a mean shift clustering algorithm to pinpoint the centroid of trees in order to place tree trunks, using a similar method as outlined in [this research paper](https://doi.org/10.3390/rs15051241). Afterwards, I'll be re-assessing the color and texture mapping approach used for matching a given building to a block pallete. The world will then be de-hollowed and then released to the public on a server, where the interiors of buildings will be built by hand (aided by floor plans, 3d scans, and photos where available). 
+Right now, I'm working on utilizing a mean shift clustering algorithm to pinpoint the centroid of trees in order to place tree trunks, using a similar method as outlined in [this research paper](https://doi.org/10.3390/rs15051241). Afterwards, I'll be re-assessing the color and texture mapping approach used for matching a given building to a block pallete. The world will then be de-hollowed and then released to the public on a server, where the interiors of buildings will be built by hand (aided by floor plans, 3d scans, and photos where available). 
+
+## Helping Out
+
+I'm looking for builders to help out with the project. Right now we're in the process of setting up a server, so for now take a look at the world to get a feel of what's required for an individual building and what buildings you'd like to work on.
+
+Please visit the [Discord server](https://discord.gg/FqbDJNPgDu) to get in touch with me and other builders, and for more project updates.

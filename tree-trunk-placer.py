@@ -5,17 +5,8 @@ import time
 import amulet
 import numpy as np
 import pylas
-from PIL import Image
 from amulet.api.block import Block
-from amulet.api.chunk import Chunk
-from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
-from amulet.utils.world_utils import block_coords_to_chunk_coords
-from amulet_nbt import StringTag
 from tqdm import tqdm
-import matplotlib.pyplot as plt
-
-# import dbscan from scikit-learn
-from sklearn.cluster import DBSCAN
 
 start_time = time.time()
 game_version = ("java", (1, 19, 4))
@@ -37,15 +28,15 @@ inverse_rotation_matrix = np.array([[math.cos(rotation), math.sin(rotation), 0],
                                     [0, 0, 1]])
 
 
-# The goal of this script is to take in a Minecraft world and some LiDAR data, and use DBSCAN to find all the trees
-# in the world. Specifically, we will want to find the x,y coordinates of the base of the tree based on a weighted
-# center of the leaves. The center will be weighted by the local height of the leaves: more (local) height means more
-# weight. We will then want to place tree trunks in the Minecraft world at the x,y coordinates of the base of the tree
-# all the way up to the height of the leaves. This will make sure that the tree trunks are always the correct height
-# and that we are not removing any actual leaves from the world (as the leaves that are getting replaced are the ones
-# that should be tree trunks anyway).
+# The goal of this script is to take in a Minecraft world and some LiDAR data, and use mean shift clustering to find
+# all the trees in the world. Specifically, we will want to find the x,y coordinates of the base of the tree based on
+# a weighted center of the leaves. The center will be weighted by the local height of the leaves: more (local) height
+# means more weight. We will then want to place tree trunks in the Minecraft world at the x,y coordinates of the base
+# of the tree all the way up to the height of the leaves. This will make sure that the tree trunks are always the
+# correct height and that we are not removing any actual leaves from the world (as the leaves that are getting
+# replaced are the ones that should be tree trunks anyway).
 
-def perform_dbscan_dataset(ds):
+def perform_tree_clustering(ds, name):
     level = amulet.load_level("world/UBC")
     x, y, z, labels = ds.x, ds.y, ds.z, ds.classification
     # remove all data that is not class 5
@@ -79,40 +70,31 @@ def perform_dbscan_dataset(ds):
     min_x, min_y, min_z = np.floor(np.min(x)), np.floor(np.min(y)), np.floor(np.min(z))
     max_x, max_y, max_z = np.ceil(np.max(x)), np.ceil(np.max(y)), np.ceil(np.max(z))
 
-    # Now it's DBSCAN time. Unlike the previous script, we will beed to transform on the entire dataset at once
+    # Now it's clustering time. Unlike the previous script, we will need to transform on the entire dataset at once
     # instead of on a per-chunk basis. This is because there are trees that span multiple chunks, and we need to
     # only place one tree trunk for a given tree (and ensure correct centroid placement).
 
-    # DBSCAN parameters
-    eps = 0.2
-    min_samples = 10  # this is the minimum number of points in a cluster for it to be considered a tree
-    # reshape the data into the correct format for DBSCAN
-    data = np.array([x, y, z]).T
+    # we're using mean shift clustering here, as it works best
 
-    # perform DBSCAN
-    db = DBSCAN(eps=eps, min_samples=min_samples).fit(data)
-    labels = db.labels_
-    print("done DBSCAN", time.time() - start_time)
+    # TODO: perform mean shift clustering here
+
+    data = []  # replace
+
 
     # now for each cluster, we need to find the centroid of the leaves and place a tree trunk there
     # we will also need to find the height of the tree and place the tree trunk up to that height
-
-    if debug:
-        # plot the clusters
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(x, y, z, c=labels)
 
     # first, we need to find the unique labels
     unique_labels = set(labels)
     # remove the noise label
     unique_labels.remove(-1)
+
     # now we need to iterate over each label
     for label in tqdm(unique_labels):
         # find all the points that belong to this label
         indices = np.where(labels == label)
         # get the x, y, z coordinates of these points
-        x, y, z = x[indices], y[indices], z[indices]
+        x, y, z = data[indices].T
         # find the weighted centroid of the leaves
         # the weight is the z coordinate
         # the centroid is the average of the x and y coordinates
@@ -121,23 +103,16 @@ def perform_dbscan_dataset(ds):
         centroid_x = np.average(x, weights=normalized_z)
         centroid_y = np.average(y, weights=normalized_z)
         height = np.max(z) - np.min(z)
-        # now we need to place the tree trunk
-        if debug:
-            # add the centroid to the plot
-            ax.scatter(centroid_x, centroid_y, np.min(z), c="red")
-        else:
-            for i in range(int(height)):
-                level.set_version_block(
-                    centroid_x, np.min(z) + i, centroid_y,  # convert from LiDAR coord space to Minecraft coord space
-                    "minecraft:overworld",
-                    game_version,
-                    spruce_log
-                )
+        for i in range(int(height)):
+            level.set_version_block(
+                centroid_x, np.min(z) + i, centroid_y,  # convert from LiDAR coord space to Minecraft coord space
+                "minecraft:overworld",
+                game_version,
+                spruce_log
+            )
     if not debug:
         level.save()
         level.close()
-    else:
-        plt.show()
 
 
 finished_datasets = []
@@ -145,5 +120,5 @@ for filename in os.listdir("LiDAR LAS Data/las/"):
     if filename.endswith(".las") and not filename[:-4] in finished_datasets:
         dataset = pylas.read("LiDAR LAS Data/las/" + filename)
         print("transforming chunks for", filename, time.time() - start_time)
-        perform_dbscan_dataset(dataset)
+        perform_tree_clustering(dataset, filename[:-4])
         print("done transforming chunks for", filename, time.time() - start_time)

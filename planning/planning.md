@@ -52,6 +52,7 @@ The current project team consists of:
 - Ashtan Mistal
 - Eve Sankar
 - Jon
+- Hod
 
 ## Project Deliverables
 
@@ -93,6 +94,17 @@ This work primarily involves the following tasks:
 - Assessing the level of de-noising required for the LiDAR data based on the transformed world file. The de-noising is carried out in the [WorldEdit work](#manual-work) section. _(Current status: Not started)_
 - Assessing the level of smoothing required for the LiDAR data based on the transformed world file. The smoothing is carried out in the [WorldEdit work](#manual-work) section.
 
+## Tree Trunk Placement
+
+Assigned to: Ashtan Mistal
+
+The LiDAR data does not differentiate between tree trunks and leaves, and thus a different method must be used to place the tree trunks. We will be utilizing a stepwise tree detection approach as discussed in [this research paper](https://doi.org/10.3390/rs15051241) through mean shift clustering. The following tasks are required for this:
+
+- 2D horizontal mean shift clustering for individual tree detection.
+  - 2D was preferred in the study above due to the fact that 3D analysis focuses on the crown of the tree, which is not useful for our purposes as it ignores stem points.
+
+Current progress: Analyzing optimal choice for search kernel.
+
 ## Orthographic Imagery Transformation
 
 Assigned to: Ashtan Mistal (Help appreciated)
@@ -131,14 +143,12 @@ There is lots of manual work to be done in this project. This includes:
 - Making the world not hollow, and replacing any holes in the ground left by the LiDAR data. Most of this is WorldEdit work to significantly speed up the process. 
 - Placing shrubs and smaller touches to the world. Right now it looks really good from above, but it would be great to have signs, benches, and other small details to make the world feel more alive.
 - Trimming trees. As Minecraft's trees make a whole square meter of leaves (!) if leaves are detected by the LiDAR sensor, this makes the trees look very busy and make it more difficult to a player not in spectator mode to traverse the ground. Especially trees around walkways, making the campus walkable is a priority. Trees in tree-dominated areas do not need to be trimmed, however.
-  - Along the topic of trees, replacing some of the leaves with tree trunks would be a good idea. This would make the trees look more realistic and less like a green blob. Unfortunately the LiDAR data does not differentiate between leaves and tree trunks (as the color matching would make a lot of darker leaves into tree trunks), so this would have to be done manually. This is not necessarily a priority, however. Leaf decay is also disabled in the world file, so this would not be a functional issue and is merely a visual issue.
-
 
 ## Server Hosting
 
-Assigned to: Unknown (Help appreciated)
+Assigned to: Hod
 
-_(Current status: Not started)_
+_(Current status: In progress, waiting for world file to be completed)_
 
 We need a server to host the Minecraft world, but this will be determined later once we know more about budget and the size of the world file. This will need to be done prior to getting volunteers to work on the manual work, however, as the world file will need to be hosted somewhere for people to be able to work on the project. 
 

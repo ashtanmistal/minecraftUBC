@@ -10,6 +10,8 @@ Read more about the project and its current progress in the [planning documentat
 
 ## Screenshots and Renders
 
+The below screenshots and renders is after processing the LiDAR data into Minecraft blocks. No additional blocks have been placed. These screenshots will be updated as progress allows.
+
 ![image](https://github.com/ashtanmistal/minecraftUBC/assets/70030490/91dda6d4-b54b-4fef-9cfa-6297f8112a3c)
 
 Render of north campus using Avoyd.
@@ -17,3 +19,8 @@ Render of north campus using Avoyd.
 ![2023-05-26_17 12 32](https://github.com/ashtanmistal/minecraftUBC/assets/70030490/98a55ca9-cf15-44cd-8613-39d2ebf50792)
 
 Screenshot of the IKB / Koerner Library area. 
+
+
+## Current Progress
+
+As of 2023-06-06, I'm working on utilizing a mean shift clustering algorithm to pinpoint the centroid of trees in order to place tree trunks, using a similar method as outlined in [this research paper](https://doi.org/10.3390/rs15051241). Afterwards, I'll be re-assessing the color and texture mapping approach used for matching a given building to a block pallete. The world will then be de-hollowed and then released to the public on a server, where the interiors of buildings will be built by hand (aided by floor plans, 3d scans, and photos where available). 

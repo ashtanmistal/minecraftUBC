@@ -10,7 +10,7 @@ Read more about the project and its current progress in the [planning documentat
 
 ## Download
 
-See [here](https://github.com/ashtanmistal/minecraftUBC/tree/master/world/UBC) for the current world. See an ocean and not UBC? Make sure you're spawning around `2500, 28, -1000`. 
+See [here](https://github.com/ashtanmistal/minecraftUBC/tree/master/world/UBC) for the current world. See an ocean and not UBC? Make sure you're spawning around `2500, 28, -1000`, and that you've copied the `region` folder as well. 
 
 ## Screenshots and Renders
 

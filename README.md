@@ -37,3 +37,18 @@ Right now, I'm working on utilizing a mean shift clustering algorithm to pinpoin
 I'm looking for builders to help out with the project. Right now we're in the process of setting up a server, so for now take a look at the world to get a feel of what's required for an individual building and what buildings you'd like to work on.
 
 Please visit the [Discord server](https://discord.gg/FqbDJNPgDu) to get in touch with me and other builders, and for more project updates.
+
+___
+
+# FAQ
+
+- I want to build some buildings! How do I get started?
+  - Join the [Discord server](https://discord.gg/FqbDJNPgDu) and we'll get you set up.
+- I want to help out, but I don't want to build buildings. What else can I do?
+  - There's lots of other things to do! See the [planning document](https://github.com/ashtanmistal/minecraftUBC/blob/master/planning/planning.md) for a list of things to do. Mainly it's finding some floor plans and putting them in the spreadsheet, or finding some photos of areas Google Maps doesn't capture. 
+- Why are there lots of holes in the ground?
+  - The LiDAR data is not perfect, and there are lots of holes in the data. I'm working on a way to fill in these holes automatically, but it's a slow process. Right now I'm just filling in the holes by hand as I go along but not worrying about it too much.
+- Why are there lots of floating trees?
+  - Tree trunks usually aren't visible from the sky - it's just the leaves that are - so tree trunks are a work in progress. See mean shift clustering above.
+- Some of the buildings only have partial walls. Why?
+  - See "holes in the ground" above. This doesn't matter too much as the LiDAR data just provides a useful skeleton for the buildings, and the rest is built by hand (using WorldEdit).

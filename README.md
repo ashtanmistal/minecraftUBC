@@ -13,6 +13,8 @@ Read more about the project and its current progress in the [planning documentat
 
 ## Download
 
+**Looking to check out the world? See the [Discord server](https://discord.gg/FqbDJNPgDu) for the link to the server. That's where current world progress is now being developed, with backups to GitHub.**
+
 See [here](https://github.com/ashtanmistal/minecraftUBC/tree/master/world/UBC) for the current world. See an ocean and not UBC? Make sure you're spawning around `2500, 28, -1000`, and that you've copied the `region` folder as well. 
 
 ## Screenshots and Renders

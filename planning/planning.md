@@ -39,7 +39,7 @@ The current project team consists of:
 - Ashtan Mistal
 - Eve Sankar
 - Jon
-- Hod
+- Hod Kimhi
 
 # Work to be done
 

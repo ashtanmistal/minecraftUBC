@@ -71,11 +71,10 @@ def perform_tree_clustering(ds):
 
     min_bin_freq = 5  # minimum number of points in a bin to be considered a cluster
     n_jobs = -1
-    n_iter = 100
 
-    cluster_centers, meanshift_labels = MeanShift(bandwidth=2, min_bin_freq=min_bin_freq, n_jobs=n_jobs).fit_predict(
-        np.array([x, y, z]).T)  # Not worrying about the kernel selection for now
-    # TODO perform it n_iter times
+    ms = MeanShift(bandwidth=2, min_bin_freq=min_bin_freq, n_jobs=n_jobs)
+    meanshift_labels = ms.fit_predict(np.array([x, y, z]).T)
+    cluster_centers = ms.cluster_centers_
     print("done clustering", time.time() - start_time)
 
     # Now that we have the candidate tree clusters we need to perform vertical strata analysis to categorize the
@@ -157,6 +156,7 @@ def perform_tree_clustering(ds):
         plt.show()
     else:
         # placing the tree trunks in Minecraft
+        # TODO we have since flipped y and z
         for cluster_center in tqdm(cluster_centers):
             level.get_block(cluster_center[0], cluster_center[1], cluster_center[2], "minecraft:overworld")
             # go up until we no longer have any leaves
@@ -188,9 +188,11 @@ def perform_tree_clustering(ds):
             for z in range(min_ground_height, max_leaf_height + 1):
                 level.set_version_block(cluster_center[0], cluster_center[1], z,
                                         "minecraft:overworld", game_version, spruce_log)
+        level.save()
+        level.close()
 
 
-finished_datasets = []
+finished_datasets = ["480000_5455000"]
 for filename in os.listdir("LiDAR LAS Data/las/"):
     if filename.endswith(".las") and not filename[:-4] in finished_datasets:
         dataset = pylas.read("LiDAR LAS Data/las/" + filename)

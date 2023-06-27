@@ -15,14 +15,19 @@ Outline of this document:
   - If you're a builder, please request access to this spreadsheet so you can edit it.
 
 ## The Building Process
-1. Find a building you want to build on the [Building Spreadsheet](https://docs.google.com/spreadsheets/d/16vR1eYbdkNVdfTgkR4nw5c2QBYRDDq_WJ4L-AfOAfrM/edit?usp=sharing). Please claim it by putting your name in the "Builder Claim" column. Please put progress as "not started" so we know you're about to start building it. If someone else has already claimed the building, and it's in progress, ask them if you can help them build it and then feel free to put your name alongside. **When writing your name**, please use the format "DiscordName(MinecraftName)". Then, please visit the "Builders" sheet and add your name to the list of builders alongside your Minecraft name and Discord name. This helps give credit where credit is due.
-2. Once you've claimed a building, please make sure you've read through the [WorldEdit Basics](#worldedit-basics) section of this document. This will help you get started with building.
-3. When you're building, Google Maps and Google Earth are useful resources. See the [Matching with Google Maps and Google Earth](#matching-with-google-maps-and-google-earth) section of this document for more information.
-4. Please update your progress as you go along on the spreadsheet. This helps us know what's being worked on and what's not. If you're not going to be able to finish a building, please unclaim it so someone else can work on it.
-5. Don't worry too much about detailing for now. We can do that later on. For now, focus on getting the basic patterns, windows, and some floors (if necessary) in place. If you're not sure what to do for detailing, please ask in the Discord server. We're happy to help.
-6. If you know that the building has a basement, it's ok to leave the bottom of the building as void - This is so we can add the basement later on. If you're not sure please leave it void just in case. Only fill it if it's necessary.
-7. Leave the inside hollow, or just add the floors. No interior detailing is necessary at this point.
-8. When you're done, please mark the progress as "finished" on the spreadsheet.
+1. Put your name, discord name, and Minecraft name into the Builders sheet under the [Building Spreadsheet](https://docs.google.com/spreadsheets/d/16vR1eYbdkNVdfTgkR4nw5c2QBYRDDq_WJ4L-AfOAfrM/edit?usp=sharing).
+2. Find the building(s) you want to build on the Building sheet, claim them (Discord name), and select "not started" for progress. 
+3. Once you've claimed a building, please make sure you've read through the [WorldEdit Basics](#worldedit-basics) section of this document. This will help you get started with building.
+4. When you're building, Google Maps and Google Earth are useful resources. See the [Matching with Google Maps and Google Earth](#matching-with-google-maps-and-google-earth) section of this document for more information.
+5. Please update your progress as you go along on the spreadsheet. If you're not going to be able to finish a building, please unclaim it so someone else can work on it (leave progress as is).
+6. Don't worry too much about detailing for now. We can do that later on. For now, focus on getting the basic patterns, windows, and some floors (if necessary) in place. If you're not sure what to do for detailing, please ask in the Discord server. We're happy to help.
+7. If you know that the building has a basement, it's ok to leave the bottom of the building as void - This is so that we can add the basement later on. If you're not sure please leave it void just in case. Only fill it if it's necessary.
+8. Leave the inside hollow, or just add the floors. No interior detailing is necessary at this point.
+9. When you're done, please mark the progress as "finished" on the spreadsheet. 
+
+Want to join another builder on a building? That's fine! Put your name in the "additional builders" column on the spreadsheet and check in with the other builder(s) for that building.
+
+
 
 ## WorldEdit Basics
 WorldEdit will make your building life so much easier throughout this process. See [here](https://www.youtube.com/watch?v=SOOvommDpUA) for a good tutorial. Most importantly, the tools I've used most often are:

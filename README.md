@@ -2,7 +2,7 @@
 
 The UBC Minecraft Project is a project that aims to recreate the UBC Vancouver Campus inside a Minecraft world, in a 1:1 scale. The project is currently a collaboration between Ashtan Mistal and the UBC Electrical and Computer Engineering Student Society. 
 
-It's built by by manipulating LiDAR data (available [here](https://opendata.vancouver.ca/explore/dataset/lidar-2022/information/)) into Minecaft blocks after a series of coordinate transformations and rotations.Then, details such as accurate coloring, windows, and other details are manually added (in-progress). It's therefore a full 1:1 scale recreation, to the extent that Minecraft allows. 
+It's built by manipulating LiDAR data (available [here](https://opendata.vancouver.ca/explore/dataset/lidar-2022/information/)) into Minecaft blocks after a series of coordinate transformations and rotations.Then, details such as accurate coloring, windows, and other details are manually added (in-progress). It's therefore a full 1:1 scale recreation, to the extent that Minecraft allows. 
 
 Right now, the project is available as a world download (see below), but will be hosted on a server soon. 
 

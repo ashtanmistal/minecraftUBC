@@ -14,14 +14,13 @@ game_version = ("java", (1, 19, 4))
 bedrock = Block("minecraft", "bedrock")
 dirt = Block("minecraft", "dirt")
 
-level = amulet.load_level("world/UBC")
-
 x_min = 0
 x_max = 5248
 z_min = -2304
 z_max = 2816
 
 for x in tqdm(range(x_min, x_max, 16)):
+    level = amulet.load_level("world/UBC")
     for z in range(z_min, z_max, 16):
         cx, cz = block_coords_to_chunk_coords(x, z)
         try:
@@ -33,13 +32,13 @@ for x in tqdm(range(x_min, x_max, 16)):
         universal_bedrock, universal_bedrock_entity, universal_bedrock_extra = level.translation_manager.get_version("java", (
             1, 19, 4)).block.to_universal(bedrock)
         bedrock_block_id = level.block_palette.get_add_block(universal_bedrock)
-        chunk.blocks[x % 16, -64, z % 16] = bedrock_block_id
+        if chunk.blocks[0, -64, 0] == bedrock_block_id:
+            continue
+        chunk.blocks[:, -64, :] = bedrock_block_id
         universal_dirt, universal_dirt_entity, universal_dirt_extra = level.translation_manager.get_version("java", (
             1, 19, 4)).block.to_universal(dirt)
         dirt_block_id = level.block_palette.get_add_block(universal_dirt)
-        for y in range(-63, -60):
-            chunk.blocks[x % 16, y, z % 16] = dirt_block_id
-        level.put_chunk(chunk, *block_coords_to_chunk_coords(x, 0, z))
-
-level.save()
-level.close()
+        chunk.blocks[:, -63:-61, :] = dirt_block_id
+        level.put_chunk(chunk, "minecraft:overworld")
+    level.save()
+    level.close()

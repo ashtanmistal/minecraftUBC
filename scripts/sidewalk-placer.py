@@ -29,9 +29,9 @@ MAX_SEARCH_RADIUS = 6  # the maximum search radius for the height of the start a
 terrain_blocks = {
     "moss_block": Block("minecraft", "moss_block"),
     "stone": Block("minecraft", "stone"),
-    "white concrete": Block("minecraft", "white_concrete"),
-    "light gray concrete": Block("minecraft", "light_gray_concrete"),
-    "grass block": Block("minecraft", "grass_block"),
+    "white_concrete": Block("minecraft", "white_concrete"),
+    "light_gray_concrete": Block("minecraft", "light_gray_concrete"),
+    "grass_block": Block("minecraft", "grass_block"),
     "dirt": Block("minecraft", "dirt")
 }
 
@@ -74,16 +74,6 @@ VEHICLE_ACCESS_width = {  # whether vehicles are able to access the road determi
 }
 crosswalk_width = 2
 
-ROAD_TYPE_search_radius = {  # the search radius for the height of the start and end points depends on the road type
-    '': None,
-    "Crosswalk": 1,
-    "Local Access Pathway": 3,
-    "Primary Pathway": 1,
-    "Sidewalk": 1,
-    "Street_Crossing": 1,
-    "Trail": 3
-}
-
 
 # functions we need to write:
 # 1. get the height of a point [done for now]
@@ -124,34 +114,34 @@ def get_height_of_point(x, z, search_radius, level):
     height = max_y
     # only search the blocks in the outer layer of the search radius - we've checked the inner layers already on
     # previous iterations
-    for i in range(search_radius):
-        # search the blocks on the top of the square
-        for j in range(-search_radius + i, search_radius - i + 1):
-            # search the blocks on the left side of the square
-            block, _ = level.get_version_block(x - search_radius + i, height, z + j, "minecraft:overworld", game_version)
-            if block in terrain_blocks.values():
-                return height
-            # search the blocks on the right side of the square
-            block, _ = level.get_version_block(x + search_radius - i, height, z + j, "minecraft:overworld", game_version)
-            if block in terrain_blocks.values():
-                return height
-        # search the blocks on the bottom of the square
-        for j in range(-search_radius + i + 1, search_radius - i):
-            # search the blocks on the left side of the square
-            block, _ = level.get_version_block(x - search_radius + i, height, z + j, "minecraft:overworld", game_version)
-            if block in terrain_blocks.values():
-                return height
-            # search the blocks on the right side of the square
-            block, _ = level.get_version_block(x + search_radius - i, height, z + j, "minecraft:overworld", game_version)
-            if block in terrain_blocks.values():
-                return height
+    while height > min_y:
+        for i in range(search_radius):
+            # search the blocks on the top of the square
+            for j in range(-search_radius + i, search_radius - i + 1):
+                # search the blocks on the left side of the square
+                block, _ = level.get_version_block(x - search_radius + i, height, z + j, "minecraft:overworld", game_version)
+                if block.base_name in terrain_blocks.keys():
+                    return height
+                # search the blocks on the right side of the square
+                block, _ = level.get_version_block(x + search_radius - i, height, z + j, "minecraft:overworld", game_version)
+                if block.base_name in terrain_blocks.keys():
+                    return height
+            # search the blocks on the bottom of the square
+            for j in range(-search_radius + i + 1, search_radius - i):
+                # search the blocks on the left side of the square
+                block, _ = level.get_version_block(x - search_radius + i, height, z + j, "minecraft:overworld", game_version)
+                if block.base_name in terrain_blocks.keys():
+                    return height
+                # search the blocks on the right side of the square
+                block, _ = level.get_version_block(x + search_radius - i, height, z + j, "minecraft:overworld", game_version)
+                if block.base_name in terrain_blocks.keys():
+                    return height
         height -= 1
     if height == min_y:
         # raise ValueError(f"No terrain blocks found within {search_radius} blocks of ({x}, {z})")
         if search_radius < MAX_SEARCH_RADIUS:
             return get_height_of_point(x, z, search_radius + 1, level)
         else:
-            pass
             raise ValueError(f"No terrain blocks found within {MAX_SEARCH_RADIUS} blocks of ({x}, {z})")
     # TODO should we try calling the function again with a larger search radius?
     return height
@@ -273,8 +263,6 @@ def place_road(start_x, start_y, start_z, end_x, end_y, end_z, level, road_type,
     :param vehicle_access: whether vehicles can access the road (string)
     :return: None
     """
-    if ROAD_TYPE_search_radius[road_type] is None:
-        return ValueError("Invalid road type: " + road_type)
     if VEHICLE_ACCESS_width[vehicle_access] is None:
         return ValueError("Invalid vehicle access: " + vehicle_access)
     intersecting_blocks = get_intersecting_block_coords(start_x, start_y, start_z, end_x, end_y, end_z)
@@ -307,9 +295,9 @@ def convert_feature(feature, level):
     line_segments = []
     for i in range(len(coordinates) - 1):
         x1, z1 = convert_lat_long_to_x_z(coordinates[i][1], coordinates[i][0])
-        y1 = get_height_of_point(x1, z1, ROAD_TYPE_search_radius[road_type], level)
+        y1 = get_height_of_point(x1, z1, 0, level)
         x2, z2 = convert_lat_long_to_x_z(coordinates[i + 1][1], coordinates[i + 1][0])
-        y2 = get_height_of_point(x2, z2, ROAD_TYPE_search_radius[road_type], level)
+        y2 = get_height_of_point(x2, z2, 0, level)
         line_segments.append([(x1, y1, z1), (x2, y2, z2)])
 
     # Place the road for each line segment
@@ -326,7 +314,10 @@ def main():
     with open(sidewalk_data_path) as sidewalk_data_file:
         sidewalk_data = json.load(sidewalk_data_file)
 
-    for feature in tqdm(sidewalk_data["features"]):
+    # reverse the features
+    features = sidewalk_data["features"]
+    features = features[::-1]
+    for feature in tqdm(features):
         try:
             convert_feature(feature, level)
         except ChunkLoadError:

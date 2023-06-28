@@ -29,8 +29,8 @@
 -rwxrwx---   1 mc519861 mc519861        0 Jun 27 23:05 r.3.1.mca
 -rwxrwx---   1 mc519861 mc519861        0 Jun 27 23:05 r.3.2.mca
 -rwxrwx---   1 mc519861 mc519861        0 Jun 27 23:05 r.4.-1.mca
--rwxrwx---   1 mc519861 mc519861    16384 Jun 28 18:49 r.4.-2.mca
--rwxrwx---   1 mc519861 mc519861    32768 Jun 28 18:48 r.4.-3.mca
+-rwxrwx---   1 mc519861 mc519861    16384 Jun 28 19:59 r.4.-2.mca
+-rwxrwx---   1 mc519861 mc519861    32768 Jun 28 19:56 r.4.-3.mca
 -rwxrwx---   1 mc519861 mc519861  3231744 Jun 27 23:05 r.4.-4.mca
 -rwxrwx---   1 mc519861 mc519861        0 Jun 27 23:05 r.4.0.mca
 -rwxrwx---   1 mc519861 mc519861        0 Jun 27 23:05 r.4.1.mca
@@ -38,12 +38,12 @@
 -rwxrwx---   1 mc519861 mc519861        0 Jun 27 23:05 r.4.3.mca
 -rwxrwx---   1 mc519861 mc519861   184320 Jun 27 23:05 r.4.4.mca
 -rwxrwx---   1 mc519861 mc519861  4202496 Jun 27 23:05 r.5.-1.mca
--rwxrwx---   1 mc519861 mc519861  4202496 Jun 28 18:44 r.5.-2.mca
+-rwxrwx---   1 mc519861 mc519861  4202496 Jun 28 19:54 r.5.-2.mca
 -rwxrwx---   1 mc519861 mc519861  4202496 Jun 28 02:24 r.5.-3.mca
 -rwxrwx---   1 mc519861 mc519861  4141056 Jun 28 02:26 r.5.-4.mca
 -rwxrwx---   1 mc519861 mc519861   225280 Jun 28 02:26 r.5.-5.mca
--rwxrwx---   1 mc519861 mc519861  4202496 Jun 27 23:05 r.5.0.mca
--rwxrwx---   1 mc519861 mc519861  4202496 Jun 27 23:05 r.5.1.mca
+-rwxrwx---   1 mc519861 mc519861  4202496 Jun 28 19:15 r.5.0.mca
+-rwxrwx---   1 mc519861 mc519861  4202496 Jun 28 19:15 r.5.1.mca
 -rwxrwx---   1 mc519861 mc519861        0 Jun 27 23:05 r.5.2.mca
 -rwxrwx---   1 mc519861 mc519861        0 Jun 27 23:05 r.5.3.mca
 -rwxrwx---   1 mc519861 mc519861  3723264 Jun 27 23:05 r.5.4.mca
@@ -53,8 +53,8 @@
 -rwxrwx---   1 mc519861 mc519861  4202496 Jun 28 02:26 r.6.-3.mca
 -rwxrwx---   1 mc519861 mc519861  4202496 Jun 28 02:27 r.6.-4.mca
 -rwxrwx---   1 mc519861 mc519861  1290240 Jun 28 02:27 r.6.-5.mca
--rwxrwx---   1 mc519861 mc519861  4202496 Jun 28 02:25 r.6.0.mca
--rwxrwx---   1 mc519861 mc519861  4202496 Jun 27 23:05 r.6.1.mca
+-rwxrwx---   1 mc519861 mc519861  4202496 Jun 28 19:14 r.6.0.mca
+-rwxrwx---   1 mc519861 mc519861  4202496 Jun 28 19:14 r.6.1.mca
 -rwxrwx---   1 mc519861 mc519861  4202496 Jun 27 23:05 r.6.2.mca
 -rwxrwx---   1 mc519861 mc519861  3944448 Jun 27 23:05 r.6.3.mca
 -rwxrwx---   1 mc519861 mc519861  2019328 Jun 27 23:05 r.6.4.mca

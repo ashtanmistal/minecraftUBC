@@ -5,10 +5,10 @@ drwxrwx---   3 mc519861 mc519861     4096 Jun 27 17:59 data
 drwxr-xr-x   3 mc519861 mc519861       19 Jun 24 19:15 datapacks
 drwxrwx---   2 mc519861 mc519861     4096 Jun 27 22:45 entities
 -rwxrwx---   1 mc519861 mc519861     5535 Jun 24 19:45 icon.png
--rw-r--r--   1 mc519861 mc519861     4359 Jun 28 18:49 level.dat
--rw-r--r--   1 mc519861 mc519861     4354 Jun 28 18:44 level.dat_old
+-rw-r--r--   1 mc519861 mc519861     4358 Jun 28 19:59 level.dat
+-rw-r--r--   1 mc519861 mc519861     4358 Jun 28 19:54 level.dat_old
 -rw-r--r--   1 mc519861 mc519861      218 Jun 28 01:49 paper-world.yml
-drwxrwx---   2 mc519861 mc519861     4096 Jun 28 18:45 playerdata
+drwxrwx---   2 mc519861 mc519861     4096 Jun 28 19:59 playerdata
 drwxr-xr-x   2 mc519861 mc519861     4096 Jun 24 19:46 poi
 drwxrwx---   2 mc519861 mc519861     4096 Jun 27 22:46 region
 drwxrwx---   2 mc519861 mc519861       30 Jun 24 19:13 serverconfig

@@ -48,8 +48,7 @@ ROAD_TYPE_translation = {
     "Local Access Pathway": Block("minecraft", "andesite"),
     "Primary Pathway": Block("minecraft", "andesite"),
     "Sidewalk": Block("minecraft", "smooth_stone"),
-    "Street_Crossing": Block("minecraft", "white_concrete"),  # TODO does this mean that there is no crosswalk? if so,
-    # leave original block underneath?
+    "Street_Crossing": Block("minecraft", "andesite"),
     "Trail": Block("minecraft", "dirt_path"),
 }
 
@@ -74,24 +73,6 @@ VEHICLE_ACCESS_width = {  # whether vehicles are able to access the road determi
 }
 crosswalk_width = 2
 
-
-# functions we need to write:
-# 1. get the height of a point [done for now]
-# 2. convert lat/long to x/z
-# 3. rotation matrix (align with UBC's world instead of nesw) [done for now]
-# 4. get the block type of a line segment
-# 5. functions to place a crosswalk, sidewalk, and trail
-#    - trail will likely be within trees so we'll need a larger search radius for the elevation calculation
-#    - crosswalk will need to place a pattern of alternating blocks (white concrete and original block type)
-
-
-# main loop:
-# for each segment in the geojson file:
-#  - get the height of the start and end points
-#  - convert lat/long to x/z (incl. rotation matrix)
-#  - get the block type of the line segment (switch on road type)
-#  - call appropriate placement function
-
 def get_height_of_point(x, z, search_radius, level):
     """
     Returns the height of the highest block at the given x,z coordinates. Only considers blocks within the search
@@ -102,7 +83,6 @@ def get_height_of_point(x, z, search_radius, level):
     :param level: the Minecraft level object
     :return: the height of the highest terrain block at the given x,z coordinates (throw an error if none found)
     """
-    # TODO this function is not working properly; always setting minimum height and never anything else
     # get the chunk coordinates of the point
     chunk_x, chunk_z = block_coords_to_chunk_coords(x, z)
     # load the chunk
@@ -143,7 +123,6 @@ def get_height_of_point(x, z, search_radius, level):
             return get_height_of_point(x, z, search_radius + 1, level)
         else:
             raise ValueError(f"No terrain blocks found within {MAX_SEARCH_RADIUS} blocks of ({x}, {z})")
-    # TODO should we try calling the function again with a larger search radius?
     return height
 
 
@@ -163,22 +142,6 @@ def convert_lat_long_to_x_z(lat, long):
     x, z, _ = np.matmul(inverse_rotation_matrix, np.array([x, z, 1]))
     z = -z  # flip z axis to match Minecraft
     return int(x), int(z)
-
-
-def get_block_type_of_line_segment(road_type, surface_type):
-    """
-    Returns the block type of the line segment based on the road type and surface type.
-    :param road_type: the type of road (e.g. "Sidewalk")
-    :param surface_type: the type of surface (e.g. "Paved/large gravel")
-    :return: the block type of the line segment
-    """
-    if road_type in ROAD_TYPE_translation:
-        block = ROAD_TYPE_translation[road_type]
-    else:
-        return ValueError(f"Road type {road_type} not recognized")  # this should never happen
-    if surface_type in SURFACE_TYPE_translation:
-        block = SURFACE_TYPE_translation[surface_type]
-    return block
 
 
 def place_crosswalk(start_x, start_y, start_z, end_x, end_y, end_z, level):
@@ -320,6 +283,8 @@ def main():
         try:
             convert_feature(feature, level)
         except ChunkLoadError:
+            print("Error converting feature: ", feature)
+        except ValueError:
             print("Error converting feature: ", feature)
         # convert_feature(feature, level)
 

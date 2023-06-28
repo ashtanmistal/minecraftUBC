@@ -16,5 +16,3 @@
 	#The permission handler used by the server. Defaults to forge:default_handler if no such handler with that name is registered.
 	permissionHandler = "forge:default_handler"
 
-fault_handler"
-

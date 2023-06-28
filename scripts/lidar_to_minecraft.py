@@ -1,4 +1,4 @@
-# lidar-to-minecraft.py
+# lidar_to_minecraft.py
 # author: Ashtan Mistal
 import math
 import os

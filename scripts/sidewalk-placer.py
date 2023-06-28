@@ -24,7 +24,7 @@ max_y = 45
 x_offset = 480000
 z_offset = 5455000
 
-MAX_SEARCH_RADIUS = 6  # the maximum search radius for the height of the start and end points
+MAX_SEARCH_RADIUS = 15  # the maximum search radius for the height of the start and end points
 
 terrain_blocks = {
     "moss_block": Block("minecraft", "moss_block"),
@@ -160,10 +160,9 @@ def convert_lat_long_to_x_z(lat, long):
     transformer = pyproj.Transformer.from_pipeline(pipeline)
     x, z = transformer.transform(lat, long)
     x, z = x - x_offset, z - z_offset
-    # x, z = z, x
     x, z, _ = np.matmul(inverse_rotation_matrix, np.array([x, z, 1]))
     z = -z  # flip z axis to match Minecraft
-    return int(x), int(z)  # TODO is this the right order?
+    return int(x), int(z)
 
 
 def get_block_type_of_line_segment(road_type, surface_type):

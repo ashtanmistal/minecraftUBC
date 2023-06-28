@@ -24,7 +24,7 @@ max_y = 45
 x_offset = 480000
 z_offset = 5455000
 
-MAX_SEARCH_RADIUS = 10  # the maximum search radius for the height of the start and end points
+MAX_SEARCH_RADIUS = 6  # the maximum search radius for the height of the start and end points
 
 terrain_blocks = {
     "moss_block": Block("minecraft", "moss_block"),
@@ -121,14 +121,32 @@ def get_height_of_point(x, z, search_radius, level):
     except ChunkDoesNotExist:
         raise ChunkLoadError(f"Chunk ({chunk_x}, {chunk_z}) does not exist - check coordinates")
     # get the height of the highest block within the search radius
-    max_height = min_y
-    for block_x in range(max(0, x - search_radius), min(15, x + search_radius)):  # can't exceed bounds of chunk
-        for block_z in range(max(0, z - search_radius), min(15, z + search_radius)):
-            for block_y in range(min_y, max_y):
-                block = chunk.get_block(block_x - chunk_x * 16, block_y, block_z - chunk_z * 16)
-                if block.base_name in terrain_blocks:  # TODO should we check the universal block object instead?
-                    max_height = max(max_height, block_y)
-    if max_height == min_y:
+    height = max_y
+    # only search the blocks in the outer layer of the search radius - we've checked the inner layers already on
+    # previous iterations
+    for i in range(search_radius):
+        # search the blocks on the top of the square
+        for j in range(-search_radius + i, search_radius - i + 1):
+            # search the blocks on the left side of the square
+            block, _ = level.get_version_block(x - search_radius + i, height, z + j, "minecraft:overworld", game_version)
+            if block in terrain_blocks.values():
+                return height
+            # search the blocks on the right side of the square
+            block, _ = level.get_version_block(x + search_radius - i, height, z + j, "minecraft:overworld", game_version)
+            if block in terrain_blocks.values():
+                return height
+        # search the blocks on the bottom of the square
+        for j in range(-search_radius + i + 1, search_radius - i):
+            # search the blocks on the left side of the square
+            block, _ = level.get_version_block(x - search_radius + i, height, z + j, "minecraft:overworld", game_version)
+            if block in terrain_blocks.values():
+                return height
+            # search the blocks on the right side of the square
+            block, _ = level.get_version_block(x + search_radius - i, height, z + j, "minecraft:overworld", game_version)
+            if block in terrain_blocks.values():
+                return height
+        height -= 1
+    if height == min_y:
         # raise ValueError(f"No terrain blocks found within {search_radius} blocks of ({x}, {z})")
         if search_radius < MAX_SEARCH_RADIUS:
             return get_height_of_point(x, z, search_radius + 1, level)
@@ -136,7 +154,7 @@ def get_height_of_point(x, z, search_radius, level):
             pass
             raise ValueError(f"No terrain blocks found within {MAX_SEARCH_RADIUS} blocks of ({x}, {z})")
     # TODO should we try calling the function again with a larger search radius?
-    return max_height
+    return height
 
 
 def convert_lat_long_to_x_z(lat, long):

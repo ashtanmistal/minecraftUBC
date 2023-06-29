@@ -1,0 +1,8 @@
+Fieldname,Description,FieldValues
+BLDG_UID,The UID of the building,
+BLDG_USAGE,The main usage of a building,"Academic, Administrative, Athletics, Commons, Commercial, Housing, Operations, Other, Parking, Research, Services, Student Housing"
+BLDG_CODE,"2-5 character short form of building name, either the acronym of building name or derived from building name. Building Code for academic buildings may be used as classroom codes where applicable.",
+CONSTR_STATUS,Status of Building indicated by the type of Permit received.,"Complete,UnderConstruction,PreConstruction"
+PRIMARY_ADDRESS,The street address of the main building address (if it has one).,
+NAME,Official name of the building.,
+POSTAL_CODE,Postal Code assigned by Canada Post for the purposes to deliver mail. Required once STATUS = Complete (Canada Post assigns postal code),

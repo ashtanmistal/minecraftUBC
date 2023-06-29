@@ -1,0 +1,8 @@
+Fieldname|Description|FieldValues|Type
+MUNI|||char(25)
+RGSDESIG|||char(25)
+RGSDESCRIP|||char(254)
+CREATED_USER|||char(255)
+CREATED_DATE|||date
+LAST_EDITED_USER|||char(255)
+LAST_EDITED_DATE|||date

@@ -1,0 +1,40 @@
+Fieldname,Description,FieldValues,Type
+ADDRESS_DESCRIPTOR,Describes the address usage at all levels of the hierarchy.,"CampusBuildingEmergencyCommercial,Outdoor,Complex,OtherBuilding,Occupant,IndoorArea,Residential,NeighbourhoodBldg",char(30)
+ADDRESS_NOTES,Notes about this address location.,,char(400)
+ADD_UID,Unique identifier,,char(10)
+BLDG_UID,Foreign key to building table.,,char(10)
+CIVIC_NUMBER,The number assigned to a site on a street by an address authority.,,integer
+CIVIC_NUMBER_SUFFIX,A letter or fraction following the civic number.,,char(10)
+CREATED_DATE,,,date
+CREATED_USER,,,char(255)
+FOOTPRINT_DESCRIPTOR,Describes the footprint area that the address point is associated to. ,"Building,Complex,OutdoorArea,IndoorArea,SecureOutdoorArea,Parcel",char(20)
+FOOTPRINT_ID,"The ID of the polygon that has this address, if any. This could be an ID for a parcel, building, or poi. This is required if:  ADDRESS_DESCRIPTOR = Any Building Type, Outdoor, Complex. ",,char(10)
+FULL_ADDRESS,The full street address of the address location.,,char(300)
+IS_ANNUNCIATOR,If annunciator panel is located near the address point.,"1:True,0:False",integer
+IS_MAILING_ADDRESS,True if this a Canada Post or Campus Mail mailing address.,"1:True,0:False",integer
+IS_NON_CIVIC_ADDRESS,True if address has no assigned civic number.,"1:True,0:False",integer
+IS_OFFICIAL_ADDRESS,True if address is official; False if unofficial (e.g. former address),"1:True,0:False",integer
+IS_PRIMARY,True if this is the primary building address for the purposes of Workday/IRP.,"1:True,0:False",integer
+IS_STREET_DIRECTION_PREFIX,True if street direction is prefix (NW Marine Drive),"1:True,0:False",integer
+IS_STREET_TYPE_PREFIX,True if street type is prefix.,"1:True,0:False",integer
+LAST_EDITED_DATE,,,date
+LAST_EDITED_USER,,,char(255)
+LOCALITY,The name of the locality assigned to a given site by an address authority. ,,char(100)
+LOCALITY_DESCRIPTOR,Describes the nature of the address location.,,char(50)
+MAIL_PROVIDER,Identifies which organization delivers the mail.,"CanadaPost,CampusMail",char(20)
+NARRITIVE_LOCATION,Step by step directions to a non-civic address location,,char(400)
+NEIGHBOURHOOD,,,char(50)
+NUM_OF_UNITS,Number of units at this address.,,integer
+POSTAL_CODE,Postal Code assigned by Canada Post for the purposes to deliver mail. Required once STATUS = Complete (Canada Post assigns postal code),,char(7)
+PROVINCE_CODE,he ISO 3166-2 Sub-Country Code.,,char(2)
+SITE_NAME,"A string containing the name of a site. A business or occupant name should only be used if it is permanently affixed to the site and the site has no other, more generic name (ADDRESS_DESCRIPTOR = {Occupant, Commercial}). If a site is a unit within a complex, it may have a sitename in addition to a unitNumber and unitNumberSuffix. This site name will be repeated for each unit.",,char(200)
+SITE_POINT_DESCRIPTOR,Describes the location of the address point.,"Parcel,FrontDoor,Rooftop,EmergencyAccess,ServiceAccess,FrontGate,InternalDoor",char(50)
+STATUS,The state or condition of the address,"Current,Pending,Retired,Temporary,,Other",char(20)
+STREET_DIRECTION,Canada Post street direction.,"NW, SW",char(20)
+STREET_NAME,Recognized by the municipality as the official name of the street.,,char(100)
+STREET_TYPE,The type of street. Use the full word.,"Avenue, Drive, Mall, Boulevard, Crescent, Lane, Road, Place, Court, Mews, Row, Walk",char(20)
+SUPER_FULL_SITE_DESCRIPTOR,"Name of all units, buildings and sites in parent site hierarchy separated by a double dash. To identify buildings in a complex or sub-buildings in a building.",Spruce House (sub-building) -- Ponderosa Commons East (building) – Ponderosa Commons Residence (complex),char(400)
+UNIT_DESIGNATOR,The type of unit.,"APT, BLDG, BSMT, FLR, LOBBY, LWR, PAD, PH, REAR, RM, SIDE, SITE, SUITE, TH, UNIT, UPPR, etc.",char(50)
+UNIT_NUMBER,"The number or range of numbers that identify units/ suites/buildings within a building or complex. For ADDRESS_DESCRIPTOR = CampusBldg, this must be a single value not a range.",,char(30)
+UNIT_NUMBER_PREFIX,"A single alphabetic character or list of alphabetic characters and ranges, that is placed before the unit number",,char(20)
+UNIT_NUMBER_SUFFIX,"A single alphabetic character or list of alphabetic characters and ranges, that follow the unit number.",,char(10)

@@ -59,3 +59,16 @@ This operational geospatial data also contains information about traffic impacto
 ### Hiking Trails
 
 Most hiking trails will have been missed in the DEM. Every sidewalk marked as a trail will be laid overtop of the DEM (replacing the top blocks with a trail type matched to block type), with signs placed at trailheads and the trail name as the sign data. 
+
+___
+
+## Placement Order
+
+The order of block placement is as follows, to avoid mistakes in terrain generation:
+1. Voxelized and colourized DEM
+2. Road markings and hiking trails
+3. Trees
+4. Buildings (any overlapping blocks will replace tree data)
+5. Road signs
+
+___

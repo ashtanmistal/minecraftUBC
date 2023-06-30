@@ -1,0 +1,8 @@
+Fieldname,Description,FieldValues,Type
+ID,,integer,integer
+NAME,,,char(50)
+OTHER,,,char(20)
+CREATED_USER,,,char(255)
+CREATED_DATE,,,date
+LAST_EDITED_USER,,,char(255)
+LAST_EDITED_DATE,,,date

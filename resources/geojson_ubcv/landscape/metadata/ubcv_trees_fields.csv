@@ -1,0 +1,28 @@
+Fieldname,Description,FieldValues
+TREEID,UID for this tree,
+FAMILY,Tree family,
+TAXA,"Genus, species, variety, other taxa",
+COMMON_NAME,A common name for this tree (only one name),
+TAG,Visible tree tag Y/N,"Y,N"
+TAGID,"Tag ID number, if tagged",
+LIVE_TREE,Is the tree alive?,"Live,Dead"
+DBH,Diameter at breast height in cm,
+THEIGHT,Height from ground to top(alive or dead) of tree in meters,
+HEIGHT_LIVETOP,Height from ground to the live top of tree in meters,
+HEIGHT_LIVEBASE,Height from ground to base of live crown in meters,
+CROWNWIDTH1,Crown width (shortest) in meters,
+CROWNWIDTH2,Crown width (longest) in meters,
+CANOPYMISSING,Percent of crown volume that is not occupied by branches or leaves,
+CROWN_LIGHTEXP,Number of sides (inc above) tree receives light from,1-5
+NUM_STEMS,Number of stems,
+TEAM,Team that did the data collection,
+TREE_TYPE,"General tree type (Coniferous, Evergreen, Deciduous)","Coniferous,Evergreen,Deciduous"
+DATE_MEASURE,Date the non-ID tree meauserments were taken,
+TREE_ID_YR,Year tree taxa/name and location collected,
+HEIGHT_LIDAR,Height of tree in meters derived from lidar,
+HEIGHT_ERROR_LIDAR,"The error range of the tree height, based on the range of ground elevations",
+NOTES,General notes about the tree (such as class/memorial tree).,
+CREATED_USER,,
+CREATED_DATE,,
+LAST_EDITED_USER,,
+LAST_EDITED_DATE,,

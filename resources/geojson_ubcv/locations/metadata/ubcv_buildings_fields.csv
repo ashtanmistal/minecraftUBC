@@ -1,0 +1,33 @@
+Fieldname,Description,FieldValues,Type
+ACCESSIBILITY_RATING,"The Rick Hansen Foundation Accessibility CertificationTM (RHFAC) is a rating system that uses trained professionals to evaluate the meaningful access of commercial, institutional, and multi-unit residential buildings and sites.","CertifiedGold,Certified,NotCertified",char(30)
+BLDG_CODE,"2-5 character short form of building name, either the acronym of building name or derived from building name. Building Code for academic buildings may be used as classroom codes where applicable.",,char(10)
+BLDG_CONDITION,Facility Condition Index (FCI) score reflects the current condition of the building based on the total cost of needed building repairs and renewal divided by the current cost of replacing the building.,"Good,Fair,Poor,Critical",char(10)
+BLDG_FORM,Classification of building based on the form of the structure.,"Apt5StoreyPlus,AptLess5Storey,Duplex/Outbuildings,UnspecifiedParking",char(30)
+BLDG_HEIGHT,Height in meters from grade to highest point of roof. See UBC Development Handbook Section 3.6.,,double
+BLDG_MAINTENANCE,"Identify who the building is maintained by. Examples of values include: UBC Building Operations, Student Housing and Hospitality Services, and others.",,char(30)
+BLDG_SEC_USAGE,"Indicates a secondary usage of a building, if a building has multiple usages.","Academic,Administrative,Athletics,Commons,Housing,Operations,Other,Parking,Research,StudentHousing,Commercial",char(20)
+BLDG_STATE,Physical state of the occupancy in the building.,"Temporary,Unoccupied,UnderRenovation,Occupied",char(30)
+BLDG_UID,Unique ID of the building.,,char(10)
+BLDG_USAGE,Classification of building based on its main usage.,"Academic,Administrative,Athletics,Commons,Housing,Operations,Other,Parking,Research,StudentHousing,Commercial",char(20)
+CONSTR_STATUS,Status of Building indicated by the type of Permit received.,"Complete,UnderConstruction,PreConstruction",char(20)
+CONSTR_TYPE,Classification of building based on construction material type.,"Concrete,Wood,Steel,OtherMixed",char(20)
+CREATED_DATE,,,date
+CREATED_USER,,,char(255)
+GBA,"The sum of all horizontal areas of each storey within the exterior stud face of all exterior and basement walls. See UBC Development Handbook Section 3.3: Building Area, for full list of inclusions and exclusions.",,integer
+GEOM_SOURCE,"Source of building footprint geometry. As-built, orthophoto, etc.",,char(100)
+GREEN_STATUS,Identify which program and at what level of certification a building has achieved. Leadership in Energy and Environmental Design (LEED) is for academic buildings and the Residential Environmental Assessment Program (REAP) is for residential neighbourhood buildings. ,,char(20)
+HAS_SUBBLDGS,True if this building is a parent to sub-buildings.,"1:Yes,0:No",integer
+JURISDICTION,"The extent or range of judicial, law-enforcement, or other authority.",UBC:UNA:Non-UBC,char(10)
+LAST_EDITED_DATE,,,date
+LAST_EDITED_USER,,,char(255)
+MANAGE_ORG,"The organization that leases and/or manages the building. Examples of values include: UBCPT (UBC Properties Trust), Parking, UNA (University Neighbourhoods Association), TransLink, Non-UBC.","UBC,Athletics,UBCPT,Parking,SHHS,AMS,UNA,TransLink,VCH,VSB,Non-UBC",Char(30)
+MAX_FLOORS,Total floors above and below grade.,,integer
+NAME,Official name of the building.,,char(100)
+NEIGHBOURHOOD,Areas identified in the Land Use Plan for Point Grey Campus.,"Academic,StudentHousing,Chancellor,EastCampusUBlvd,Hawthorn,Hampton,Wesbrook",char(50)
+NOTES,,,char(500)
+OCCU_DATE,The date on which Occupancy Permit was issued.,,date
+REC_IDS,A semicolon delimited list of record IDs are part of this building.,,char(300)
+BLDG_CLASS,,,
+PROPERTY_TYPE,"A description of the type of ownership or contractual relationship of UBC’s with respect to buildings, lands, or sites (Real Property).  ","FeeSimple, LeasedToUBC, LeasedFromUBC, LicensedToUBC, LicensedFromUBC, Other",
+LABEL_NAME,Name used for cartographic labels,,
+LABEL_CLASS,Label class for cartographic purposes,,

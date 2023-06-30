@@ -1,0 +1,10 @@
+Fieldname,Description,FieldValues,Type
+BOL_CONDITION,,VG:<quote>Very<space>Good<quote>:G:Good:P:Poor,char(254)
+BOL_TYPE,Type of bollard,"Fixed, Static, Collapsible",char(20)
+LOCATION,Location description,,char(100)
+NOTES,"Number of bollards at location, notes about locks, chains, etc.",,char(500)
+CREATED_USER,,,char(255)
+CREATED_DATE,,,date
+LAST_EDITED_USER,,,char(255)
+LAST_EDITED_DATE,,,date
+BOL_COND2020,Bollard condition update Spring 2020,"Good,Fair,Poor,Damaged,Missing",char(10)

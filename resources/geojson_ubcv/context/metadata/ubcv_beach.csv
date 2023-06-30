@@ -1,0 +1,6 @@
+Fieldname|Description|FieldValues|Type
+NAME|||char(50)
+CREATED_USER|||char(255)
+CREATED_DATE|||date
+LAST_EDITED_USER|||char(255)
+LAST_EDITED_DATE|||date

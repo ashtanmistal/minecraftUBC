@@ -4,7 +4,7 @@ ___
 
 ## Creation of a TIN and a voxelized DEM
 
-First, we take the LiDAR data, extract only the ground information, and transform it into a triangulated irregular network (TIN). Though this loses the color data, it efficiently stores vertices needed for voxelization. This network we then treat as an open manifold mesh, where the goal is then to close the mesh: To do this, we also know that there exists a plane beneath the current mesh (The bedrock layer, as well as a couple layers above). We then want to take the boundary edges add vertices and edges vertically until this plane is reached; after which, we connect the points that are touching the plane to create a closed manifold mesh. This closed mesh is easy to voxelize; numerous algorithms exist for such a task already.
+First, we take the LiDAR data, extract only the ground information, and transform it into a triangulated irregular network (TIN). Though this loses the color data, it efficiently stores vertices needed for voxelization. This network we then treat as an open manifold mesh, where the goal is then to close the mesh: To do this, we also know that there exists a plane beneath the current mesh (The bedrock layer, as well as a couple layers above). We then want to take the boundary edges and add vertices and edges vertically until this plane is reached; after which, we connect the points that are touching the plane to create a closed manifold mesh. This closed mesh is easy to voxelize; numerous algorithms exist for such a task already.
 
 Once that's done, we need to take the orthophotos and perform a Gaussian blur such that we have a reduced number of points per square meter.
 

@@ -1,0 +1,4 @@
+Data/ubcv_paths_sidewalks.geojson (application/geo+json) 1862510 bytes.
+Data/ubcv_roads.geojson (application/geo+json) 579381 bytes.
+Data/ubcv_routes.gdb.zip (application/octet-stream) 662730 bytes.
+Data/ubcv_routes_src.geojson (application/geo+json) 4508318 bytes.

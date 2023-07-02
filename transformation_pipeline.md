@@ -1,6 +1,50 @@
 # Transformation of LiDAR Data, Orthographic Imagery, and Operational Geospatial Data to a 1:1 Minecraft World
 
+Table of Contents:
+- [Creation of a TIN and a voxelized DEM](#creation-of-a-tin-and-a-voxelized-dem)
+- [Placing buildings](#placing-buildings)
+- [Tree handling](#tree-handling)
+- [Street data and other touches](#street-data-and-other-touches)
+  - [Road markings](#road-markings)
+  - [Road Signs](#road-signs)
+  - [Hiking Trails](#hiking-trails)
+- [Placement Order](#placement-order)
+
 ___
+
+# First Iteration
+
+## LiDAR Processing
+
+the first iteration of this approach involved the pipeline described directly below. Right now it is the world that you see if you view the server, as the second iteration is still in development.
+
+### Denoising the Dataset
+
+The first thing we need to do is ensure the quality of the data that is being placed into the world. As such, there are only a few classes of data that we care about, and so we remove noise and unneeded classes as well as removing points above the height limit of Minecraft. 
+
+### Rotation and Translation
+
+We do a quick coordinate space transformation by applying offsets to the data. This ensures that campus coordinates are reasonable. After this, we apply a rotation matrix to the data as UBC's roads are misaligned with true north, and we want the building process to be as easy as possible, so we want to properly align the roads with the x and z axes in Minecraft.
+
+### Chunk processing
+
+After breaking the data into chunks to process, we want to voxelize the data. This is done by truncating each value to the nearest cubic meter, and then iterate through each unique meter that contains data. We then calculate the median classification of a given meter, and select from a block palette the block that best matches the average color of the points in that meter. This is done for each meter, and then we have a voxelized chunk with the blocks placed in the world. Trees are slightly de-noised in this process, removing stray points that do not have a high enough density to be considered a tree.
+
+## Road and Sidewalk Placement
+
+Geodata is available for every one of UBC's roads and sidewalks, with information pertaining to type and material. This information was translated into the correct coordinate space and was placed into the already generated world. 
+
+___
+
+# Second Iteration
+
+The first iteration was a moderate success, and created a playable world for people to use and build the remaining buildings. However, it was not perfect, and there were many things that could be improved, namely the following:
+- The ground was hollow in many places where there existed lots of tree of building data above, making it easy to fall out of the world
+- The trees were not realistic as they had no trunks or branches
+- Street data height calculation was somewhat unrealistic given the lack of height data available for some trail points
+- More geojson data is available for classification purposes and block palette selection that was unused in the first iteration
+
+The second iteration aims to resolve these errors through a geometric modelling based approach, and relying more heavily on the available geodata, which would select a more accurate block palette than the first iteration, which was affected by shadows and other factors. This second iteration is still a work in progress. Any buildings that were improved by hand in the first iteration will be copied over.
 
 ## Creation of a TIN and a voxelized DEM
 

@@ -1,0 +1,5 @@
+Fieldname,Description,FieldValues,Type
+ID,,integer,integer
+NAME,,,char(50)
+OTHER,,,char(20)
+LANDUSE,,,char(20)

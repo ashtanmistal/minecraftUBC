@@ -1,0 +1,5 @@
+Fieldname|Description|FieldValues|Type
+FID_LANDUS||integer|integer
+MUNI|||char(25)
+RGSDESIG|||char(25)
+RGSDESCRIP|||char(254)

@@ -7,14 +7,15 @@ Table of Contents:
     - [Rotation and Translation](#rotation-and-translation)
     - [Chunk processing](#chunk-processing)
   - [Road and Sidewalk Placement](#road-and-sidewalk-placement)
-- [Creation of a TIN and a voxelized DEM](#creation-of-a-tin-and-a-voxelized-dem)
-- [Placing buildings](#placing-buildings)
-- [Tree handling](#tree-handling)
-- [Street data and other touches](#street-data-and-other-touches)
-  - [Road markings](#road-markings)
-  - [Road Signs](#road-signs)
-  - [Hiking Trails](#hiking-trails)
-- [Placement Order](#placement-order)
+- [Second Iteration](#second-iteration)
+  - [Creation of a TIN and a voxelized DEM](#creation-of-a-tin-and-a-voxelized-dem)
+  - [Placing buildings](#placing-buildings)
+  - [Tree handling](#tree-handling)
+  - [Street data and other touches](#street-data-and-other-touches)
+    - [Road Markings](#road-markings)
+    - [Road Signs](#road-signs)
+    - [Hiking Trails](#hiking-trails)
+  - [Placement Order](#placement-order)
 
 ___
 

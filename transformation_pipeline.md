@@ -1,6 +1,12 @@
 # Transformation of LiDAR Data, Orthographic Imagery, and Operational Geospatial Data to a 1:1 Minecraft World
 
 Table of Contents:
+- [First Iteration](#first-iteration)
+  - [LiDAR Processing](#lidar-processing)
+    - [Denoising the Dataset](#denoising-the-dataset)
+    - [Rotation and Translation](#rotation-and-translation)
+    - [Chunk processing](#chunk-processing)
+  - [Road and Sidewalk Placement](#road-and-sidewalk-placement)
 - [Creation of a TIN and a voxelized DEM](#creation-of-a-tin-and-a-voxelized-dem)
 - [Placing buildings](#placing-buildings)
 - [Tree handling](#tree-handling)

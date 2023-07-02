@@ -44,7 +44,6 @@ allowed_trees = {  # class 5
 
 allowed_building_blocks = {  # class 6
     "bricks": Block("minecraft", "bricks"),
-    # that should cover the reds
     "block of iron": Block("minecraft", "iron_block"),
     "stone bricks": Block("minecraft", "stone_bricks"),
     "deepslate tiles": Block("minecraft", "deepslate_tiles"),

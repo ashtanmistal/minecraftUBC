@@ -2,7 +2,7 @@
 # using Bresenham's Algorithm
 # https://www.geeksforgeeks.org/bresenhams-algorithm-for-3-d-line-drawing/
 
-def get_intersecting_block_coords(x1, y1, z1, x2, y2, z2):
+def get_line_block_intersections(x1, y1, z1, x2, y2, z2):
     # convert all coordinates to integers
     x1, y1, z1 = int(x1), int(y1), int(z1)
     x2, y2, z2 = int(x2), int(y2), int(z2)

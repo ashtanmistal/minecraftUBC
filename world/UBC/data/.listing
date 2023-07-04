@@ -5,10 +5,10 @@ drwxrwx---   3 mc519861 mc519861       35 Jun 24 19:13 lod
 -rw-r--r--   1 mc519861 mc519861     1045 Jun 27 15:49 map_1.dat
 -rw-r--r--   1 mc519861 mc519861      258 Jun 27 15:49 map_2.dat
 -rw-r--r--   1 mc519861 mc519861      770 Jun 27 15:49 map_3.dat
--rw-r--r--   1 mc519861 mc519861     7602 Jul 01 01:54 map_4.dat
+-rw-r--r--   1 mc519861 mc519861     7594 Jul 03 19:19 map_4.dat
 -rw-r--r--   1 mc519861 mc519861     5073 Jun 27 17:59 map_5.dat
 -rw-r--r--   1 mc519861 mc519861      256 Jun 27 17:59 map_6.dat
 -rw-r--r--   1 mc519861 mc519861      258 Jun 27 17:59 map_7.dat
 -rw-r--r--   1 mc519861 mc519861      258 Jun 27 17:59 map_8.dat
--rw-r--r--   1 mc519861 mc519861     1886 Jun 30 07:34 map_9.dat
--rwxrwx---   1 mc519861 mc519861       90 Jul 01 19:59 raids.dat
+-rw-r--r--   1 mc519861 mc519861     1886 Jul 03 15:24 map_9.dat
+-rwxrwx---   1 mc519861 mc519861       90 Jul 04 00:59 raids.dat

@@ -1,14 +1,12 @@
 # Lidar surface reconstruction
-"""This script transforms a LiDAR dataset into a Minecraft world. It does this by breaking up the dataset into chunks
-that correspond to Minecraft chunks, and performing Delaunay triangulation on each chunk. This resultant
-triangulation is then used as a surface mesh to calculate the height of each block in the chunk though barycentric
-interpolation where there exists an intersecting face. Below the surface patch, the mesh is closed by placing blocks
-all the way down to the minimum y level in Minecraft. No additional mesh data is needed for below the surface. All of
-this processing is done in parallel to speed up the process, but the Minecraft chunks must be placed in series given
-the level lock on the Minecraft world. Because we've rotated the dataset, some chunks may already have data in it
-from a previous dataset; we need to keep this data. As a result before creation of a new thread, we check if the
-chunk already exists in the Minecraft world and if so, we take the existing chunk and add data to it before saving it
-back to the world."""
+"""
+This script transforms a LiDAR dataset into a Minecraft world. It does this by breaking up the dataset into chunks
+that correspond to Minecraft chunks, and calculating the convex hull of each chunk. This resultant convex hull is then
+treated as a 2d mesh which is then voxelized and denoised. The voxelized mesh is then used as a mask with which to
+place blocks. Height is determined by the LiDAR data, but if none exists, the height is calculated by a weighted average
+of the three nearest points. Below the surface patch, the mesh is then closed by placing blocks all the way down to the
+minimum y level in Minecraft.
+"""
 import math
 import os
 import time
@@ -54,15 +52,10 @@ def get_convex_hull(chunk_data):
     hull = ConvexHull(chunk_data)
     vertices = hull.points[hull.vertices]
     points_inside = np.zeros((16, 16))
-    # iterate over the vertices
     for i in range(0, len(vertices)):
-        # get the current vertex
         vertex = vertices[i]
-        # get the next vertex
         next_vertex = vertices[(i + 1) % len(vertices)]
-        # get the line between these two vertices
         line = bresenham_2d(vertex[0], vertex[1], next_vertex[0], next_vertex[1])
-        # add all the points in this line to the points inside array
         for point in line:
             points_inside[point[0], point[1]] = 1
     # calculate the centroid of the convex hull; we will use this as a starting point for a flood fill algorithm
@@ -82,11 +75,10 @@ def get_convex_hull(chunk_data):
     # but should be. A lot of this is speckle noise on chunk edges.
     # we'll first test by seeing if the total number of points that are 0 is less than 16. If so, we'll just set all
     # the points to 1
+    # For further denoising, see fill_region.py for a region flood fill algorithm
     if np.sum(points_inside == 0) < 16:
         points_inside = np.ones((16, 16))  # this might not look the best near the beach, but it's better than nothing
     return points_inside
-
-
 
 
 def voxelize_patch(points_inside, chunk, block_id, data):
@@ -111,9 +103,7 @@ def voxelize_patch(points_inside, chunk, block_id, data):
                 else:
                     # calculate the weighted average of the 3 nearest points
                     nearest_points = data[np.argsort(np.linalg.norm(data[:, [0, 2]] - [x, z], axis=1))[:3], :]
-                    # calculate the weights to use for the weighted average
                     weights = 1 / np.linalg.norm(nearest_points[:, [0, 2]] - [x, z], axis=1)
-                    # calculate the weighted average
                     y = np.sum(nearest_points[:, 1] * weights) / np.sum(weights)
                     if np.isnan(y):
                         pass

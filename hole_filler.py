@@ -87,7 +87,7 @@ def main():
         # we only need x and z; ignore y
         coords = coords[::2]
         points_to_fill = np.array(coords)
-        hole_filler(points_to_fill, level)
+        hole_filler(points_to_fill, level, single=True)
         level.save()
         level.close()
 

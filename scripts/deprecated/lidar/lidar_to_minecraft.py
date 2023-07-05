@@ -51,7 +51,7 @@ allowed_building_blocks = {  # class 6
 }
 
 # next we need to get the textures for each Minecraft block, and get the average rgb value for each texture
-texture_location = "resources/block"
+texture_location = "../resources/block"
 
 
 def get_average_rgb(block_object):

@@ -77,7 +77,16 @@ def get_convex_hull(chunk_data):
             queue.append(point + np.array([-1, 0]))
             queue.append(point + np.array([0, 1]))
             queue.append(point + np.array([0, -1]))
+
+    # We now need to denoise the points_inside array; there will be some points that are not part of the convex hull
+    # but should be. A lot of this is speckle noise on chunk edges.
+    # we'll first test by seeing if the total number of points that are 0 is less than 16. If so, we'll just set all
+    # the points to 1
+    if np.sum(points_inside == 0) < 16:
+        points_inside = np.ones((16, 16))  # this might not look the best near the beach, but it's better than nothing
     return points_inside
+
+
 
 
 def voxelize_patch(points_inside, chunk, block_id, data):
@@ -184,14 +193,15 @@ def transform_dataset(ds, start_time):
         for ix in tqdm(range(min_x.astype(int), max_x.astype(int), 16)):
             for iz in range(min_z.astype(int), max_z.astype(int), 16):
                 chunk_indices = np.where((x >= ix) & (x < ix + 16) & (z >= iz) & (z < iz + 16))
-                if len(chunk_indices[0]) == 0:
-                    continue
                 cx, cz = block_coords_to_chunk_coords(ix, iz)
                 try:
                     chunk = level.get_chunk(cx, cz, "minecraft:overworld")
                 except ChunkDoesNotExist:
                     chunk = Chunk(cx, cz)
                 except ChunkLoadError:
+                    continue
+                if len(chunk_indices[0]) == 0:
+                    level.put_chunk(chunk, "minecraft:overworld")  # save the chunk if it is empty to avoid terrain gen
                     continue
                 # find the unique block_id of default_block in the chunk
                 universal_block, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(

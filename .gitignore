@@ -4,3 +4,7 @@
 /resources/orthographic_photos/
 /resources/streetlight_ZONES.sdf
 /resources/streetlight.db
+/resources/geojson_ubcv/context/geojson/ubcv_beach.geojson.failed
+/resources/geojson_ubcv/landscape/geojson/ubcv_landscape_hard.geojson.failed
+/resources/geojson_ubcv/landscape/geojson/ubcv_landscape_soft.geojson.failed
+/resources/geojson_ubcv/landscape/geojson/ubcv_municipal_waterfeatures.geojson.failed

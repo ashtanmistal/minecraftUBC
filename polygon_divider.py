@@ -7,13 +7,17 @@ operations.
 import numpy as np
 from amulet.utils import block_coords_to_chunk_coords
 
-# from PIL import Image
+from PIL import Image
 
 from scripts.deprecated.geojson.bresenham import bresenham_2d
 from scripts.deprecated.geojson.sidewalk_placer import convert_lat_long_to_x_z
 
-x_cutoff = 5200
-z_cutoff = 2800
+x_cutoff_max = 5200
+z_cutoff_max = 2800
+# x_cutoff_max = 2304
+# x_cutoff_min = 1792
+# z_cutoff_min = 256
+# z_cutoff_max = 1024
 
 def point_inside_polygon(x: int, z: int, matrix) -> bool:
     """
@@ -83,6 +87,11 @@ def primary_vertices_divider(vertices: list):
     max_x, max_z = np.max(translated_vertices, axis=1)
     # Now we have the translated vertices, and we can create a large matrix of zeros that will be used for the flood
     # fill algorithm
+    # if they're out of bounds, throw an error
+    # if max_x > x_cutoff_max and min_x < x_cutoff_min:
+    #     raise ValueError("Polygon is out of bounds in the x direction.")
+    # if max_z > z_cutoff_max and min_z < z_cutoff_min:
+    #     raise ValueError("Polygon is out of bounds in the z direction.")
 
     large_matrix = np.zeros((max_x + 1, max_z + 1), dtype=bool)
     # Now we need to iterate through the vertices and use bresenham to draw lines between them. We will use the
@@ -164,6 +173,7 @@ def secondary_vertices_divider(vertices: list, large_matrix, min_x, min_z):
 
 
 def polygon_divider(coordinates):
+
     # if it contains just one array, then it is a polygon. If it contains multiple arrays, then it is a multipolygon.
     # we need to voxelize this polygon
     large_matrix, min_x, min_z = primary_vertices_divider(coordinates[0])
@@ -181,20 +191,10 @@ def polygon_divider(coordinates):
             secondary_large_matrix |= matrix
         # now if a value is true in the secondary matrix, we want to invert the value in the large matrix
         large_matrix[secondary_large_matrix] = False
-
-    # # turn it into a black and white image for easier debugging
-    # image = np.zeros((max_x + 1, max_z + 1, 3), dtype=np.uint8)
-    # image[large_matrix] = 255
-    # image[~large_matrix] = 0
-    # image = Image.fromarray(image)
-    # image.save("test.png")
-    max_x = large_matrix.shape[0] - 1
-    max_z = large_matrix.shape[1] - 1
     if min_z < 0:
         offset_min = min_x % 16, (min_z % 16)
     else:
         offset_min = min_x % 16, min_z % 16
-    lm_copy = large_matrix.copy()
     large_matrix = np.pad(large_matrix, ((offset_min[0], 0), (offset_min[1], 0)), mode="constant", constant_values=False)
     # min_x was the offset to the actual world data from 0,0 of the matrix. Now that we've changed 0,0 we need to update
     # min_x and min_z
@@ -202,8 +202,14 @@ def polygon_divider(coordinates):
     min_z -= offset_min[1]
 
     # we need to cut off the bounds of some of the data as it goes outside the map
-    if large_matrix.shape[0] + min_x > x_cutoff:
-        large_matrix = large_matrix[:x_cutoff - min_x, :]
-    if large_matrix.shape[1] + min_z > z_cutoff:
-        large_matrix = large_matrix[:, :z_cutoff - min_z]
+    if large_matrix.shape[0] + min_x > x_cutoff_max:
+        large_matrix = large_matrix[:x_cutoff_max - min_x, :]
+    if large_matrix.shape[1] + min_z > z_cutoff_max:
+        large_matrix = large_matrix[:, :z_cutoff_max - min_z]
+    # if min_x < x_cutoff_min:
+    #     large_matrix = large_matrix[x_cutoff_min - min_x:, :]
+    #     min_x = x_cutoff_min
+    # if min_z < z_cutoff_min:
+    #     large_matrix = large_matrix[:, z_cutoff_min - min_z:]
+    #     min_z = z_cutoff_min
     return large_matrix, min_x, min_z

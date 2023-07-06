@@ -76,6 +76,21 @@ LSSOFT_TYPE_conversion = {
     }
 }
 
+FID_LANDUS_conversion = {
+    "ROAD": {
+        "block": Block("minecraft", "light_gray_concrete_powder"),
+        "depth": 2,
+    },
+    "BLDG": {  # This is the space that the buildings are but not actually the buildings themselves
+        "block": Block("minecraft", "grass_block"),  # most of the space are lawns
+        "depth": 2,
+    },
+    "GRASS": {  # This is where the golf course is
+        "block": Block("minecraft", "grass_block"),
+        "depth": 2,
+    },
+}
+
 
 def convert_feature(feature, level, landscape_type, block_override=None, depth_override=None):
     # if the geometry type is a polygon, that's fine
@@ -107,6 +122,14 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
     elif landscape_type == "water":
         block = Block("minecraft", "water")
         depth = 1
+    elif landscape_type == "psrp":
+        block = Block("minecraft", "moss_block")
+        depth = 2
+    elif landscape_type == "uel":
+        if properties["FID_LANDUS"] == "IGNORE":
+            return
+        block, depth = FID_LANDUS_conversion[properties["FID_LANDUS"]]["block"], \
+            FID_LANDUS_conversion[properties["FID_LANDUS"]]["depth"]
     else:
         raise ValueError("Invalid landscape type")
     if block_override is not None:
@@ -146,7 +169,7 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
                     for z in range(16):
                         if matrix_slice[x, z]:
                             try:
-                                height = np.max(np.where(blocks[x, :, z] == default_block_id))
+                                height = min_height + np.max(np.where(blocks[x, min_height:, z] == default_block_id))
                                 chunk.blocks[x, int(height - depth):int(height) + depth, z] = block_id
                             except ValueError:
                                 pass
@@ -182,13 +205,18 @@ def main():
         # "resources/geojson_ubcv/landscape/geojson/ubcv_municipal_waterfeatures.geojson",
         # "resources/geojson_ubcv/landscape/geojson/ubcv_landscape_hard.geojson",
         # "resources/geojson_ubcv/landscape/geojson/ubcv_landscape_soft.geojson",
-        "resources/geojson_ubcv/context/geojson/ubcv_beach.geojson"
+        # "resources/geojson_ubcv/context/geojson/ubcv_beach.geojson",
+        "resources/geojson_ubcv/context/geojson/ubcv_psrp.geojson",
+        "resources/geojson_ubcv/context/geojson/ubcv_uel.geojson"
     ]
     landscape_types = [
         # "water",
         # "hard",
         # "soft",
-        "beach"]  # TODO debug why the beach is not working - check terrain bounding box
+        # "beach",
+        "psrp",
+        "uel"
+    ]
     for file, landscape_type in zip(files, landscape_types):
         level = amulet.load_level("world/UBC")
         convert_features_from_file(file, level, landscape_type)

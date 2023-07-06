@@ -8,7 +8,7 @@ from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 import pyproj
-from scripts.geojson.bresenham import get_intersecting_block_coords
+from scripts.deprecated.geojson.bresenham import bresenham_3d
 
 """This script transforms a geojson file of sidewalks, trails, and similar walkways, and places them in the UBC 
 Vancouver Minecraft world. To do this, we will calculate the height of the start and end points of the sidewalk, 
@@ -163,14 +163,14 @@ def place_crosswalk(start_x, start_y, start_z, end_x, end_y, end_z, level):
     :param level: the Minecraft level object
     :return: None
     """
-    intersecting_blocks = get_intersecting_block_coords(start_x, start_y, start_z, end_x, end_y, end_z)
+    intersecting_blocks = bresenham_3d(start_x, start_y, start_z, end_x, end_y, end_z)
     # Because the crosswalk is crosswalk_width blocks wide, we need to place blocks on either side of the line segment.
     # This requires translating the line segment one meter on either side of the original line segment (perpendicular
     # to the line segment) and then placing blocks along the new line segments.
     for i in range(1, crosswalk_width + 1):
-        intersecting_blocks_right = get_intersecting_block_coords(
+        intersecting_blocks_right = bresenham_3d(
             *translate_line_segment(start_x, start_y, start_z, end_x, end_y, end_z, i))
-        intersecting_blocks_left = get_intersecting_block_coords(
+        intersecting_blocks_left = bresenham_3d(
             *translate_line_segment(start_x, start_y, start_z, end_x, end_y, end_z, -i))
         # Place the blocks intersected by the translated line segments
         i = 0
@@ -234,11 +234,11 @@ def place_road(start_x, start_y, start_z, end_x, end_y, end_z, level, road_type,
     """
     if VEHICLE_ACCESS_width[vehicle_access] is None:
         return ValueError("Invalid vehicle access: " + vehicle_access)
-    intersecting_blocks = get_intersecting_block_coords(start_x, start_y, start_z, end_x, end_y, end_z)
+    intersecting_blocks = bresenham_3d(start_x, start_y, start_z, end_x, end_y, end_z)
     for i in range(1, VEHICLE_ACCESS_width[vehicle_access] + 1):
-        intersecting_blocks += get_intersecting_block_coords(
+        intersecting_blocks += bresenham_3d(
             *translate_line_segment(start_x, start_y, start_z, end_x, end_y, end_z, i))
-        intersecting_blocks += get_intersecting_block_coords(
+        intersecting_blocks += bresenham_3d(
             *translate_line_segment(start_x, start_y, start_z, end_x, end_y, end_z, -i))
 
     if SURFACE_TYPE_translation[surface_type] is not None:

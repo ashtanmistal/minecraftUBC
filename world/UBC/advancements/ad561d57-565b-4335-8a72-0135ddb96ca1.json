@@ -1805,5 +1805,11 @@
     },
     "done": true
   },
+  "minecraft:husbandry/froglights": {
+    "criteria": {
+      "froglights": "2023-07-06 21:36:10 +0000"
+    },
+    "done": true
+  },
   "DataVersion": 3337
 }

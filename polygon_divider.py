@@ -5,12 +5,9 @@ operations.
 """
 
 import numpy as np
-from amulet.utils import block_coords_to_chunk_coords
-
-from PIL import Image
 
 from scripts.deprecated.geojson.bresenham import bresenham_2d
-from scripts.deprecated.geojson.sidewalk_placer import convert_lat_long_to_x_z
+from sidewalk_placer import convert_lat_long_to_x_z
 
 x_cutoff_max = 5200
 z_cutoff_max = 2800

@@ -27,6 +27,8 @@ standard_light = [
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),
+    Block("minecraft", "polished_blackstone_wall"),
+    Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "redstone_lamp"),
     Block("minecraft", "daylight_detector", {"inverted": StringTag("true")}),
 ]
@@ -37,6 +39,9 @@ bollard_light = [
 ]
 
 tall_light = [
+    Block("minecraft", "polished_blackstone_wall"),
+    Block("minecraft", "polished_blackstone_wall"),
+    Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),

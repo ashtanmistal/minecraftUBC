@@ -1225,133 +1225,133 @@
   },
   "minecraft:recipes/building_blocks/blackstone_stairs": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/blackstone_slab_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/decorations/polished_blackstone_brick_wall_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/polished_blackstone_slab_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/polished_blackstone": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/decorations/blackstone_wall": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/blackstone_slab": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/polished_blackstone_brick_slab_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/polished_blackstone_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/polished_blackstone_brick_stairs_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/polished_blackstone_bricks_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/decorations/blackstone_wall_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/polished_blackstone_stairs_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/decorations/polished_blackstone_wall_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/chiseled_polished_blackstone_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/blackstone_stairs_from_blackstone_stonecutting": {
     "criteria": {
-      "has_blackstone": "2023-06-29 16:07:03 +0000"
+      "has_blackstone": "2023-06-29 09:07:03 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/waxed_exposed_cut_copper_slab_from_waxed_exposed_copper_stonecutting": {
     "criteria": {
-      "has_waxed_exposed_copper": "2023-06-29 16:29:14 +0000"
+      "has_waxed_exposed_copper": "2023-06-29 09:29:14 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/waxed_exposed_cut_copper_from_waxed_exposed_copper_stonecutting": {
     "criteria": {
-      "has_waxed_exposed_copper": "2023-06-29 16:29:14 +0000"
+      "has_waxed_exposed_copper": "2023-06-29 09:29:14 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/waxed_exposed_cut_copper": {
     "criteria": {
-      "has_waxed_exposed_copper": "2023-06-29 16:29:14 +0000"
+      "has_waxed_exposed_copper": "2023-06-29 09:29:14 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/waxed_exposed_cut_copper_stairs_from_waxed_exposed_copper_stonecutting": {
     "criteria": {
-      "has_waxed_exposed_copper": "2023-06-29 16:29:14 +0000"
+      "has_waxed_exposed_copper": "2023-06-29 09:29:14 -0700"
     },
     "done": true
   },
   "minecraft:recipes/building_blocks/stripped_oak_wood": {
     "criteria": {
-      "has_log": "2023-06-29 16:44:08 +0000"
+      "has_log": "2023-06-29 09:44:08 -0700"
     },
     "done": true
   },
   "minecraft:recipes/redstone/dispenser": {
     "criteria": {
-      "has_bow": "2023-06-29 19:22:43 +0000"
+      "has_bow": "2023-06-29 12:22:43 -0700"
     },
     "done": true
   },

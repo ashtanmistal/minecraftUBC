@@ -3,6 +3,7 @@ This script iterates through the polygons defined in the geojson file, voxelizes
 utilizes various attributes of the feature to place blocks in the world.
 """
 import json
+import random
 
 import amulet
 import numpy as np
@@ -12,6 +13,8 @@ from tqdm import tqdm
 
 from polygon_divider import polygon_divider
 from amulet.utils import block_coords_to_chunk_coords
+import sidewalk_placer
+import streetlight_handler
 
 min_height = -63
 max_height = 45
@@ -20,11 +23,11 @@ default_block = Block("minecraft", "stone")
 
 LSHARD_TYPE_conversion = {
     "Concrete": {
-        "block": Block("minecraft", "light_gray_concrete_powder"),
+        "block": Block("minecraft", "gray_concrete_powder"),
         "depth": 2,
     },
     "Road": {
-        "block": Block("minecraft", "light_gray_concrete_powder"),
+        "block": Block("minecraft", "gray_concrete_powder"),
         "depth": 2,
     },
     "Pedestrian": {
@@ -32,18 +35,22 @@ LSHARD_TYPE_conversion = {
         "depth": 2,
     },
     "Parking": {
-        "block": Block("minecraft", "light_gray_concrete"),
+        "block": Block("minecraft", "gray_concrete"),
         "depth": 1,
     },
     "Driveway": {
-        "block": Block("minecraft", "light_gray_concrete"),
+        "block": Block("minecraft", "gray_concrete"),
         "depth": 1,
     },
 }
 
 LSSOFT_TYPE_conversion = {
     "Wild": {
-        "block": Block("minecraft", "moss_block"),
+        "block": random.choices(
+            [Block("minecraft", "moss_block"), Block("minecraft", "dirt"), Block("minecraft", "grass_block")],
+            weights=[0.7, 0.2, 0.1],
+            k=1
+        )[0],
         "depth": 3,
     },
     "PlantingBed": {
@@ -59,7 +66,11 @@ LSSOFT_TYPE_conversion = {
         "depth": 2,
     },
     "Garden": {
-        "block": Block("minecraft", "dirt"),
+        "block": random.choices(
+            [Block("minecraft", "dirt"), Block("minecraft", "coarse_dirt")],
+            weights=[0.7, 0.3],
+            k=1
+        )[0],
         "depth": 1,
     },
     "Field": {
@@ -78,7 +89,7 @@ LSSOFT_TYPE_conversion = {
 
 FID_LANDUS_conversion = {
     "ROAD": {
-        "block": Block("minecraft", "light_gray_concrete_powder"),
+        "block": Block("minecraft", "gray_concrete_powder"),
         "depth": 2,
     },
     "BLDG": {  # This is the space that the buildings are but not actually the buildings themselves
@@ -110,37 +121,10 @@ def convert_feature(feature, level, landscape_type, block_override=None, depth_o
 
 
 def geometry_handler(block_override, coordinates, depth_override, landscape_type, level, properties):
-    if landscape_type == "hard":
-        ls_type = properties["LSHARD_TYPE"]
-        block, depth = LSHARD_TYPE_conversion[ls_type]["block"], LSHARD_TYPE_conversion[ls_type]["depth"]
-    elif landscape_type == "soft":
-        ls_type = properties["LSSOFT_TYPE"]
-        block, depth = LSSOFT_TYPE_conversion[ls_type]["block"], LSSOFT_TYPE_conversion[ls_type]["depth"]
-    elif landscape_type == "beach":
-        block = Block("minecraft", "sand")
-        depth = 2
-    elif landscape_type == "water":
-        block = Block("minecraft", "water")
-        depth = 1
-    elif landscape_type == "psrp":
-        block = Block("minecraft", "moss_block")
-        depth = 2
-    elif landscape_type == "uel":
+    if landscape_type == "uel":
         if properties["FID_LANDUS"] == "IGNORE":
             return
-        block, depth = FID_LANDUS_conversion[properties["FID_LANDUS"]]["block"], \
-            FID_LANDUS_conversion[properties["FID_LANDUS"]]["depth"]
-    else:
-        raise ValueError("Invalid landscape type")
-    if block_override is not None:
-        block = block_override
-        if depth_override is not None:
-            depth = depth_override
-        else:
-            raise ValueError("If block_override is not None, depth_override must also be not None")
-    else:
-        if depth_override is not None:
-            depth = depth_override  # it's okay to have a depth override without a block override
+
     # get the flooded matrix
     matrix, min_x, min_z = polygon_divider(coordinates)
     for cx in range(0, matrix.shape[0], 16):
@@ -158,9 +142,7 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
                 blocks = chunk.blocks
                 if blocks is None:
                     continue
-                universal_block, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
-                    block)
-                block_id = level.block_palette.get_add_block(universal_block)
+
                 universal_default_block, _, _ = level.translation_manager.get_version("java",
                                                                                       (1, 19, 4)).block.to_universal(
                     default_block)
@@ -169,6 +151,11 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
                     for z in range(16):
                         if matrix_slice[x, z]:
                             try:
+                                block, depth = get_block_type(block_override, depth_override, landscape_type,
+                                                              properties)
+                                universal_block, _, _ = level.translation_manager.get_version("java", (
+                                    1, 19, 4)).block.to_universal(block)
+                                block_id = level.block_palette.get_add_block(universal_block)
                                 height = min_height + np.max(np.where(blocks[x, min_height:, z] == default_block_id))
                                 chunk.blocks[x, int(height - depth):int(height) + depth, z] = block_id
                             except ValueError:
@@ -177,6 +164,52 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
                 chunk.changed = True
             except ChunkDoesNotExist:
                 continue
+
+
+def get_block_type(block_override, depth_override, landscape_type, properties):
+    if landscape_type == "hard":
+        ls_type = properties["LSHARD_TYPE"]
+        block, depth = LSHARD_TYPE_conversion[ls_type]["block"], LSHARD_TYPE_conversion[ls_type]["depth"]
+    elif landscape_type == "soft":
+        ls_type = properties["LSSOFT_TYPE"]
+        block, depth = LSSOFT_TYPE_conversion[ls_type]["block"], LSSOFT_TYPE_conversion[ls_type]["depth"]
+    elif landscape_type == "beach":
+        block = random.choices(
+            [Block("minecraft", "sand"), Block("minecraft", "sandstone")],
+            weights=[0.7, 0.3],
+            k=1
+        )[0]
+        depth = 2
+    elif landscape_type == "water":
+        block = Block("minecraft", "water")
+        depth = 1
+    elif landscape_type == "psrp":
+        block = random.choices(
+            [Block("minecraft", "moss_block"),
+             Block("minecraft", "dirt"),
+             Block("minecraft", "grass_block"),
+             Block("minecraft", "coarse_dirt")],
+            weights=[0.6, 0.2, 0.15, 0.05],
+            k=1
+        )[0]
+        depth = 2
+    elif landscape_type == "uel":
+        if properties["FID_LANDUS"] == "IGNORE":
+            raise ValueError("This should have been caught earlier")
+        block, depth = FID_LANDUS_conversion[properties["FID_LANDUS"]]["block"], \
+            FID_LANDUS_conversion[properties["FID_LANDUS"]]["depth"]
+    else:
+        raise ValueError("Invalid landscape type")
+    if block_override is not None:
+        block = block_override
+        if depth_override is not None:
+            depth = depth_override
+        else:
+            raise ValueError("If block_override is not None, depth_override must also be not None")
+    else:
+        if depth_override is not None:
+            depth = depth_override  # it's okay to have a depth override without a block override
+    return block, depth
 
 
 def convert_features(features, level, landscape_type, block_override=None, depth_override=None):
@@ -202,18 +235,18 @@ def convert_features_from_file(file, level, landscape_type, block_override=None,
 
 def main():
     files = [
-        # "resources/geojson_ubcv/landscape/geojson/ubcv_municipal_waterfeatures.geojson",
-        # "resources/geojson_ubcv/landscape/geojson/ubcv_landscape_hard.geojson",
-        # "resources/geojson_ubcv/landscape/geojson/ubcv_landscape_soft.geojson",
-        # "resources/geojson_ubcv/context/geojson/ubcv_beach.geojson",
+        "resources/geojson_ubcv/landscape/geojson/ubcv_landscape_soft.geojson",
+        "resources/geojson_ubcv/landscape/geojson/ubcv_landscape_hard.geojson",
+        "resources/geojson_ubcv/landscape/geojson/ubcv_municipal_waterfeatures.geojson",
+        "resources/geojson_ubcv/context/geojson/ubcv_beach.geojson",
         "resources/geojson_ubcv/context/geojson/ubcv_psrp.geojson",
         "resources/geojson_ubcv/context/geojson/ubcv_uel.geojson"
     ]
     landscape_types = [
-        # "water",
-        # "hard",
-        # "soft",
-        # "beach",
+        "soft",
+        "hard",
+        "water",
+        "beach",
         "psrp",
         "uel"
     ]
@@ -228,3 +261,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    sidewalk_placer.main()
+    streetlight_handler.streetlight_handler()

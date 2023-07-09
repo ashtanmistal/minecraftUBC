@@ -48,4 +48,11 @@
     "done": true
   },
   "DataVersion": 3337
+}dstone/redstone_lamp": {
+    "criteria": {
+      "has_glowstone": "2023-07-08 19:21:51 +0000"
+    },
+    "done": true
+  },
+  "DataVersion": 3337
 }

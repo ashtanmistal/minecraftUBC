@@ -30,9 +30,10 @@ terrain_blocks = {
     "moss_block": Block("minecraft", "moss_block"),
     "stone": Block("minecraft", "stone"),
     "white_concrete": Block("minecraft", "white_concrete"),
-    "light_gray_concrete": Block("minecraft", "light_gray_concrete"),
+    "gray_concrete": Block("minecraft", "gray_concrete"),
     "grass_block": Block("minecraft", "grass_block"),
-    "dirt": Block("minecraft", "dirt")
+    "dirt": Block("minecraft", "dirt"),
+    "gray_concrete_powder": Block("minecraft", "gray_concrete_powder"),
 }
 
 rotation_degrees = 28.000  # This is the rotation of UBC's roads relative to true north.
@@ -175,13 +176,13 @@ def place_crosswalk(start_x, start_y, start_z, end_x, end_y, end_z, level):
         # Place the blocks intersected by the translated line segments
         i = 0
         for block in intersecting_blocks_right:
-            if i % 2 == 0:
+            if i % 3 == 0:
                 level.set_version_block(int(block[0]), int(block[1]), int(block[2]), "minecraft:overworld",
                                         game_version, ROAD_TYPE_translation["Crosswalk"])
             i += 1
         i = 0
         for block in intersecting_blocks_left:
-            if i % 2 == 0:
+            if i % 3 == 0:
                 level.set_version_block(int(block[0]), int(block[1]), int(block[2]), "minecraft:overworld",
                                         game_version, ROAD_TYPE_translation["Crosswalk"])
             i += 1
@@ -189,7 +190,7 @@ def place_crosswalk(start_x, start_y, start_z, end_x, end_y, end_z, level):
     # Place the blocks intersected by the original line segment
     i = 0
     for block in intersecting_blocks:
-        if i % 2 == 0:
+        if i % 3 == 0:
             level.set_version_block(int(block[0]), int(block[1]), int(block[2]), "minecraft:overworld",
                                     game_version, ROAD_TYPE_translation["Crosswalk"])
         i += 1
@@ -260,6 +261,8 @@ def convert_feature(feature, level):
     coordinates, properties = feature["geometry"]["coordinates"], feature["properties"]
     road_type, surface_type, vehicle_access = properties["ROAD_TYPE"], properties["SURFACE_TYPE"], \
         properties["VEHICLE_ACCESS"]
+    if road_type != "Crosswalk":
+        return None
     # break the coordinates into line segments (each line segment is a list of two coordinates)
     line_segments = []
     for i in range(len(coordinates) - 1):
@@ -274,18 +277,19 @@ def convert_feature(feature, level):
         if road_type == "Crosswalk":
             place_crosswalk(*line_segment[0], *line_segment[1], level)
         else:
-            place_road(*line_segment[0], *line_segment[1], level, road_type, surface_type, vehicle_access)
+            pass
+            # place_road(*line_segment[0], *line_segment[1], level, road_type, surface_type, vehicle_access)
 
 
 def main():
-    level = amulet.load_level("../../world/UBC")
-    sidewalk_data_path = "../../resources/ubc_roads/Data/ubcv_paths_sidewalks.geojson"
+    level = amulet.load_level("world/UBC")
+    sidewalk_data_path = "resources/ubc_roads/Data/ubcv_paths_sidewalks.geojson"
     with open(sidewalk_data_path) as sidewalk_data_file:
         sidewalk_data = json.load(sidewalk_data_file)
 
     # reverse the features
     features = sidewalk_data["features"]
-    features = features[::-1]
+    # features = features[::-1]
     for feature in tqdm(features):
         try:
             convert_feature(feature, level)

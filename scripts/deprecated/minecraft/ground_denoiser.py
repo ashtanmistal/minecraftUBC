@@ -2,15 +2,10 @@
 #  written by: Ashtan Mistal
 
 import amulet
-import numpy as np
 from amulet.api.block import Block
-from amulet.api.chunk import Chunk
-from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
-from amulet.utils.world_utils import block_coords_to_chunk_coords
 import math
 from tqdm import tqdm
-from bresenham import get_intersecting_block_coords
-from sidewalk_placer import get_height_of_point, MAX_SEARCH_RADIUS, min_y, max_y
+from scripts.deprecated.geojson.sidewalk_placer import get_height_of_point, MAX_SEARCH_RADIUS, min_y, max_y
 
 """This algorithm takes in a Minecraft world and a range of x and z coordinates to denoise. It denoises only the 
 ground terrain, and leaves all other blocks untouched. It does this by first getting the current chunk, 

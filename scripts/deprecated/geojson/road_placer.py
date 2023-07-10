@@ -3,10 +3,10 @@ import amulet
 from amulet.api.block import Block
 from amulet.api.errors import ChunkLoadError
 from tqdm import tqdm
-from scripts.geojson.bresenham import get_intersecting_block_coords
-from sidewalk_placer import convert_lat_long_to_x_z
-from sidewalk_placer import game_version
-from sidewalk_placer import get_height_of_point, translate_line_segment
+from scripts.deprecated.geojson.bresenham import bresenham_3d
+from scripts.deprecated.geojson.sidewalk_placer import convert_lat_long_to_x_z
+from scripts.deprecated.geojson.sidewalk_placer import game_version
+from scripts.deprecated.geojson.sidewalk_placer import get_height_of_point, translate_line_segment
 
 ROAD_TYPE_translation = {
     "Arterial": Block("minecraft", "light_gray_concrete"),
@@ -39,11 +39,11 @@ def place_road(start_x, start_y, start_z, end_x, end_y, end_z, level, road_type,
 
     if VEHICLE_ACCESS_width[vehicle_access] is None:
         return ValueError("Invalid vehicle access: " + vehicle_access)
-    intersecting_blocks = get_intersecting_block_coords(start_x, start_y, start_z, end_x, end_y, end_z)
+    intersecting_blocks = bresenham_3d(start_x, start_y, start_z, end_x, end_y, end_z)
     for i in range(1, VEHICLE_ACCESS_width[vehicle_access] + 1):
-        intersecting_blocks += get_intersecting_block_coords(
+        intersecting_blocks += bresenham_3d(
             *translate_line_segment(start_x, start_y, start_z, end_x, end_y, end_z, i))
-        intersecting_blocks += get_intersecting_block_coords(
+        intersecting_blocks += bresenham_3d(
             *translate_line_segment(start_x, start_y, start_z, end_x, end_y, end_z, -i))
 
     block_type = ROAD_TYPE_translation[road_type]

@@ -11,10 +11,10 @@ from amulet import Block
 from amulet.api.errors import ChunkDoesNotExist
 from tqdm import tqdm
 
-from polygon_divider import polygon_divider
+from scripts.geojson.polygon_divider import polygon_divider
 from amulet.utils import block_coords_to_chunk_coords
-import sidewalk_placer
-import streetlight_handler
+from scripts.deprecated.geojson import sidewalk_placer
+from scripts.geojson import streetlight_handler
 
 min_height = -63
 max_height = 45
@@ -251,7 +251,7 @@ def main():
         "uel"
     ]
     for file, landscape_type in zip(files, landscape_types):
-        level = amulet.load_level("world/UBC")
+        level = amulet.load_level("../../world/UBC")
         convert_features_from_file(file, level, landscape_type)
         print(f"Finished {landscape_type}")
         level.save()

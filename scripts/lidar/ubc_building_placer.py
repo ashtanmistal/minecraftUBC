@@ -86,7 +86,7 @@ def transform_chunk(data, level):
 
 
 def transform_dataset(ds):
-    level = amulet.load_level("world/UBC")
+    level = amulet.load_level("../../world/UBC")
     x, y, z, r, g, b, c = ds.x, ds.y, ds.z, ds.red, ds.green, ds.blue, ds.classification
     x, y, z = np.matmul(inverse_rotation_matrix, np.array([x - x_offset, y - y_offset, z - z_offset]))
     r, g, b = (r / 256).astype(int), (g / 256).astype(int), (b / 256).astype(int)
@@ -116,7 +116,7 @@ def transform_dataset(ds):
 
 if __name__ == "__main__":
     start_time = time.time()
-    lidar_dir = "LiDAR LAS Data/las"
+    lidar_dir = "../../LiDAR LAS Data/las"
     for filename in os.listdir(lidar_dir):
         if filename.endswith(".las"):
             dataset = pylas.read(os.path.join(lidar_dir, filename))

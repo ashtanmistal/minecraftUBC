@@ -14,7 +14,7 @@ from amulet import Block
 from tqdm import tqdm
 from amulet_nbt import StringTag
 
-json_path = "resources/streetlights_json.geojson"
+json_path = "../../resources/streetlights_json.geojson"
 min_height = -20
 max_height = 45
 game_version = ("java", (1, 19, 4))
@@ -74,7 +74,7 @@ def streetlight_handler():
     with open(json_path) as f:
         data = json.load(f)
 
-    level = amulet.load_level("world/UBC")
+    level = amulet.load_level("../../world/UBC")
     # iterate through the features
     for feature in tqdm(data["features"]):
         # get the layer attribute

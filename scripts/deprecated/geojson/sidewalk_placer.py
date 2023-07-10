@@ -282,8 +282,8 @@ def convert_feature(feature, level):
 
 
 def main():
-    level = amulet.load_level("world/UBC")
-    sidewalk_data_path = "resources/ubc_roads/Data/ubcv_paths_sidewalks.geojson"
+    level = amulet.load_level("../../../world/UBC")
+    sidewalk_data_path = "../../../resources/ubc_roads/Data/ubcv_paths_sidewalks.geojson"
     with open(sidewalk_data_path) as sidewalk_data_file:
         sidewalk_data = json.load(sidewalk_data_file)
 

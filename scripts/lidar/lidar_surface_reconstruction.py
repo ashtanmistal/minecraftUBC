@@ -156,7 +156,7 @@ def transform_dataset(ds, start_time):
     :return: None
     """
     if __name__ == '__main__':
-        level = amulet.load_level("world/UBC")
+        level = amulet.load_level("../../world/UBC")
         x, y, z, labels = ds.x, ds.y, ds.z, ds.classification
         # remove anything that is not ground terrain
         indices_to_delete = np.where(labels != 2)
@@ -208,7 +208,7 @@ def transform_dataset(ds, start_time):
 
 
 def main():
-    lidar_path = "LiDAR LAS Data/las"
+    lidar_path = "../../LiDAR LAS Data/las"
     start_time = time.time()
     for filename in os.listdir(lidar_path):
         if filename.endswith(".las"):

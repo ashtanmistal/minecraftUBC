@@ -8,14 +8,14 @@ from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-from scripts.geojson.helpers import bresenham_2d, convert_lat_long_to_x_z
+from scripts.helpers import bresenham_2d, convert_lat_long_to_x_z
 
 """
 This script transforms the UEL trail data and places the trails in the Minecraft world. It also places signs
 at the beginning of each trail, denoting the trail name. 
 """
 
-path = "../../resources/geojson_ubcv/context/geojson/ubcv_psrp_trail.geojson"
+path = "/resources/geojson_ubcv/context/geojson/ubcv_psrp_trail.geojson"
 game_version = ("java", (1, 19, 4))
 x_offset = 480000
 z_offset = 5455000
@@ -96,7 +96,7 @@ def place_line_segment(line_segment, level, surface_material):
 
 
 def place_trails():
-    level = amulet.load_level("../../world/UBC")
+    level = amulet.load_level("/world/UBC")
     with open(path) as f:
         data = json.load(f)
     for feature in tqdm(data["features"]):

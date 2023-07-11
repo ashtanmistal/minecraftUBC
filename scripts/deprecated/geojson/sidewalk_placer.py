@@ -6,7 +6,7 @@ from amulet.api.block import Block
 from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from tqdm import tqdm
-from scripts.geojson.helpers import bresenham_3d, convert_lat_long_to_x_z
+from scripts.helpers import bresenham_3d, convert_lat_long_to_x_z
 
 """This script transforms a geojson file of sidewalks, trails, and similar walkways, and places them in the UBC 
 Vancouver Minecraft world. To do this, we will calculate the height of the start and end points of the sidewalk, 
@@ -65,11 +65,10 @@ VEHICLE_ACCESS_width = {  # whether vehicles are able to access the road determi
 crosswalk_width = 2
 
 
-def get_height_of_point(x, z, search_radius, level, max_search_radius=MAX_SEARCH_RADIUS, return_details=False):
+def get_height_of_point(x, z, search_radius, level, max_search_radius=MAX_SEARCH_RADIUS):
     """
     Returns the height of the highest block at the given x,z coordinates. Only considers blocks within the search
     radius, between min_y and max_y, and ignores non-terrain blocks.
-    :param return_details: whether to return the block object, radius, as well as the height
     :param max_search_radius: the maximum search radius to use (default is set to 15)
     :param x: the Minecraft x coordinate of the point
     :param z: the Minecraft z coordinate of the point
@@ -81,7 +80,7 @@ def get_height_of_point(x, z, search_radius, level, max_search_radius=MAX_SEARCH
     chunk_x, chunk_z = block_coords_to_chunk_coords(x, z)
     # load the chunk
     try:
-        chunk = level.get_chunk(chunk_x, chunk_z, "minecraft:overworld")
+        level.get_chunk(chunk_x, chunk_z, "minecraft:overworld")
     except ChunkDoesNotExist:
         raise ChunkLoadError(f"Chunk ({chunk_x}, {chunk_z}) does not exist - check coordinates")
     # get the height of the highest block within the search radius
@@ -96,24 +95,24 @@ def get_height_of_point(x, z, search_radius, level, max_search_radius=MAX_SEARCH
                 block, _ = level.get_version_block(x - search_radius + i, height, z + j, "minecraft:overworld",
                                                    game_version)
                 if block.base_name in terrain_blocks.keys():
-                    return height if not return_details else (height, (x - search_radius + i, height, z + j), search_radius)
+                    return height
                 # search the blocks on the right side of the square
                 block, _ = level.get_version_block(x + search_radius - i, height, z + j, "minecraft:overworld",
                                                    game_version)
                 if block.base_name in terrain_blocks.keys():
-                    return height if not return_details else (height, (x + search_radius - i, height, z + j), search_radius)
+                    return height
             # search the blocks on the bottom of the square
             for j in range(-search_radius + i + 1, search_radius - i):
                 # search the blocks on the left side of the square
                 block, _ = level.get_version_block(x - search_radius + i, height, z + j, "minecraft:overworld",
                                                    game_version)
                 if block.base_name in terrain_blocks.keys():
-                    return height if not return_details else (height, (x - search_radius + i, height, z + j), search_radius)
+                    return height
                 # search the blocks on the right side of the square
                 block, _ = level.get_version_block(x + search_radius - i, height, z + j, "minecraft:overworld",
                                                    game_version)
                 if block.base_name in terrain_blocks.keys():
-                    return height if not return_details else (height, (x + search_radius - i, height, z + j), search_radius)
+                    return height
         height -= 1
     if height == min_y:
         # raise ValueError(f"No terrain blocks found within {search_radius} blocks of ({x}, {z})")
@@ -254,8 +253,8 @@ def convert_feature(feature, level):
 
 
 def main():
-    level = amulet.load_level("../../../world/UBC")
-    sidewalk_data_path = "../../../resources/ubc_roads/Data/ubcv_paths_sidewalks.geojson"
+    level = amulet.load_level("/world/UBC")
+    sidewalk_data_path = "/resources/ubc_roads/Data/ubcv_paths_sidewalks.geojson"
     with open(sidewalk_data_path) as sidewalk_data_file:
         sidewalk_data = json.load(sidewalk_data_file)
 

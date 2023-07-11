@@ -21,11 +21,10 @@ from amulet.utils import block_coords_to_chunk_coords
 from scipy.spatial import QhullError, ConvexHull
 from tqdm import tqdm
 
-from scripts.geojson.helpers import bresenham_2d
+from scripts.helpers import bresenham_2d
 
 min_height = -64
 default_block = Block("minecraft", "stone")
-game_version = ("java", (1, 19, 4))
 x_offset = 480000
 y_offset = 5455000
 z_offset = 59
@@ -156,7 +155,7 @@ def transform_dataset(ds, start_time):
     :return: None
     """
     if __name__ == '__main__':
-        level = amulet.load_level("../../world/UBC")
+        level = amulet.load_level("/world/UBC")
         x, y, z, labels = ds.x, ds.y, ds.z, ds.classification
         # remove anything that is not ground terrain
         indices_to_delete = np.where(labels != 2)
@@ -208,7 +207,7 @@ def transform_dataset(ds, start_time):
 
 
 def main():
-    lidar_path = "../../LiDAR LAS Data/las"
+    lidar_path = "/LiDAR LAS Data/las"
     start_time = time.time()
     for filename in os.listdir(lidar_path):
         if filename.endswith(".las"):

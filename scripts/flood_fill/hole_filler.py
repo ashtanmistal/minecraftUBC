@@ -1,7 +1,8 @@
-import amulet
 import numpy as np
 from amulet.api.block import Block
 from tqdm import tqdm
+
+from scripts.helpers import seed_setup
 
 
 def hole_filler(points_to_fill, level, single=False):
@@ -75,18 +76,7 @@ def hole_filler(points_to_fill, level, single=False):
 
 def main():
     while True:
-        level = amulet.load_level("world/UBC")
-        # Select a region to fill in
-        prompt = "Enter the coordinates of the region to fill in  (i.e. '/tp 1738.5 200 -466.5')"
-        print(prompt)
-        coords = input("Coordinates: ").split(" ")
-        # get rid of the /tp part if it exists
-        if coords[0] == "/tp":
-            coords = coords[1:]
-        coords = [float(coord) for coord in coords]
-        # we only need x and z; ignore y
-        coords = coords[::2]
-        points_to_fill = np.array(coords)
+        level, points_to_fill = seed_setup()
         hole_filler(points_to_fill, level, single=True)
         level.save()
         level.close()

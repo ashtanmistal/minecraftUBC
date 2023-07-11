@@ -251,7 +251,7 @@ def main():
         "uel"
     ]
     for file, landscape_type in zip(files, landscape_types):
-        level = amulet.load_level("../../world/UBC")
+        level = amulet.load_level("/world/UBC")
         convert_features_from_file(file, level, landscape_type)
         print(f"Finished {landscape_type}")
         level.save()

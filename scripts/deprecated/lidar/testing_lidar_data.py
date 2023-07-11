@@ -1,8 +1,7 @@
 # Testing the LiDAR data to have more of an idea of what we're working with
-import numpy as np
-import math
-import pylas
 import matplotlib.pyplot as plt
+import numpy as np
+import pylas
 
 # load the data
 data = pylas.read("LiDAR LAS Data/las/481000_5458000.las")

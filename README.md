@@ -30,15 +30,15 @@ See [here](https://github.com/ashtanmistal/minecraftUBC/tree/master/world/UBC) f
 
 The below screenshots and renders is after processing the LiDAR data into Minecraft blocks, with some touch-ups in various buildings. These screenshots will be updated as progress allows.
 
-![2023-06-23_11 36 12](screenshots/2023-06-23_11.36.12.png)
+![2023-06-23_11 36 12](docs/screenshots/2023-06-23_11.36.12.png)
 
 Screenshot of some Ponderosa progress.
 
-![2023-06-23_11 40 20](screenshots/2023-06-23_11.40.20.png)
+![2023-06-23_11 40 20](docs/screenshots/2023-06-23_11.40.20.png)
 
 IKB, Ladner clock tower, and Buchanan tower.
 
-![2023-06-23_12 17 01](screenshots/2023-06-23_12.17.01.png)
+![2023-06-23_12 17 01](docs/screenshots/2023-06-23_12.17.01.png)
 
 Wreck Beach south of the stairs, with some residence buildings in the background.
 

@@ -11,6 +11,7 @@ import math
 import amulet
 import numpy as np
 from amulet import Block
+from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 from amulet_nbt import StringTag
 
@@ -110,8 +111,7 @@ def get_height(x, z, level):
     :return: height of the terrain at the given coordinates
     """
     # get the chunk coordinates
-    chunk_x = math.floor(x / 16)
-    chunk_z = math.floor(z / 16)
+    chunk_x, chunk_z = block_coords_to_chunk_coords(x, z)
 
     # get the chunk
     chunk = level.get_chunk(chunk_x, chunk_z, "minecraft:overworld")

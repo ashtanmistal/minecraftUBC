@@ -2,13 +2,11 @@ import json
 import math
 
 import amulet
-import numpy as np
 from amulet.api.block import Block
 from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from tqdm import tqdm
-import pyproj
-from scripts.deprecated.geojson.bresenham import bresenham_3d
+from scripts.geojson.helpers import bresenham_3d, convert_lat_long_to_x_z
 
 """This script transforms a geojson file of sidewalks, trails, and similar walkways, and places them in the UBC 
 Vancouver Minecraft world. To do this, we will calculate the height of the start and end points of the sidewalk, 
@@ -20,9 +18,6 @@ game_version = ("java", (1, 19, 4))
 
 min_y = -58
 max_y = 45
-
-x_offset = 480000
-z_offset = 5455000
 
 MAX_SEARCH_RADIUS = 15  # the maximum search radius for the height of the start and end points
 
@@ -36,12 +31,7 @@ terrain_blocks = {
     "gray_concrete_powder": Block("minecraft", "gray_concrete_powder"),
 }
 
-rotation_degrees = 28.000  # This is the rotation of UBC's roads relative to true north.
 # After converting lat/lon to metres and subtracting the offset, the roads are rotated 28 degrees clockwise.
-rotation = math.radians(rotation_degrees)
-inverse_rotation_matrix = np.array([[math.cos(rotation), math.sin(rotation), 0],
-                                    [-math.sin(rotation), math.cos(rotation), 0],
-                                    [0, 0, 1]])
 
 ROAD_TYPE_translation = {
     '': None,
@@ -132,24 +122,6 @@ def get_height_of_point(x, z, search_radius, level, max_search_radius=MAX_SEARCH
         else:
             raise ValueError(f"No terrain blocks found within {max_search_radius} blocks of ({x}, {z})")
     # return height if not return_block else (height, block)
-
-
-def convert_lat_long_to_x_z(lat, long):
-    """
-    Converts the given latitude and longitude coordinates to Minecraft x and z coordinates. Uses a pipeline to convert
-    from EPSG:4326 (lat/lon) to EPSG:26910 (UTM zone 10N).
-    :param lat: the latitude coordinate
-    :param long: the longitude coordinate
-    :return: the Minecraft x and z coordinates of the given latitude and longitude
-    """
-    pipeline = "+proj=pipeline +step +proj=axisswap +order=2,1 +step +proj=unitconvert +xy_in=deg +xy_out=rad +step " \
-               "+proj=utm +zone=10 +ellps=GRS80"
-    transformer = pyproj.Transformer.from_pipeline(pipeline)
-    x, z = transformer.transform(lat, long)
-    x, z = x - x_offset, z - z_offset
-    x, z, _ = np.matmul(inverse_rotation_matrix, np.array([x, z, 1]))
-    z = -z  # flip z axis to match Minecraft
-    return int(x), int(z)
 
 
 def place_crosswalk(start_x, start_y, start_z, end_x, end_y, end_z, level):

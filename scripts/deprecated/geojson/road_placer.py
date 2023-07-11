@@ -3,8 +3,7 @@ import amulet
 from amulet.api.block import Block
 from amulet.api.errors import ChunkLoadError
 from tqdm import tqdm
-from scripts.deprecated.geojson.bresenham import bresenham_3d
-from scripts.deprecated.geojson.sidewalk_placer import convert_lat_long_to_x_z
+from scripts.geojson.helpers import bresenham_3d, convert_lat_long_to_x_z
 from scripts.deprecated.geojson.sidewalk_placer import game_version
 from scripts.deprecated.geojson.sidewalk_placer import get_height_of_point, translate_line_segment
 

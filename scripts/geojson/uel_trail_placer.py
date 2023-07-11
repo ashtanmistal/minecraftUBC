@@ -8,8 +8,7 @@ from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-from scripts.deprecated.geojson.bresenham import bresenham_2d
-from scripts.deprecated.geojson.sidewalk_placer import convert_lat_long_to_x_z
+from scripts.geojson.helpers import bresenham_2d, convert_lat_long_to_x_z
 
 """
 This script transforms the UEL trail data and places the trails in the Minecraft world. It also places signs

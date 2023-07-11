@@ -21,7 +21,7 @@ from amulet.utils import block_coords_to_chunk_coords
 from scipy.spatial import QhullError, ConvexHull
 from tqdm import tqdm
 
-from scripts.deprecated.geojson.bresenham import bresenham_2d
+from scripts.geojson.helpers import bresenham_2d
 
 min_height = -64
 default_block = Block("minecraft", "stone")

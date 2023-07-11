@@ -2,15 +2,10 @@
 #  written by: Ashtan Mistal
 
 import amulet
-import numpy as np
 from amulet.api.block import Block
-from amulet.api.chunk import Chunk
-from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
-from amulet.utils.world_utils import block_coords_to_chunk_coords
 import math
 from tqdm import tqdm
-from bresenham import get_intersecting_block_coords
-from sidewalk_placer import get_height_of_point, MAX_SEARCH_RADIUS, min_y, max_y
+from scripts.deprecated.geojson.sidewalk_placer import get_height_of_point, MAX_SEARCH_RADIUS, min_y, max_y
 
 """This algorithm takes in a Minecraft world and a range of x and z coordinates to denoise. It denoises only the 
 ground terrain, and leaves all other blocks untouched. It does this by first getting the current chunk, 
@@ -55,7 +50,7 @@ def make_plane(control_points):
     """
     # To do this, we need to basically find every Minecraft block that lies in the plane within the control points.
     # We can do this with what is basically a 3D version of the Bresenham line algorithm, adapted for planes.
-    # We have an implementation of the 3d line algorithm in the bresenham.py file, so we can use that.
+    # We have an implementation of the 3d line algorithm in the helpers.py file, so we can use that.
     # We'll need to pick two of the control points (the ones that are furthest apart) and use those to create a line.
     # We will then use the third control point and use that to create a line that intersects the first line (iterating
     # through each block coordinate in the first line and using that as a coordinate in the second line). We will then

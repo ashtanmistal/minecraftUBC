@@ -72,4 +72,4 @@ There's a lot of holes in the ground that need to be filled in. As a result, som
 
 ## Manual Work
 
-See [the building document](../building.md) for more information.
+See [the building document](building.md) for more information.

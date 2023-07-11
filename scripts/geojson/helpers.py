@@ -1,3 +1,36 @@
+import math
+
+import numpy as np
+import pyproj
+
+
+rotation_degrees = 28.000  # This is the rotation of UBC's roads relative to true north.
+rotation = math.radians(rotation_degrees)
+inverse_rotation_matrix = np.array([[math.cos(rotation), math.sin(rotation), 0],
+                                    [-math.sin(rotation), math.cos(rotation), 0],
+                                    [0, 0, 1]])
+x_offset = 480000
+z_offset = 5455000
+
+
+def convert_lat_long_to_x_z(lat, long):
+    """
+    Converts the given latitude and longitude coordinates to Minecraft x and z coordinates. Uses a pipeline to convert
+    from EPSG:4326 (lat/lon) to EPSG:26910 (UTM zone 10N).
+    :param lat: the latitude coordinate
+    :param long: the longitude coordinate
+    :return: the Minecraft x and z coordinates of the given latitude and longitude
+    """
+    pipeline = "+proj=pipeline +step +proj=axisswap +order=2,1 +step +proj=unitconvert +xy_in=deg +xy_out=rad +step " \
+               "+proj=utm +zone=10 +ellps=GRS80"
+    transformer = pyproj.Transformer.from_pipeline(pipeline)
+    x, z = transformer.transform(lat, long)
+    x, z = x - x_offset, z - z_offset
+    x, z, _ = np.matmul(inverse_rotation_matrix, np.array([x, z, 1]))
+    z = -z  # flip z axis to match Minecraft
+    return int(x), int(z)
+
+
 def bresenham_3d(x1, y1, z1, x2, y2, z2):
     """
     Implementation for Bresenham's algorithm in 3d. Adapted from the following source:

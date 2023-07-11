@@ -2,7 +2,7 @@ import numpy as np
 from amulet.api.block import Block
 from tqdm import tqdm
 
-from scripts.util import seed_setup
+from scripts.helpers import seed_setup
 
 
 def flood_replace(seed, level, find_block, replace_block, min_height, max_height, game_version=("java", (1, 19, 4))):

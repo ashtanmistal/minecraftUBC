@@ -29,8 +29,8 @@ for x in tqdm(range(x_min, x_max, 16)):
             continue
         except ChunkLoadError:
             continue
-        universal_bedrock, universal_bedrock_entity, universal_bedrock_extra = level.translation_manager.get_version("java", (
-            1, 19, 4)).block.to_universal(bedrock)
+        universal_bedrock, universal_bedrock_entity, universal_bedrock_extra = level.translation_manager.get_version(
+            "java", (1, 19, 4)).block.to_universal(bedrock)
         bedrock_block_id = level.block_palette.get_add_block(universal_bedrock)
         if chunk.blocks[0, -64, 0] == bedrock_block_id:
             continue

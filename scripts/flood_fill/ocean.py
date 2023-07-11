@@ -7,7 +7,7 @@ from amulet.api.chunk import Chunk
 from amulet.api.errors import ChunkDoesNotExist
 from tqdm import tqdm
 
-from scripts.util import region_setup
+from scripts.helpers import region_setup
 
 
 def main():

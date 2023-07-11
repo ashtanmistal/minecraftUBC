@@ -2,7 +2,7 @@ import numpy as np
 from amulet.api.block import Block
 from tqdm import tqdm
 
-from scripts.util import seed_setup
+from scripts.helpers import seed_setup
 
 
 def hole_filler(points_to_fill, level, single=False):

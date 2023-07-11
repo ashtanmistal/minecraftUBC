@@ -19,9 +19,9 @@ from tqdm import tqdm
 from scripts.lidar.lidar_surface_reconstruction import rotate_dataset, x_offset, y_offset, z_offset
 from sklearn.cluster import MeanShift
 
-
 MIN_BIN_FREQUENCY = 5
 N_JOBS = -1
+
 
 def transform_dataset(ds, start_time):
     """
@@ -81,7 +81,7 @@ def handle_chunk(chunk, x, y, z, red, green, blue):
     :param red: the red values of the chunk
     :param green: the green values of the chunk
     :param blue: the blue values of the chunk
-    :return: the chunk with the tree trunks placed
+    :return: the chunk with the tree trunks, branches, and leaves placed
     """
 
     # perform horizontal mean shift clustering algorithm with vertical strata analysis
@@ -98,7 +98,7 @@ def handle_chunk(chunk, x, y, z, red, green, blue):
 
 
 def main():
-    lidar_path = "../../LiDAR LAS Data/las"
+    lidar_path = "../../resources/LiDAR LAS Data/las"
     start_time = time.time()
     for filename in os.listdir(lidar_path):
         if filename.endswith(".las"):

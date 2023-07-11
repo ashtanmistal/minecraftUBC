@@ -21,11 +21,10 @@ from amulet.utils import block_coords_to_chunk_coords
 from scipy.spatial import QhullError, ConvexHull
 from tqdm import tqdm
 
-from scripts.util import bresenham_2d
+from scripts.helpers import bresenham_2d
 
 min_height = -64
 default_block = Block("minecraft", "stone")
-game_version = ("java", (1, 19, 4))
 x_offset = 480000
 y_offset = 5455000
 z_offset = 59

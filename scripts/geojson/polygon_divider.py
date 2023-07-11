@@ -6,7 +6,7 @@ operations.
 
 import numpy as np
 
-from scripts.util import bresenham_2d, convert_lat_long_to_x_z
+from scripts.helpers import bresenham_2d, convert_lat_long_to_x_z
 
 x_cutoff_max = 5200
 z_cutoff_max = 2800
@@ -93,7 +93,7 @@ def primary_vertices_divider(vertices: list):
 
     large_matrix = np.zeros((max_x + 1, max_z + 1), dtype=bool)
     # Now we need to iterate through the vertices and use bresenham to draw lines between them. We will use the
-    # bresenham_2d function from the util.py script. We will write our own flood fill algorithm
+    # bresenham_2d function from the helpers.py script. We will write our own flood fill algorithm
     for i in range(len(translated_vertices[0]) - 1):
         x0, z0 = translated_vertices[:, i]
         x1, z1 = translated_vertices[:, i + 1]

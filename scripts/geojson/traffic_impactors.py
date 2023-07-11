@@ -12,7 +12,7 @@ from amulet.api.errors import ChunkDoesNotExist
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-from scripts.util import bresenham_2d, convert_lat_long_to_x_z
+from scripts.helpers import bresenham_2d, convert_lat_long_to_x_z
 
 game_version = ("java", (1, 19, 4))
 

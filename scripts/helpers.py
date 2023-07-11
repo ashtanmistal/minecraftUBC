@@ -1,17 +1,9 @@
-import math
-
 import amulet
 import numpy as np
 import pyproj
 from amulet.utils import block_coords_to_chunk_coords
 
-rotation_degrees = 28.000  # This is the rotation of UBC's roads relative to true north.
-rotation = math.radians(rotation_degrees)
-inverse_rotation_matrix = np.array([[math.cos(rotation), math.sin(rotation), 0],
-                                    [-math.sin(rotation), math.cos(rotation), 0],
-                                    [0, 0, 1]])
-x_offset = 480000
-z_offset = 5455000
+from scripts.utils import inverse_rotation_matrix, x_offset, z_offset
 
 
 def convert_lat_long_to_x_z(lat, long):

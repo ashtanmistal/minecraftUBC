@@ -10,7 +10,7 @@ from amulet.api.block import Block
 from tqdm import tqdm
 
 from hole_filler import hole_filler
-from scripts.util import region_setup
+from scripts.helpers import region_setup
 
 
 def main():

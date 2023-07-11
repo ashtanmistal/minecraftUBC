@@ -5,41 +5,18 @@ iterating through each chunk and checking what blocks are void. If there is a vo
 fill in the void.
 """
 
-from hole_filler import hole_filler
-
-import amulet
 import numpy as np
 from amulet.api.block import Block
 from tqdm import tqdm
-from amulet.utils import block_coords_to_chunk_coords
+
+from hole_filler import hole_filler
+from scripts.util import region_setup
 
 
 def main():
     min_height = -64
     air_block = Block("minecraft", "air")
-    level = amulet.load_level("world/UBC")
-    prompt = input("starting coordinate: ")
-    start = prompt.split(" ")
-    if start[0] == "/tp":
-        start = start[1:]
-    start = [float(coord) for coord in start]
-    # we only need x and z; ignore y
-    start = start[::2]
-    start = np.array(start)
-    prompt = input("ending coordinate: ")
-    end = prompt.split(" ")
-    if end[0] == "/tp":
-        end = end[1:]
-    end = [float(coord) for coord in end]
-    end = end[::2]
-    end = np.array(end)
-    # get the chunk coordinates of the start and end points
-    cx, cz = block_coords_to_chunk_coords(start[0], start[1])
-    cx2, cz2 = block_coords_to_chunk_coords(end[0], end[1])
-    if cx > cx2:
-        cx, cx2 = cx2, cx
-    if cz > cz2:
-        cz, cz2 = cz2, cz
+    cx, cx2, cz, cz2, level = region_setup()
 
     for chunk_x in tqdm(range(cx, cx2 + 1)):
         for chunk_z in range(cz, cz2 + 1):

@@ -10,6 +10,34 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\resources\geojson_ubcv\locations\csv\ubcv_address.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\locations\csv\ubcv_address_mailing.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\locations\csv\ubcv_buildings.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\locations\csv\ubcv_buildings_simple.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\resources\geojson_ubcv\locations\csv\ubcv_poi.csv">
           <value>
             <Attribute>

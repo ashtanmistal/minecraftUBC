@@ -6,10 +6,12 @@ operations.
 
 import numpy as np
 
-from scripts.geojson.helpers import bresenham_2d, convert_lat_long_to_x_z
+from scripts.util import bresenham_2d, convert_lat_long_to_x_z
 
 x_cutoff_max = 5200
 z_cutoff_max = 2800
+
+
 # x_cutoff_max = 2304
 # x_cutoff_min = 1792
 # z_cutoff_min = 256
@@ -91,7 +93,7 @@ def primary_vertices_divider(vertices: list):
 
     large_matrix = np.zeros((max_x + 1, max_z + 1), dtype=bool)
     # Now we need to iterate through the vertices and use bresenham to draw lines between them. We will use the
-    # bresenham_2d function from the helpers.py script. We will write our own flood fill algorithm
+    # bresenham_2d function from the util.py script. We will write our own flood fill algorithm
     for i in range(len(translated_vertices[0]) - 1):
         x0, z0 = translated_vertices[:, i]
         x1, z1 = translated_vertices[:, i + 1]
@@ -169,7 +171,6 @@ def secondary_vertices_divider(vertices: list, large_matrix, min_x, min_z):
 
 
 def polygon_divider(coordinates):
-
     # if it contains just one array, then it is a polygon. If it contains multiple arrays, then it is a multipolygon.
     # we need to voxelize this polygon
     large_matrix, min_x, min_z = primary_vertices_divider(coordinates[0])
@@ -191,7 +192,8 @@ def polygon_divider(coordinates):
         offset_min = min_x % 16, (min_z % 16)
     else:
         offset_min = min_x % 16, min_z % 16
-    large_matrix = np.pad(large_matrix, ((offset_min[0], 0), (offset_min[1], 0)), mode="constant", constant_values=False)
+    large_matrix = np.pad(large_matrix, ((offset_min[0], 0), (offset_min[1], 0)), mode="constant",
+                          constant_values=False)
     # min_x was the offset to the actual world data from 0,0 of the matrix. Now that we've changed 0,0 we need to update
     # min_x and min_z
     min_x -= offset_min[0]

@@ -1,8 +1,9 @@
 import math
 
+import amulet
 import numpy as np
 import pyproj
-
+from amulet.utils import block_coords_to_chunk_coords
 
 rotation_degrees = 28.000  # This is the rotation of UBC's roads relative to true north.
 rotation = math.radians(rotation_degrees)
@@ -64,52 +65,32 @@ def bresenham_3d(x1, y1, z1, x2, y2, z2):
 
     # Driving axis is X-axis
     if dx >= dy and dx >= dz:
-        p1 = 2 * dy - dx
-        p2 = 2 * dz - dx
-        while x1 != x2:
-            x1 += xs
-            if p1 >= 0:
-                y1 += ys
-                p1 -= 2 * dx
-            if p2 >= 0:
-                z1 += zs
-                p2 -= 2 * dx
-            p1 += 2 * dy
-            p2 += 2 * dz
-            list_of_points.append((x1, y1, z1))
+        bresenham_driver(dx, dy, dz, list_of_points, x1, x2, xs, y1, ys, z1, zs)
 
     # Driving axis is Y-axis
     elif dy >= dx and dy >= dz:
-        p1 = 2 * dx - dy
-        p2 = 2 * dz - dy
-        while y1 != y2:
-            y1 += ys
-            if p1 >= 0:
-                x1 += xs
-                p1 -= 2 * dy
-            if p2 >= 0:
-                z1 += zs
-                p2 -= 2 * dy
-            p1 += 2 * dx
-            p2 += 2 * dz
-            list_of_points.append((x1, y1, z1))
+        bresenham_driver(dy, dx, dz, list_of_points, x1, y2, ys, y1, xs, z1, zs)
 
     # Driving axis is Z-axis
     else:
-        p1 = 2 * dy - dz
-        p2 = 2 * dx - dz
-        while z1 != z2:
-            z1 += zs
-            if p1 >= 0:
-                y1 += ys
-                p1 -= 2 * dz
-            if p2 >= 0:
-                x1 += xs
-                p2 -= 2 * dz
-            p1 += 2 * dy
-            p2 += 2 * dx
-            list_of_points.append((x1, y1, z1))
+        bresenham_driver(dz, dy, dx, list_of_points, x1, z2, zs, y1, ys, z1, xs)
     return list_of_points
+
+
+def bresenham_driver(dx, dy, dz, list_of_points, x1, x2, xs, y1, ys, z1, zs):
+    p1 = 2 * dy - dx
+    p2 = 2 * dz - dx
+    while x1 != x2:
+        x1 += xs
+        if p1 >= 0:
+            y1 += ys
+            p1 -= 2 * dx
+        if p2 >= 0:
+            z1 += zs
+            p2 -= 2 * dx
+        p1 += 2 * dy
+        p2 += 2 * dz
+        list_of_points.append((x1, y1, z1))
 
 
 def bresenham_2d(x1, y1, x2, y2):
@@ -159,3 +140,46 @@ def bresenham_2d(x1, y1, x2, y2):
             p1 += 2 * dx
             list_of_points.append((x1, y1))
     return list_of_points
+
+
+def region_setup():
+    level = amulet.load_level("world/UBC")
+    prompt = input("starting coordinate: ")
+    start = prompt.split(" ")
+    if start[0] == "/tp":
+        start = start[1:]
+    start = [float(coord) for coord in start]
+    # we only need x and z; ignore y
+    start = start[::2]
+    start = np.array(start)
+    prompt = input("ending coordinate: ")
+    end = prompt.split(" ")
+    if end[0] == "/tp":
+        end = end[1:]
+    end = [float(coord) for coord in end]
+    end = end[::2]
+    end = np.array(end)
+    # get the chunk coordinates of the start and end points
+    cx, cz = block_coords_to_chunk_coords(start[0], start[1])
+    cx2, cz2 = block_coords_to_chunk_coords(end[0], end[1])
+    if cx > cx2:
+        cx, cx2 = cx2, cx
+    if cz > cz2:
+        cz, cz2 = cz2, cz
+    return cx, cx2, cz, cz2, level
+
+
+def seed_setup():
+    level = amulet.load_level("world/UBC")
+    # Select a region to fill in
+    prompt = "Enter the coordinates of the region to fill in  (i.e. '/tp 1738.5 200 -466.5')"
+    print(prompt)
+    coords = input("Coordinates: ").split(" ")
+    # get rid of the /tp part if it exists
+    if coords[0] == "/tp":
+        coords = coords[1:]
+    coords = [float(coord) for coord in coords]
+    # we only need x and z; ignore y
+    coords = coords[::2]
+    points_to_fill = np.array(coords)
+    return level, points_to_fill

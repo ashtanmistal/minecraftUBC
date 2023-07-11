@@ -3,7 +3,7 @@ import amulet
 from amulet.api.block import Block
 from amulet.api.errors import ChunkLoadError
 from tqdm import tqdm
-from scripts.geojson.helpers import bresenham_3d, convert_lat_long_to_x_z
+from scripts.util import bresenham_3d, convert_lat_long_to_x_z
 from scripts.deprecated.geojson.sidewalk_placer import game_version
 from scripts.deprecated.geojson.sidewalk_placer import get_height_of_point, translate_line_segment
 
@@ -75,8 +75,8 @@ def convert_feature(feature, level):
 
 
 def main():
-    level = amulet.load_level("../../world/UBC")
-    sidewalk_data_path = "../../resources/ubc_roads/Data/ubcv_roads.geojson"
+    level = amulet.load_level("/world/UBC")
+    sidewalk_data_path = "/resources/ubc_roads/Data/ubcv_roads.geojson"
     with open(sidewalk_data_path) as road_data_file:
         road_data = json.load(road_data_file)
 

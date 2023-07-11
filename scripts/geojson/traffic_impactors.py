@@ -12,11 +12,11 @@ from amulet.api.errors import ChunkDoesNotExist
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-from scripts.geojson.helpers import bresenham_2d, convert_lat_long_to_x_z
+from scripts.util import bresenham_2d, convert_lat_long_to_x_z
 
 game_version = ("java", (1, 19, 4))
 
-json_path = "../../resources/BC_Road_Data_Selected.geojson"
+json_path = "/resources/BC_Road_Data_Selected.geojson"
 
 MAX_PERPENDICULAR_SEARCH_DISTANCE = 20
 IMPACTOR_DISTANCE = 10
@@ -289,7 +289,7 @@ def get_height(x, z, level, blocks_to_ignore=None):
 
 
 def main():
-    level = amulet.load_level("../../world/UBC")
+    level = amulet.load_level("/world/UBC")
     with open(json_path) as f:
         data = json.load(f)
 

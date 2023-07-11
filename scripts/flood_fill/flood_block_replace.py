@@ -1,9 +1,8 @@
-import random
-
-import amulet
 import numpy as np
 from amulet.api.block import Block
 from tqdm import tqdm
+
+from scripts.util import seed_setup
 
 
 def flood_replace(seed, level, find_block, replace_block, min_height, max_height, game_version=("java", (1, 19, 4))):
@@ -63,17 +62,7 @@ def flood_replace(seed, level, find_block, replace_block, min_height, max_height
 
 def main():
     while True:
-        level = amulet.load_level("world/UBC")
-        prompt = "Enter the coordinates of the region to fill in  (i.e. '/tp 1738.5 200 -466.5')"
-        print(prompt)
-        coords = input("Coordinates: ").split(" ")
-        # get rid of the /tp part if it exists
-        if coords[0] == "/tp":
-            coords = coords[1:]
-        coords = [float(coord) for coord in coords]
-        # we only need x and z; ignore y
-        coords = coords[::2]
-        points_to_fill = np.array(coords)
+        level, points_to_fill = seed_setup()
         input_block = Block("minecraft", "smooth_red_sandstone")
         output_block = Block("minecraft", "dirt")
         min_height = input("Enter the minimum height to replace blocks at: ")

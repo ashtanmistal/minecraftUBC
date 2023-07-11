@@ -15,7 +15,7 @@ from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 from amulet_nbt import StringTag
 
-json_path = "../../resources/streetlights_json.geojson"
+json_path = "/resources/streetlights_json.geojson"
 min_height = -20
 max_height = 45
 game_version = ("java", (1, 19, 4))
@@ -67,15 +67,15 @@ def streetlight_handler():
     """
     This function handles the streetlight geojson file, which contains the location of streetlights in the landscape.
     The data is given in EPSG:26910 (UTM zone 10N) coordinates, so it is converted to the Minecraft coordinate system
-    by adjusting the offsets and applying the rotation matrix. Afterwards, the terrain height is determined and the preset
-    streetlight configuration is placed in the world dependent on the LAYER attribute of the feature.
+    by adjusting the offsets and applying the rotation matrix. Afterwards, the terrain height is determined and the
+    preset streetlight configuration is placed in the world dependent on the LAYER attribute of the feature.
     :return: None
     """
     # load the geojson file
     with open(json_path) as f:
         data = json.load(f)
 
-    level = amulet.load_level("../../world/UBC")
+    level = amulet.load_level("/world/UBC")
     # iterate through the features
     for feature in tqdm(data["features"]):
         # get the layer attribute

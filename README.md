@@ -12,13 +12,13 @@ Table of Contents:
 
 The UBC Minecraft Project is a project that aims to recreate the UBC Vancouver Campus inside a Minecraft world, in a 1:1 scale. The project is currently a collaboration between Ashtan Mistal and the UBC Electrical and Computer Engineering Student Society, with a team of builders assembled from various social media platforms.
 
-It's built by manipulating LiDAR data (available [here](https://opendata.vancouver.ca/explore/dataset/lidar-2022/information/)) into Minecraft blocks. The exact pipeline is described in the [transformation pipeline document](https://github.com/ashtanmistal/minecraftUBC/blob/master/transformation_pipeline.md). Then, details such as accurate wall coloring, windows, and other details are manually added. It's therefore a full 1:1 scale recreation, to the extent that Minecraft allows. 
+It's built by manipulating LiDAR data (available [here](https://opendata.vancouver.ca/explore/dataset/lidar-2022/information/)) into Minecraft blocks. The exact pipeline is described in the [transformation pipeline document](docs/transformation_pipeline.md). Then, details such as accurate wall coloring, windows, and other details are manually added. It's therefore a full 1:1 scale recreation, to the extent that Minecraft allows. 
 
 Right now, the project is available as a world download (see below), and is also hosted on a public server (see the [Discord server](https://discord.gg/FqbDJNPgDu) for the link). 
 
 It is intended to be used as a platform for students to explore the campus, and has a potential for event hosting once it is completed. It'll allow students new to UBC to explore the campus and get a feel for the campus before they arrive, and students who are currently studying at UBC to explore in a new way.
 
-Read a bit more about the project and its current progress in the [planning documentation](https://github.com/ashtanmistal/minecraftUBC/blob/master/planning/planning.md). **Interested in helping? Read through the planning document, and then join the [Discord server](https://discord.gg/FqbDJNPgDu) to get in touch with me and other builders, and for more project updates.**
+Read a bit more about the project and its current progress in the [planning documentation](docs/planning.md). **Interested in helping? Read through the planning document, and then join the [Discord server](https://discord.gg/FqbDJNPgDu) to get in touch with me and other builders, and for more project updates.**
 
 ## Download
 
@@ -58,7 +58,7 @@ ___
 - I want to build some buildings! How do I get started?
   - Join the [Discord server](https://discord.gg/FqbDJNPgDu) and we'll get you set up.
 - I want to help out, but I don't want to build buildings. What else can I do?
-  - There's lots of other things to do! See the [planning document](https://github.com/ashtanmistal/minecraftUBC/blob/master/planning/planning.md) for a list of things to do. Mainly it's finding some floor plans and putting them in the spreadsheet, or finding some photos of areas Google Maps doesn't capture. 
+  - There's lots of other things to do! See the [planning document](docs/planning.md) for a list of things to do. Mainly it's finding some floor plans and putting them in the spreadsheet, or finding some photos of areas Google Maps doesn't capture. 
 - Why are there lots of holes in the ground?
   - The LiDAR data is not perfect, and there are lots of holes in the data. I'm working on a way to fill in these holes automatically, but it's a slow process. Right now I'm just filling in the holes by hand as I go along but not worrying about it too much.
 - Why are there lots of floating trees?
@@ -66,7 +66,7 @@ ___
 - Some of the buildings only have partial walls. Why?
   - See "holes in the ground" above. This doesn't matter too much as the LiDAR data just provides a useful skeleton for the buildings, and the rest is built by hand (using WorldEdit).
 
-Many of the FAQ questions will be resolved in the second iteration of the terrain transformation pipeline, which you can read about [here](https://github.com/ashtanmistal/minecraftUBC/blob/master/transformation_pipeline.md). 
+Many of the FAQ questions will be resolved in the second iteration of the terrain transformation pipeline, which you can read about [here](docs/transformation_pipeline.md). 
 
 ## Project History
 

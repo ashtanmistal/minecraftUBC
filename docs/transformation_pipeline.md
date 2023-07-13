@@ -53,15 +53,19 @@ The first iteration was a moderate success, and created a playable world for peo
 
 The second iteration aims to resolve these errors through a geometric modelling based approach, and relying more heavily on the available geodata, which would select a more accurate block palette than the first iteration, which was affected by shadows and other factors. This second iteration is still a work in progress. Any buildings that were improved by hand in the first iteration will be copied over.
 
-## Creation of a TIN and a voxelized DEM
+## Creation of a voxelized and colorized DEM
 
-First, we take the LiDAR data, extract only the ground information, and transform it into a triangulated irregular network (TIN). Though this loses the color data, it efficiently stores vertices needed for voxelization. This network we then treat as an open manifold mesh, where the goal is then to close the mesh: To do this, we also know that there exists a plane beneath the current mesh (The bedrock layer, as well as a couple layers above). We then want to take the boundary edges and add vertices and edges vertically until this plane is reached; after which, we connect the points that are touching the plane to create a closed manifold mesh. This closed mesh is easy to voxelize; numerous algorithms exist for such a task already.
+In order for us to have an accurate, hole-free world, we need to write a surface reconstruction pipeline for processing the data into a voxelized DEM. A few options were considered for this, namely the creation of a triangulated irregular network (TIN) and voxelizing that. However, given the next step of voxelization, it was a waste of computational power to create a TIN and then voxelize it. As a result, the following pipeline was used:
+- For each chunk, we can calculate the 2d convex hull of the points within. This ensures that the beach and other edges are properly defined, and also filling in some of the smaller within-chunk holes in the data.
+- For points in the convex hull that did have associated heights, the blocks were placed accordingly. Otherwise, the height of a given point was calculated using a weighted nearest neighbours approach, where the 3 closest points in the chunk were selected. Beneath the maximum height all blocks until the minimum height were placed to close and fill in the mesh. 
+- A few denoising steps were performed to fill in the remaining holes in the mesh:
+  - First, any chunk that had less than 16/256 missing blocks was filled in completely with the same weighted nearest neighbours approach. This took care of the larger amount of speckled holes in the mesh.
+  - A flood fill algorithm was implemented to fill in the larger holes that were not caught by the previous denoising algorithms. This catches things like the missing ground data beneath buildings, where entire chunks were sparse in data. This flood fill was expanded to a "region fill", which bounded a user-selected rectangular region and filled in all holes within that region. This flood fill was performed on the bulk of the campus, on areas where the chunks did not intersect the ocean. For the flood fill, the heights were calculated using the same approach, taking into account points that were added to the mesh during flood fill to prevent the mesh from being too jagged.
 
-Once that's done, we need to take the orthophotos and perform a Gaussian blur such that we have a reduced number of points per square meter.
-
-We also have the polygons that are defined in the geodata: We want to voxelize this polygon in a smart manner, and get a set of all voxels that are inside this polygon. Based on various polygon attributes (i.e. landscape information), we can match the orthographic image data within that voxel (now only a few pixels to compare after blurring) to determine the block type, if not already set by the polygon attributes. That defines the block type for every ground block. 
-
-This provides a voxelized, colorized digital elevation model (DEM) of the surface. 
+The next significant step is taking the full DEM of campus and colorizing it. There are geospatial datasets outlining the land use of campus to a significant detail, which allowed for the colorization of the DEM. The following steps were taken to colorize the DEM:
+- The geospatial data was converted into a voxelized polygon, and the points inside the polygon were selected via a flood fill. The seed for the flood fill was determined through a simple ray cast, until a point guaranteed to be inside the polygon was found. The flood fill selected the remaining points inside the polygon, and the block type was set accordingly, either through a set block or a random selection. 
+  - The flood fill worked for almost all polygons, except for ones that were skinny, where the flood fill would be stopped early due to the voxelization of the polygon. These cases were low in number and were faster to fix manually, though it could be fixed by selecting either a finer grain of voxelization prior to flood fill (and coarser after) or by using a different algorithm. 
+- Block types were selected based on various attributes of the polygon, such as land use, type, and material. See `scripts/geojson/landscaper.py` for the implementation details and the list of datasets used in the colorization process.
 
 ___
 

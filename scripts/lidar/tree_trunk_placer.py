@@ -11,18 +11,17 @@ import amulet
 import numpy as np
 from amulet import Block
 from amulet.utils import block_coords_to_chunk_coords
+from amulet_nbt import StringTag
 from sklearn.cluster import MeanShift, DBSCAN
 from tqdm import tqdm
 
-from scripts.helpers import get_height, dataset_iterator, bresenham_3d
+from scripts.helpers import dataset_iterator, bresenham_3d, min_height, max_height
 from scripts.lidar.lidar_surface_reconstruction import rotate_dataset, x_offset, y_offset, z_offset
 
-MIN_BIN_FREQUENCY = 5
+MIN_BIN_FREQUENCY = 3
 
 trunk_block = Block("minecraft", "spruce_log")
-leaves_block = Block("minecraft", "spruce_leaves")
-
-
+leaves_block = Block("minecraft", "spruce_leaves", {"persistent": StringTag("true")})
 # We'll use spruce as it's what most of the trees in PSRP are -- campus trees can be adjusted later using a modified
 # flood fill algorithm
 
@@ -66,7 +65,7 @@ def transform_dataset(ds, start_time):
             if len(chunk_indices[0]) == 0:
                 continue
             chunk = level.get_chunk(cx, cz, "minecraft:overworld")
-            chunk = handle_chunk(chunk, x[chunk_indices], y[chunk_indices], z[chunk_indices], level, trunk_block_id,
+            chunk = handle_chunk(chunk, x[chunk_indices], y[chunk_indices], z[chunk_indices], trunk_block_id,
                                  leaves_block_id)
             level.put_chunk(chunk, "minecraft:overworld")
     print("Time taken: " + str(time.time() - start_time))
@@ -75,7 +74,7 @@ def transform_dataset(ds, start_time):
     print("Saved: " + str(time.time() - start_time))
 
 
-def handle_chunk(chunk, x, y, z, level, trunk_block_id, leaves_block_id):
+def handle_chunk(chunk, x, y, z, trunk_block_id, leaves_block_id):
     """
     Handles the given chunk by performing the horizontal mean shift clustering algorithm with vertical strata analysis
     to determine the tree trunk locations. The tree trunk locations are then saved both into the world and to an array,
@@ -85,7 +84,6 @@ def handle_chunk(chunk, x, y, z, level, trunk_block_id, leaves_block_id):
     :param x: the x coordinates of the chunk
     :param y: the y coordinates of the chunk
     :param z: the z coordinates of the chunk
-    :param level: the Minecraft world
     :param trunk_block_id: the block ID of the trunk block
     :param leaves_block_id: the block ID of the leaves block
     :return: the chunk with the tree trunks, branches, and leaves placed
@@ -104,9 +102,9 @@ def handle_chunk(chunk, x, y, z, level, trunk_block_id, leaves_block_id):
                     z < cz * 16 + iz + 1))
             # if len(indices[0]) == 0:
             #     continue
-            height = get_height(cx * 16 + ix, cz * 16 + iz, level)
-            y[indices] -= (height - 1)
-            ground_heights[ix, iz] = height
+            dem_height = np.argmin(chunk.blocks[ix, min_height:max_height, iz] == 0) - 1
+            y[indices] -= dem_height
+            ground_heights[ix, iz] = dem_height
     # We should remove outliers now. Any point with a height of less than or equal to 1 is too close to the ground to be
     # useful to us.
     delete_indices = np.where(y <= 1)
@@ -115,35 +113,37 @@ def handle_chunk(chunk, x, y, z, level, trunk_block_id, leaves_block_id):
     if len(x) == 0 or len(y) == 0 or len(z) == 0:
         return chunk
 
+    for x_point, y_point, z_point in zip(x, y, z):
+        ix, iz = int(x_point - cx * 16), int(z_point - cz * 16)
+        chunk.blocks[ix, int(y_point + ground_heights[ix, iz]), iz] = leaves_block_id
+    chunk.changed = True
+
     # The study we're basing this off of also removed points with an above-ground height greater than three standard
     # deviations above the mean. We don't need to do the same, as the LiDAR dataset we're working with has sufficient
     # denoising already done.
 
     # Now the horizontal mean shift clustering means that instead of providing the heights of the points, we need to
     # just provide the x and z axes. The MeanShift algorithm itself performs the binning and density estimation.
-    ms = MeanShift(bin_seeding=True, min_bin_freq=MIN_BIN_FREQUENCY)
-    ms.fit(np.array([x, z]).T)
-    ms_labels = ms.labels_
-    cluster_centers = ms.cluster_centers_
+
+    # We should only perform mean shift if the number of points is greater than twice the minimum bin frequency.
+    # Otherwise, we can just skip this step.
+    if len(x) < 2 * MIN_BIN_FREQUENCY:
+        return chunk
+    try:
+        ms = MeanShift(bin_seeding=True, min_bin_freq=MIN_BIN_FREQUENCY, n_jobs=6)
+        ms.fit(np.array([x, z]).T)
+        ms_labels = ms.labels_
+        cluster_centers = ms.cluster_centers_
+    except ValueError:
+        return chunk
     # TODO if this step does not take long, run this multiple times and average the results.
     #  Will need to profile this script first.
-
-    # # let's plot the 2d clusters
-    # plt.scatter(x, z, c=ms_labels, s=50, cmap='viridis')
-    # plt.scatter(cluster_centers[:, 0], cluster_centers[:, 1], c='black', s=200, alpha=0.5)
-    # plt.show()
-    #
-    # # aaaaand the 3d clusters
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-    # ax.scatter(x, z, y, c=ms_labels, s=50, cmap='viridis')
-    # ax.scatter(cluster_centers[:, 0], cluster_centers[:, 1], 0, c='black', s=200, alpha=0.5)
-    # plt.show()
 
     # Now we need to do the vertical strata analysis.
     crown_clusters, non_ground_points, tree_cluster_centers, tree_clusters = vertical_strata_analysis(cluster_centers,
                                                                                                       ms_labels,
                                                                                                       x, y, z)
+
     # Now we need to assign the crown clusters to the nearest tree cluster
     # If there are no tree clusters then we can just skip this step
     if len(tree_clusters) > 0:
@@ -179,12 +179,6 @@ def handle_chunk(chunk, x, y, z, level, trunk_block_id, leaves_block_id):
         # the tree trunk, and the cluster center.
         chunk = create_branches(x, original_y, z, ms_labels, cluster_centers, cluster_heights, chunk, trunk_block_id,
                                 ground_heights)
-    # TODO we can truncate and take only unique leaves to avoid setting the same block multiple times
-    # and the leaves
-    for x_point, y_point, z_point in zip(x, original_y, z):
-        ix, iz = int(x_point - cx * 16), int(z_point - cz * 16)
-        chunk.blocks[ix, int(y_point), iz] = leaves_block_id
-    chunk.changed = True
 
     return chunk
 
@@ -214,7 +208,7 @@ def create_branches(x, y, z, ms_labels, cluster_centers, cluster_heights, chunk,
         if len(cluster_x) > min_samples:
             # we want to perform a 3d DBSCAN on the cluster
             cluster_points = np.array([cluster_x, cluster_y, cluster_z]).T
-            db = DBSCAN(eps=epsilon, min_samples=min_samples, metric='euclidean').fit(cluster_points)
+            db = DBSCAN(eps=epsilon, min_samples=min_samples, metric='euclidean', n_jobs=6).fit(cluster_points)
             labels = db.labels_
             core_samples = db.core_sample_indices_
             # Now for every unique label that's not -1, we want to get the core points that correspond to it
@@ -230,7 +224,7 @@ def create_branches(x, y, z, ms_labels, cluster_centers, cluster_heights, chunk,
                 # As such we just need to draw a line between the centroid and the trunk (with the height on the trunk
                 # being the variable to optimize)
                 distances = []
-                for height in np.arange(cluster_height):
+                for height in np.arange(centroid[2] - 2, centroid[2] + 2, 1):  # Even more constrained for faster results
                     # the first vertex is just the centroid itself
                     # the second vertex is the trunk point
                     trunk_point = np.array([cluster_center[0], height, cluster_center[1]])
@@ -300,4 +294,5 @@ def vertical_strata_analysis(cluster_centers, meanshift_labels, x, y, z):
 
 if __name__ == "__main__":
     lidar_path = r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC\resources\LiDAR LAS Data\las"
-    dataset_iterator(lidar_path, transform_dataset)
+    finished_datasets = ["480000_5455000.las"]
+    dataset_iterator(lidar_path, transform_dataset, finished_datasets)

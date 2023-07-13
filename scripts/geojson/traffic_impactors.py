@@ -9,10 +9,9 @@ import amulet
 import numpy as np
 from amulet import Block
 from amulet.api.errors import ChunkDoesNotExist
-from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-from scripts.helpers import bresenham_2d, convert_lat_long_to_x_z
+from scripts.helpers import bresenham_2d, convert_lat_long_to_x_z, get_height
 
 game_version = ("java", (1, 19, 4))
 
@@ -20,8 +19,6 @@ json_path = "/resources/BC_Road_Data_Selected.geojson"
 
 MAX_PERPENDICULAR_SEARCH_DISTANCE = 20
 IMPACTOR_DISTANCE = 10
-min_height = -40
-max_height = 50
 
 yield_sign = [
     Block("minecraft", "polished_blackstone_wall"),
@@ -271,21 +268,6 @@ def convert_feature(feature, level):
     except ChunkDoesNotExist:
         pass
     # other errors we still want to raise
-
-
-def get_height(x, z, level, blocks_to_ignore=None):
-    if blocks_to_ignore is None:
-        blocks_to_ignore = []
-    cx, cz = block_coords_to_chunk_coords(x, z)
-    chunk = level.get_chunk(cx, cz, "minecraft:overworld")
-    block_ids_to_ignore = [level.block_palette.get_add_block(block) for block in blocks_to_ignore]
-    offset_x, offset_z = x % 16, z % 16
-    # so overall we want to ignore blocks that are != 0 and are not in the blocks_to_ignore list
-    for y in range(max_height, min_height, -1):
-        block = chunk.blocks[offset_x, y, offset_z]
-        if block not in block_ids_to_ignore and block != 0:
-            return y
-    return None
 
 
 def main():

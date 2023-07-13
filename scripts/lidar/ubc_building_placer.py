@@ -1,14 +1,13 @@
 import math
-import os
-import time
 
 import amulet
 import numpy as np
-import pylas
 from PIL import Image
 from amulet.api.block import Block
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from tqdm import tqdm
+
+from scripts.helpers import dataset_iterator
 
 game_version = ("java", (1, 19, 4))
 
@@ -114,11 +113,5 @@ def transform_dataset(ds):
 
 
 if __name__ == "__main__":
-    start_time = time.time()
-    lidar_dir = "/LiDAR LAS Data/las"
-    for filename in os.listdir(lidar_dir):
-        if filename.endswith(".las"):
-            dataset = pylas.read(os.path.join(lidar_dir, filename))
-            print("transforming chunks for", filename, time.time() - start_time)
-            transform_dataset(dataset)
-            print("done transforming chunks for", filename, time.time() - start_time)
+    lidar_dir = "/resources/LiDAR LAS Data/las"
+    dataset_iterator(lidar_dir, transform_dataset)

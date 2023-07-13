@@ -170,7 +170,7 @@ def handle_chunk(chunk, x, y, z, level, trunk_block_id, leaves_block_id):
 
         # let's place the trunks into the world
         for cluster_center, cluster_height in zip(cluster_centers, cluster_heights):
-            ix, iz = int(cluster_center[0]) - cx * 16, int(cluster_center[1]) - cz * 16
+            ix, iz = int(cluster_center[0] - cx * 16), int(cluster_center[1] - cz * 16)
             dem_height = ground_heights[ix, iz].astype(int)
             chunk.blocks[ix, int(dem_height):int(dem_height + cluster_height), iz] = trunk_block_id
         # Now it's time to create tree branches. The best way to do this is via DBSCAN. This will be done per tree,
@@ -220,7 +220,7 @@ def create_branches(x, y, z, ms_labels, cluster_centers, cluster_heights, chunk,
             # Now for every unique label that's not -1, we want to get the core points that correspond to it
             # Those core points are what we'll use to calculate the cluster center.
             core_sample_labels = labels[core_samples]
-            tree_height = dem_heights[int(cluster_center[0]) - cx * 16, int(cluster_center[1]) - cz * 16]
+            tree_height = dem_heights[int(cluster_center[0] - cx * 16), int(cluster_center[1] - cz * 16)]
             for label in np.unique(core_sample_labels):
                 centroid = np.average(cluster_points[np.where(core_sample_labels == label)], axis=0)
                 points_in_cluster = cluster_points[np.where(labels == label)]  # these are the points that we want to
@@ -241,7 +241,7 @@ def create_branches(x, y, z, ms_labels, cluster_centers, cluster_heights, chunk,
                     distances.append(np.sum(distance))
                 best_height = np.argmin(distances)
                 offset_x, offset_z = -cx * 16, -cz * 16
-                cluster_center_x = int(cluster_center[0]) + offset_x
+                cluster_center_x = int(cluster_center[0] + offset_x)
                 cluster_center_z = int(cluster_center[1] + offset_z)
                 centroid_x = int(centroid[0] + offset_x)
                 centroid_z = int(centroid[2] + offset_z)

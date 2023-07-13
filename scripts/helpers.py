@@ -221,16 +221,19 @@ def seed_setup():
     return level, points_to_fill
 
 
-def dataset_iterator(lidar_path, dataset_operation):
+def dataset_iterator(lidar_path, dataset_operation, finished_datasets=None):
     """
     Iterates through all the .las files in the given directory and applies the given decorator to each dataset.
     :param lidar_path: string path to the directory containing the .las files
     :param dataset_operation: function to apply to each dataset
+    :param finished_datasets: list of datasets that have already been processed
     :return: None
     """
+    if finished_datasets is None:
+        finished_datasets = []
     start_time = time.time()
     for filename in os.listdir(lidar_path):
-        if filename.endswith(".las"):
+        if filename.endswith(".las") and filename not in finished_datasets:
             dataset = pylas.read(os.path.join(lidar_path, filename))
             print("transforming chunks for", filename, time.time() - start_time)
             dataset_operation(dataset, start_time)

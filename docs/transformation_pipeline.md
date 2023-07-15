@@ -8,7 +8,7 @@ Table of Contents:
     - [Chunk processing](#chunk-processing)
   - [Road and Sidewalk Placement](#road-and-sidewalk-placement)
 - [Second Iteration](#second-iteration)
-  - [Creation of a TIN and a voxelized DEM](#creation-of-a-voxelized-and-colorized-dem)
+  - [Creation of a Voxelized and Colorized Digital Elevation Model](#creation-of-a-voxelized-and-colorized-digital-elevation-model)
   - [Road and Sidewalk Placement](#road-and-sidewalk-placement)
   - [Building Placement](#building-placement)
   - [Tree Handling](#tree-handling)
@@ -50,7 +50,7 @@ The first iteration was a moderate success, and created a playable world for peo
 
 The second iteration aimed to resolve these errors through a geometric modelling based approach, and relying more heavily on the available geodata, which would select a more accurate block palette than the first iteration, which was affected by shadows and other factors.
 
-## Creation of a voxelized and colorized DEM
+## Creation of a Voxelized and Colorized Digital Elevation Model
 
 In order for us to have an accurate, hole-free world, we need to write a surface reconstruction pipeline for processing the data into a voxelized DEM. A few options were considered for this, namely the creation of a triangulated irregular network (TIN) and voxelizing that. However, given the next step of voxelization right after, it was a waste of computational power to try and triangulate the mesh. As a result, a different surface reconstruction algorithm was created, which is outlined below:
 - For each chunk, we can calculate the 2d convex hull of the points within. This ensures that the beach and other edges are properly defined, and also filling in some of the smaller within-chunk holes in the data.
@@ -77,7 +77,7 @@ The geospatial datasets that were used to colorize the DEM placed all of the roa
 
 The next problem to tackle is placing buildings. Datapoint matching with the operational geospatial data was considered and attempted, however due to noise and trees overtop of buildings this approach was not as accurate as the approach in the first iteration. As a result, the same approach as the first iteration was taken for placing buildings. This method was to place buildings wherever there's classified LiDAR data, and matching the average point lighting information to a block type for a given meter.
 
-The color of the buildings was semi-automatically improved using a flood fill algorithm. A user selected a wall block type, roof block type, and starting seed, and the flood fill was performed. The flood fill was done column-based given the sparsity in some walls; an \[x,z\] point was added if any block in its column was a building block. This worked well for buildings with monochrome walls and/or roofs. This was not performed for all buildings and was done on an as-needed basis; buildings with a significant difference in visible block type within the walls or within the roof were not flood filled as the flood fill will not have sped up the manual building coloring process.
+The color of the buildings was semi-automatically improved using a flood fill algorithm. A user selected a wall block type, roof block type, and starting seed, and the flood fill was performed. The flood fill was done column-based given the sparsity in some walls; an [x,z] point was added if any block in its column was a building block. This worked well for buildings with monochrome walls and/or roofs. This was not performed for all buildings and was done on an as-needed basis; buildings with a significant difference in visible block type within the walls or within the roof were not flood filled as the flood fill will not have sped up the manual building coloring process.
 
 ___
 

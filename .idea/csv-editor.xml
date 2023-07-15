@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\resources\geojson_ubcv\landscape\metadata\ubcv_softlandscape.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\resources\geojson_ubcv\locations\csv\ubcv_address.csv">
           <value>
             <Attribute>

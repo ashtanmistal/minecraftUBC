@@ -73,7 +73,7 @@ def flood_replace(seed, level, find_blocks, replace_block, replace_roof_block, m
     wall_block_id = level.block_palette.get_add_block(wall_block)
     roof_block_id = level.block_palette.get_add_block(roof_block)
     while len(queue) > 0:
-        if len(visited_points) > 10000:
+        if len(visited_points) > 1000000:
             raise Exception("Too many points to fill. Did you close off the region?")
         point = queue.pop()
         point = ([int(point[0]), int(point[1])])
@@ -132,8 +132,8 @@ def main():
     # replace_roof_block = input()
     # print("Please enter the wall replacement block")
     # wall_block = input()
-    replace_roof_block = Block("minecraft", "deepslate_tile_stairs")
-    wall_block = Block("minecraft", "bricks")
+    replace_roof_block = Block("minecraft", "andesite")
+    wall_block = Block("minecraft", "light_gray_concrete")
     while True:
         print("Please enter the coordinates of the starting seed for the flood fill")
         coords = input("Coordinates: ")
@@ -149,7 +149,7 @@ def main():
                 coords = coords[1:]
             coords = [float(coord) for coord in coords]
             coords = coords[::2]
-        level = amulet.load_level("world/UBC")
+        level = amulet.load_level(r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC\world\UBC")
         # wall_block = Block.from_string_blockstate(wall_block)
         # replace_roof_block = Block.from_string_blockstate(replace_roof_block)
         flood_replace(coords, level, find_block_ids, wall_block, replace_roof_block, -34, 95)

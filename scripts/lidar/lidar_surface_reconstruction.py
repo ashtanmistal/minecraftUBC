@@ -8,12 +8,10 @@ of the three nearest points. Below the surface patch, the mesh is then closed by
 minimum y level in Minecraft.
 """
 import math
-import os
 import time
 
 import amulet
 import numpy as np
-import pylas
 from amulet.api.block import Block
 from amulet.api.chunk import Chunk
 from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
@@ -21,7 +19,7 @@ from amulet.utils import block_coords_to_chunk_coords
 from scipy.spatial import QhullError, ConvexHull
 from tqdm import tqdm
 
-from scripts.helpers import bresenham_2d
+from scripts.helpers import bresenham_2d, dataset_iterator
 
 min_height = -64
 default_block = Block("minecraft", "stone")
@@ -206,16 +204,6 @@ def transform_dataset(ds, start_time):
         print("Done saving level", time.time() - start_time)
 
 
-def main():
-    lidar_path = "/LiDAR LAS Data/las"
-    start_time = time.time()
-    for filename in os.listdir(lidar_path):
-        if filename.endswith(".las"):
-            dataset = pylas.read(os.path.join(lidar_path, filename))
-            print("transforming chunks for", filename, time.time() - start_time)
-            transform_dataset(dataset, start_time)
-            print("done transforming chunks for", filename, time.time() - start_time)
-
-
 if __name__ == "__main__":
-    main()
+    lidar_path = "/resources/LiDAR LAS Data/las"
+    dataset_iterator(lidar_path, transform_dataset)

@@ -111,7 +111,7 @@ def perform_tree_clustering(ds):
         else:
             tree_clusters.append(cluster)
             tree_cluster_centers.append(cluster_centers[cluster])
-    print("done vertical strata analysis", time.time() - start_time)
+    # print("done vertical strata analysis", time.time() - start_time)
     # Now we need to assign the crown clusters to the nearest tree cluster
     for cluster in tqdm(crown_clusters):
         cluster_indices = np.where(meanshift_labels == cluster)
@@ -129,7 +129,7 @@ def perform_tree_clustering(ds):
                 np.argmin(np.linalg.norm(np.array(candidate_cluster_centers) - point, axis=1))]
             # assign the point to that cluster
             meanshift_labels[cluster_indices] = nearest_cluster
-    print("done assigning crown clusters", time.time() - start_time)
+    # print("done assigning crown clusters", time.time() - start_time)
     # Re-calculate the cluster centers
     cluster_centers = []
     for cluster in tqdm(np.unique(meanshift_labels)):

@@ -29,7 +29,7 @@ def flood_replace(seed, level, find_block, replace_block, min_height, max_height
     queue = [seed]
     while len(queue) > 0:
         if len(visited_points) > 1000000:
-            raise Exception("Too many points to fill. Did you close off the region?")
+            raise ValueError("Too many points to fill. Did you close off the region?")
         point = queue.pop()
         point = ([int(point[0]), int(point[1])])
         # find the height of the top block just before we reach air

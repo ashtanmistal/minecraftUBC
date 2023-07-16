@@ -26,6 +26,9 @@ default_find_blocks = [
     Block("universal_minecraft", "iron_block"),
     Block("universal_minecraft", "deepslate_tiles")]
 
+MIN_HEIGHT = -34
+MAX_HEIGHT = 95
+
 
 def change_default_find_blocks(blocks_string):
     block_strings = blocks_string.split(",")
@@ -41,7 +44,7 @@ def change_default_replace_block(block_string):
     return Block.from_string_blockstate(block_string)
 
 
-def flood_replace(seed, level, find_blocks, replace_block, replace_roof_block, min_height, max_height):
+def flood_replace(seed, level, find_blocks, replace_block, replace_roof_block):
     """
         This function works similarly to the flood void filler, except that the user can select what block they'd
         like to replace, and what block they'd like to replace it with. This is useful for replacing blocks that
@@ -53,8 +56,6 @@ def flood_replace(seed, level, find_blocks, replace_block, replace_roof_block, m
         :param find_blocks: List of Block objects to replace
         :param replace_block: Block object to replace with
         :param replace_roof_block: Block object to replace roof blocks with
-        :param min_height: Minimum height to replace blocks at
-        :param max_height: Maximum height to replace blocks at
         :return: None
         """
 
@@ -81,17 +82,17 @@ def flood_replace(seed, level, find_blocks, replace_block, replace_roof_block, m
             continue
         cx, cz = block_coords_to_chunk_coords(point[0], point[1])
         chunk = level.get_chunk(cx, cz, "minecraft:overworld")
-        column = chunk.blocks[point[0] % 16, min_height:max_height, point[1] % 16]
+        column = chunk.blocks[point[0] % 16, MIN_HEIGHT:MAX_HEIGHT, point[1] % 16]
         # get the indices of the blocks that match the find block ids
         # right now column is still a 3d array of shape=(1, max_height - min_height, 1), so we need to flatten it
         column = np.array(column).flatten()
         indices = np.where(np.isin(column, find_block_ids))
         # add all the blocks in the indices to the wall blocks, except for the top one
         if len(indices[0]) > 0:
-            wall_blocks.extend([((point[0]), (min_height + index), (point[1])) for index in indices[0][:-1]])
+            wall_blocks.extend([((point[0]), (MIN_HEIGHT + index), (point[1])) for index in indices[0][:-1]])
             # add the top block to the roof blocks
 
-            roof_blocks.append(((point[0]), (min_height + indices[0][-1]), (point[1])))
+            roof_blocks.append(((point[0]), (MIN_HEIGHT + indices[0][-1]), (point[1])))
         else:
             continue  # if there are no blocks in the column that match the find block ids, we don't need to add
             # points to the queue

@@ -8,7 +8,6 @@ import pylas
 import pyproj
 from amulet.utils import block_coords_to_chunk_coords
 
-
 min_height = -64
 max_height = 100
 rotation_degrees = 28.000  # This is the rotation of UBC's roads relative to true north.
@@ -118,6 +117,7 @@ def bresenham_3d(x1, y1, z1, x2, y2, z2):
             p2 += 2 * dx
             list_of_points.append((x1, y1, z1))
     return list_of_points
+
 
 def bresenham_2d(x1, y1, x2, y2):
     """

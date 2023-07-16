@@ -8,8 +8,8 @@ import numpy as np
 
 from scripts.helpers import bresenham_2d, convert_lat_long_to_x_z
 
-x_cutoff_max = 5200
-z_cutoff_max = 2800
+X_CUTOFF_MAX = 5200
+Z_CUTOFF_MAX = 2800
 
 
 # x_cutoff_max = 2304
@@ -17,12 +17,12 @@ z_cutoff_max = 2800
 # z_cutoff_min = 256
 # z_cutoff_max = 1024
 
-def point_inside_polygon(x: int, z: int, matrix) -> bool:
+def point_inside_polygon(x_value: int, z_value: int, matrix) -> bool:
     """
-    This function takes in a point and a matrix and returns True if the point is inside the polygon and False
-    otherwise, via ray casting within the matrix.
-    :param x: point x to test
-    :param z: point z to test
+    This function takes in a point and a matrix and returns True if the point is inside the polygon and
+    False otherwise, via ray casting within the matrix.
+    :param x_value: point x to test
+    :param z_value: point z to test
     :param matrix: Matrix of boolean values where true represents a polygon edge
     :return: boolean value representing whether the point is inside the polygon
     """
@@ -31,15 +31,15 @@ def point_inside_polygon(x: int, z: int, matrix) -> bool:
     max_x, max_y = np.max(np.argwhere(matrix), axis=0)
     # traverse x from min to max until we find a false value
     outside_point = None
-    for x in range(min_x, max_x + 1):
-        if not matrix[x, min_y]:
-            outside_point = (x, min_y)
+    for x_value in range(min_x, max_x + 1):
+        if not matrix[x_value, min_y]:
+            outside_point = (x_value, min_y)
             break
     if outside_point is None:
         raise ValueError("No outside point found for polygon.")
 
     intersections = 0
-    for x1, z1 in bresenham_2d(x, z, outside_point[0], outside_point[1]):
+    for x1, z1 in bresenham_2d(x_value, z_value, outside_point[0], outside_point[1]):
         if matrix[x1, z1]:
             intersections += 1
     return intersections % 2 == 1
@@ -120,6 +120,15 @@ def primary_vertices_divider(vertices: list):
 
 
 def boolean_flood_fill(large_matrix, max_x, max_z, x, z):
+    """
+    Flood fill algorithm that sets all values in the matrix to True that are connected to the starting point
+    :param large_matrix: Matrix to be filled
+    :param max_x: max x value
+    :param max_z: max z value
+    :param x: Seed x value
+    :param z: Seed z value
+    :return: Flood filled matrix
+    """
     queue = [(x, z)]
     while len(queue) > 0:
         x, z = queue.pop(0)
@@ -171,6 +180,12 @@ def secondary_vertices_divider(vertices: list, large_matrix, min_x, min_z):
 
 
 def polygon_divider(coordinates):
+    """
+    This function takes in a list of coordinates that define a polygon and returns a large matrix that is filled with
+    True values where the polygon is. This large matrix can then be used to voxelize the polygon.
+    :param coordinates: a list of coordinates that define a polygon
+    :return: a large matrix that is filled with True values where the polygon is
+    """
     # if it contains just one array, then it is a polygon. If it contains multiple arrays, then it is a multipolygon.
     # we need to voxelize this polygon
     large_matrix, min_x, min_z = primary_vertices_divider(coordinates[0])
@@ -200,10 +215,10 @@ def polygon_divider(coordinates):
     min_z -= offset_min[1]
 
     # we need to cut off the bounds of some of the data as it goes outside the map
-    if large_matrix.shape[0] + min_x > x_cutoff_max:
-        large_matrix = large_matrix[:x_cutoff_max - min_x, :]
-    if large_matrix.shape[1] + min_z > z_cutoff_max:
-        large_matrix = large_matrix[:, :z_cutoff_max - min_z]
+    if large_matrix.shape[0] + min_x > X_CUTOFF_MAX:
+        large_matrix = large_matrix[:X_CUTOFF_MAX - min_x, :]
+    if large_matrix.shape[1] + min_z > Z_CUTOFF_MAX:
+        large_matrix = large_matrix[:, :Z_CUTOFF_MAX - min_z]
     # if min_x < x_cutoff_min:
     #     large_matrix = large_matrix[x_cutoff_min - min_x:, :]
     #     min_x = x_cutoff_min

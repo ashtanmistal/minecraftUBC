@@ -104,23 +104,38 @@ FID_LANDUS_conversion = {
 
 
 def convert_feature(feature, level, landscape_type, block_override=None, depth_override=None):
-    # if the geometry type is a polygon, that's fine
-    try:
-        if feature["geometry"]["type"] == "Polygon":
-            coordinates, properties = feature["geometry"]["coordinates"], feature["properties"]
-            # get the ls type
-            geometry_handler(block_override, coordinates, depth_override, landscape_type, level, properties)
-        elif feature["geometry"]["type"] == "MultiPolygon":
-            coordinates, properties = feature["geometry"]["coordinates"], feature["properties"]
-            for polygon in coordinates:
-                geometry_handler(block_override, polygon, depth_override, landscape_type, level, properties)
-        else:
-            raise TypeError("Invalid geometry type")
-    except TypeError:
-        print(feature)
+    """
+    This function takes a feature from the geojson file and converts it into blocks in the world.
+    :param feature: Geojson feature object
+    :param level: Amulet level object
+    :param landscape_type: Type of landscape to convert
+    :param block_override: Manual override of the block to place instead of the feature default conversion
+    :param depth_override: Manual override of the depth to place instead of the feature default conversion
+    :return: None
+    """
+    if feature["geometry"]["type"] == "Polygon":
+        coordinates, properties = feature["geometry"]["coordinates"], feature["properties"]
+        geometry_handler(block_override, coordinates, depth_override, landscape_type, level, properties)
+    elif feature["geometry"]["type"] == "MultiPolygon":
+        coordinates, properties = feature["geometry"]["coordinates"], feature["properties"]
+        for polygon in coordinates:
+            geometry_handler(block_override, polygon, depth_override, landscape_type, level, properties)
+    else:
+        raise TypeError("Invalid geometry type")
 
 
 def geometry_handler(block_override, coordinates, depth_override, landscape_type, level, properties):
+    """
+    This function takes a polygon and converts it into blocks in the Minecraft world.
+    :param block_override: manual override of the block to place instead of the feature default conversion
+    :param coordinates: Vertices of the polygon
+    :param depth_override: manual override of block depth
+    :param landscape_type: Type of landscape to convert
+    :param level: Amulet level object
+    :param properties: Properties of the feature - this was manually entered into the json for features we wanted to
+    ignore in the UEL landscape
+    :return: None
+    """
     if landscape_type == "uel":
         if properties["FID_LANDUS"] == "IGNORE":
             return
@@ -130,10 +145,8 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
     for cx in range(0, matrix.shape[0], 16):
         for cz in range(0, matrix.shape[1], 16):
             matrix_slice = matrix[cx:cx + 16, cz:cz + 16]
-            # if the matrix slide is all 0, skip it
             if np.all(matrix_slice == 0):
                 continue
-            # if it's not exactly 16 by 16, pad on the right and bottom
             if matrix_slice.shape != (16, 16):
                 matrix_slice = np.pad(matrix_slice, ((0, 16 - matrix_slice.shape[0]), (0, 16 - matrix_slice.shape[1])))
             chunk_x, chunk_z = block_coords_to_chunk_coords(cx + min_x, cz + min_z)
@@ -167,6 +180,14 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
 
 
 def get_block_type(block_override, depth_override, landscape_type, properties):
+    """
+    Converts the landscape type to a block and depth
+    :param block_override: Manual override of default block conversion
+    :param depth_override: Manual override of default depth conversion
+    :param landscape_type: Type of landscape to convert
+    :param properties: Properties of the feature
+    :return: None
+    """
     if landscape_type == "hard":
         ls_type = properties["LSHARD_TYPE"]
         block, depth = LSHARD_TYPE_conversion[ls_type]["block"], LSHARD_TYPE_conversion[ls_type]["depth"]
@@ -194,8 +215,6 @@ def get_block_type(block_override, depth_override, landscape_type, properties):
         )[0]
         depth = 2
     elif landscape_type == "uel":
-        if properties["FID_LANDUS"] == "IGNORE":
-            raise ValueError("This should have been caught earlier")
         block, depth = FID_LANDUS_conversion[properties["FID_LANDUS"]]["block"], \
             FID_LANDUS_conversion[properties["FID_LANDUS"]]["depth"]
     else:
@@ -213,24 +232,36 @@ def get_block_type(block_override, depth_override, landscape_type, properties):
 
 
 def convert_features(features, level, landscape_type, block_override=None, depth_override=None):
-    failed_features = []
+    """
+    Converts a list of features into blocks in the Minecraft world
+    :param features: List of features to convert
+    :param level: Amulet level object
+    :param landscape_type: Type of landscape to convert
+    :param block_override: manual block override
+    :param depth_override: manual depth override
+    :return: None
+    """
     for feature in tqdm(features):
         try:
             convert_feature(feature, level, landscape_type, block_override, depth_override)
         except ValueError:
             pass
-        #     failed_features.append(feature)
-    return failed_features
 
 
 def convert_features_from_file(file, level, landscape_type, block_override=None, depth_override=None):
+    """
+    Loads a json file and places corresponding blocks in the Minecraft world
+    :param file: string path to json file
+    :param level: Amulet level object
+    :param landscape_type: Type of landscape to convert
+    :param block_override: Manual block override
+    :param depth_override: Manual depth override
+    :return:
+    """
     with open(file, "r") as f:
         features = json.load(f)
     features = features["features"]
-    failed = convert_features(features, level, landscape_type, block_override, depth_override)
-    # write failed to a file
-    with open(file + ".failed", "w") as f:
-        json.dump(failed, f)
+    convert_features(features, level, landscape_type, block_override, depth_override)
 
 
 def main():

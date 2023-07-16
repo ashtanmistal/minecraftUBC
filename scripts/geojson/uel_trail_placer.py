@@ -11,8 +11,7 @@ from tqdm import tqdm
 from scripts.helpers import bresenham_2d, convert_lat_long_to_x_z
 
 """
-This script transforms the UEL trail data and places the trails in the Minecraft world. It also places signs
-at the beginning of each trail, denoting the trail name. 
+This script transforms the UEL trail data and places the trails in the Minecraft world.
 """
 
 path = "/resources/geojson_ubcv/context/geojson/ubcv_psrp_trail.geojson"
@@ -65,6 +64,13 @@ def convert_feature(feature, level):
 
 
 def place_line_segment(line_segment, level, surface_material):
+    """
+    Places a line segment in the Minecraft world.
+    :param line_segment: Set of coordinates representing a line segment
+    :param level: Amulet level object
+    :param surface_material: The surface material of the trail
+    :return: None
+    """
     intersecting_blocks = bresenham_2d(line_segment[0], line_segment[1], line_segment[2], line_segment[3])
     for i in range(path_width):
         angle = math.atan2(line_segment[3] - line_segment[1], line_segment[2] - line_segment[0])
@@ -96,6 +102,10 @@ def place_line_segment(line_segment, level, surface_material):
 
 
 def place_trails():
+    """
+    Places the trails in the Minecraft world.
+    :return: None
+    """
     level = amulet.load_level("/world/UBC")
     with open(path) as f:
         data = json.load(f)
@@ -103,7 +113,7 @@ def place_trails():
         try:
             convert_feature(feature, level)
         except ChunkDoesNotExist:
-            continue
+            continue  # some of the trails are outside the bounds of the world
         except ChunkLoadError:
             continue
         except ValueError:

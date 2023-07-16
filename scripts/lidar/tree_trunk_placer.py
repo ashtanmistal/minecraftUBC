@@ -38,6 +38,7 @@ def transform_dataset(ds, start_time):
     """
 
     level = amulet.load_level(r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC\world\UBC")
+    # (issues with relative paths when calling Amulet from scripts in other modules)
     x, y, z, labels = ds.x, ds.y, ds.z, ds.classification
     # class 5 is tall vegetation; the data we want to keep
     not_tree = np.where(labels != 5)
@@ -122,8 +123,9 @@ def handle_chunk(chunk, x, y, z, trunk_block_id, leaves_block_id):
             dem_height = np.max(non_air_indices) + min_height
             y[indices] -= dem_height
             ground_heights[ix, iz] = dem_height
-    # We should remove outliers now. Any point with a height of less than or equal to 1 is too close to the ground to be
-    # useful to us.
+    # We should remove outliers now. Any point with a height of less than or equal to 2 is too close to the ground to be
+    # useful to us. This does impact hedges a bit - as those are classified as trees for some reason - but that is only
+    # an issue off-campus.
     delete_indices = np.where(y <= 2)
     x, y, z = np.delete(x, delete_indices), np.delete(y, delete_indices), np.delete(z, delete_indices)
     original_y = np.delete(original_y, delete_indices)
@@ -137,8 +139,8 @@ def handle_chunk(chunk, x, y, z, trunk_block_id, leaves_block_id):
     # Now the horizontal mean shift clustering means that instead of providing the heights of the points, we need to
     # just provide the x and z axes. The MeanShift algorithm itself performs the binning and density estimation.
 
-    # We should only perform mean shift if the number of points is greater than twice the minimum bin frequency.
-    # Otherwise, we can just skip this step.
+    # We should only perform mean shift if the number of points is enough to actually perform the algorithm. Otherwise,
+    # we will just return the chunk with the leaves placed.
 
     chunk = place_leaves(chunk, cx, cz, ground_heights, leaves_block_id, x, y, z)
 
@@ -265,6 +267,8 @@ def create_branches(x, y, z, ms_labels, cluster_centers, cluster_heights, chunk,
                     distances.append(np.sum(distance))
                 best_height = np.argmin(distances)
                 offset_x, offset_z = -cx * 16, -cz * 16
+                # A lot of this code in here was left from debugging out-of-bounds errors. I believe this was fixed
+                # above in the point rounding, but I'm leaving it here because the script has already ran and it works.
                 cluster_center_x = int(cluster_center[0] + offset_x)
                 cluster_center_z = int(cluster_center[1] + offset_z)
                 centroid_x = int(centroid[0] + offset_x)
@@ -310,7 +314,7 @@ def vertical_strata_analysis(cluster_centers, meanshift_labels, x, y, z):
             continue
         cluster_indices = np.where(meanshift_labels == cluster)
         cluster_x, cluster_y, cluster_z = x[cluster_indices], y[cluster_indices], z[cluster_indices]
-        vertical_gap_y = np.max(cluster_y) * 0.3  # TODO magic number
+        vertical_gap_y = np.max(cluster_y) * 0.3  # this 0.3 is based on the study
         non_ground_indices = np.where(cluster_y > vertical_gap_y)
         # we can ignore the ground residuals now. We just want to keep the crown and stem points
         non_ground_points.append(
@@ -320,10 +324,11 @@ def vertical_strata_analysis(cluster_centers, meanshift_labels, x, y, z):
         # length ratio of the cluster.
         vlr = (np.max(cluster_y) - np.min(cluster_y)) / np.max(cluster_y)
         # A high VLR cluster is a tree cluster, a low VLR cluster is a crown cluster
-        cutoff = 0.62  # TODO magic number - Not much we can do about this one, it's based on the study
+        cutoff = 0.62  # Modified cutoff value from the study to try and get more tree clusters given the fact that we
+        # a) are taking into account less data points, and b) are limiting the meanshift to a per-chunk basis
         if vlr < cutoff:
             crown_clusters.append(cluster)  # crown cluster. We need to assign these points to the nearest tree
-            # cluster within 5m
+            # cluster later.
             crown_cluster_centers.append(cluster_centers[cluster])
         else:
             tree_clusters.append(cluster)

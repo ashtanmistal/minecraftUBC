@@ -75,7 +75,7 @@ def flood_replace(seed, level, find_blocks, replace_block, replace_roof_block):
     roof_block_id = level.block_palette.get_add_block(roof_block)
     while len(queue) > 0:
         if len(visited_points) > 1000000:
-            raise Exception("Too many points to fill. Did you close off the region?")
+            raise ValueError("Too many points to fill. Did you close off the region?")
         point = queue.pop()
         point = ([int(point[0]), int(point[1])])
         if point in visited_points:
@@ -101,7 +101,7 @@ def flood_replace(seed, level, find_blocks, replace_block, replace_roof_block):
         # add the adjacent points to the queue
         x, z = point
         queue.extend([[x + 1, z], [x - 1, z], [x, z + 1], [x, z - 1]])
-    print("Found {} wall blocks and {} roof blocks".format(len(wall_blocks), len(roof_blocks)))
+    print(f"Found {len(wall_blocks)} wall blocks and {len(roof_blocks)} roof blocks")
     # replace the wall blocks
     for wall_block in tqdm(wall_blocks):
         cx, cz = block_coords_to_chunk_coords(wall_block[0], wall_block[2])
@@ -117,22 +117,9 @@ def flood_replace(seed, level, find_blocks, replace_block, replace_roof_block):
 
 
 def main():
-    # this is where the CLI is written - for now we'll do a stupidly basic one to get things working
+    # this is where the CLI is written - for now we'll do a stupidly basic one to get things working,
     # and then we'll make it better later
-    # print("Would you like to change the default find block ids? (y/n)")
-    # change_find_block_ids = input()
-    # if change_find_block_ids == "y":
-    #     print("Please enter the block ids you would like to find, separated by commas.")
-    #     print("For example, if you wanted to find stone and dirt, you would enter \"stone, dirt\".")
-    #     find_block_ids = input().split(",")
-    #     find_block_ids = [block_id.strip() for block_id in find_block_ids]
-    # else:
     find_block_ids = default_find_blocks
-    # print("Please enter the roof replacement block")
-    # print("For example, if you wanted to replace the roof with stone, you would enter \"minecraft:stone\".")
-    # replace_roof_block = input()
-    # print("Please enter the wall replacement block")
-    # wall_block = input()
     replace_roof_block = Block("minecraft", "andesite")
     wall_block = Block("minecraft", "light_gray_concrete")
     while True:
@@ -153,7 +140,7 @@ def main():
         level = amulet.load_level(r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC\world\UBC")
         # wall_block = Block.from_string_blockstate(wall_block)
         # replace_roof_block = Block.from_string_blockstate(replace_roof_block)
-        flood_replace(coords, level, find_block_ids, wall_block, replace_roof_block, -34, 95)
+        flood_replace(coords, level, find_block_ids, wall_block, replace_roof_block)
         level.save()
         level.close()
 

@@ -11,6 +11,10 @@ from scripts.helpers import region_setup
 
 
 def main():
+    """
+    Places ocean at the appropriate y level and adds chunks as needed.
+    :return: None
+    """
     # bedrock will be placed at y = -64
     # water from y = -63 to y = -58 (inclusive)
     bedrock_block = Block("minecraft", "bedrock")

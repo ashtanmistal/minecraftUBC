@@ -14,6 +14,12 @@ from scripts.helpers import region_setup
 
 
 def main():
+    """
+    This function is used to fill in void regions in a Minecraft world. It works by breaking the selection into 16x16
+    chunks, and then iterating through each chunk and checking what blocks are void. If there is a void block it will
+    call hole_filler.py to fill in the void.
+    :return: None
+    """
     min_height = -64
     air_block = Block("minecraft", "air")
     cx, cx2, cz, cz2, level = region_setup()

@@ -12,11 +12,6 @@ X_CUTOFF_MAX = 5200
 Z_CUTOFF_MAX = 2800
 
 
-# x_cutoff_max = 2304
-# x_cutoff_min = 1792
-# z_cutoff_min = 256
-# z_cutoff_max = 1024
-
 def point_inside_polygon(x_value: int, z_value: int, matrix) -> bool:
     """
     This function takes in a point and a matrix and returns True if the point is inside the polygon and
@@ -28,12 +23,12 @@ def point_inside_polygon(x_value: int, z_value: int, matrix) -> bool:
     """
     # find a point outside the polygon by checking the edges if the true values
     min_x, min_y = np.min(np.argwhere(matrix), axis=0)
-    max_x, max_y = np.max(np.argwhere(matrix), axis=0)
+    max_x, _ = np.max(np.argwhere(matrix), axis=0)
     # traverse x from min to max until we find a false value
     outside_point = None
-    for x_value in range(min_x, max_x + 1):
-        if not matrix[x_value, min_y]:
-            outside_point = (x_value, min_y)
+    for x in range(min_x, max_x + 1):
+        if not matrix[x, min_y]:
+            outside_point = (x, min_y)
             break
     if outside_point is None:
         raise ValueError("No outside point found for polygon.")
@@ -46,8 +41,13 @@ def point_inside_polygon(x_value: int, z_value: int, matrix) -> bool:
 
 
 def find_starting_point(matrix):
-    # scan until we find exactly two non-adjacent true values in a column. once we find it we will return the x value
-    # and the y value between those two true values
+    """
+    This function takes in a matrix and returns a starting point for the flood fill algorithm. It does this by
+    scanning the matrix for a column or row with exactly two true values that are not adjacent. It then returns
+    the x and z value between those two true values.
+    :param matrix: Matrix of boolean values where true represents a polygon edge
+    :return: tuple of x and z values representing the starting point for the flood fill algorithm
+    """
     for x in range(matrix.shape[0]):
         z_values = np.argwhere(matrix[x, :])
         if len(z_values) == 2:
@@ -77,23 +77,13 @@ def primary_vertices_divider(vertices: list):
     :param vertices: The counterclockwise-oriented list of vertices representing the polygon
     :return: list of PseudoChunk objects representing the chunks that the polygon occupies
     """
-    # First we need to convert the vertices into minecraft coordinates. convert_lat_long_to_x_z does this for us, and
-    # returns x and z values (tuple). We want to take in the list of vertices and return a 2d numpy array of [[x], [z]].
+    # First we need to convert the vertices into minecraft coordinates.
     translated_vertices = np.array([convert_lat_long_to_x_z(vertex[1], vertex[0]) for vertex in vertices]).T
     min_x, min_z = np.min(translated_vertices, axis=1)
     translated_vertices -= np.array([min_x, min_z]).reshape(2, 1)
     max_x, max_z = np.max(translated_vertices, axis=1)
-    # Now we have the translated vertices, and we can create a large matrix of zeros that will be used for the flood
-    # fill algorithm
-    # if they're out of bounds, throw an error
-    # if max_x > x_cutoff_max and min_x < x_cutoff_min:
-    #     raise ValueError("Polygon is out of bounds in the x direction.")
-    # if max_z > z_cutoff_max and min_z < z_cutoff_min:
-    #     raise ValueError("Polygon is out of bounds in the z direction.")
 
     large_matrix = np.zeros((max_x + 1, max_z + 1), dtype=bool)
-    # Now we need to iterate through the vertices and use bresenham to draw lines between them. We will use the
-    # bresenham_2d function from the helpers.py script. We will write our own flood fill algorithm
     for i in range(len(translated_vertices[0]) - 1):
         x0, z0 = translated_vertices[:, i]
         x1, z1 = translated_vertices[:, i + 1]
@@ -104,14 +94,12 @@ def primary_vertices_divider(vertices: list):
     x1, z1 = translated_vertices[:, 0]
     for x, z in bresenham_2d(x0, z0, x1, z1):
         large_matrix[x, z] = True
-    # Now we need to find a starting point for the flood fill algorithm. We will use the find_starting_point function
-    # for this.
+    # Now we need to find a starting point for the flood fill algorithm.
     # if there's not enough points to start the flood fill, or if it's all true, then we can just return the matrix
     if np.sum(large_matrix) < 8 or np.all(large_matrix):
         return large_matrix, min_x, min_z
     starting_point = find_starting_point(large_matrix)
     if starting_point is None:
-        # raise ValueError("No starting point found for flood fill algorithm.")
         return large_matrix, min_x, min_z
     x, z = starting_point
     large_matrix = boolean_flood_fill(large_matrix, max_x, max_z, x, z)
@@ -147,6 +135,16 @@ def boolean_flood_fill(large_matrix, max_x, max_z, x, z):
 
 
 def secondary_vertices_divider(vertices: list, large_matrix, min_x, min_z):
+    """
+    transforms secondary vertices into minecraft coordinates, creates a large matrix, and performs a flood fill
+    on the matrix. The secondary vertices are points that are within the primary polygon and represent holes in the
+    polygon.
+    :param vertices: List of secondary vertices
+    :param large_matrix: The large matrix that represents the primary polygon
+    :param min_x: min x value of the primary polygon
+    :param min_z: min z value of the primary polygon
+    :return: secondary large matrix
+    """
     translated_vertices = np.array([convert_lat_long_to_x_z(vertex[1], vertex[0]) for vertex in vertices]).T
     translated_vertices -= np.array([min_x, min_z]).reshape(2, 1)
 
@@ -219,10 +217,4 @@ def polygon_divider(coordinates):
         large_matrix = large_matrix[:X_CUTOFF_MAX - min_x, :]
     if large_matrix.shape[1] + min_z > Z_CUTOFF_MAX:
         large_matrix = large_matrix[:, :Z_CUTOFF_MAX - min_z]
-    # if min_x < x_cutoff_min:
-    #     large_matrix = large_matrix[x_cutoff_min - min_x:, :]
-    #     min_x = x_cutoff_min
-    # if min_z < z_cutoff_min:
-    #     large_matrix = large_matrix[:, z_cutoff_min - min_z:]
-    #     min_z = z_cutoff_min
     return large_matrix, min_x, min_z

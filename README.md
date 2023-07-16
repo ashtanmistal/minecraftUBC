@@ -38,21 +38,12 @@ The following people have contributed to the project outside the manual building
 
 ## Screenshots and Renders
 
-Note that these will be updated very soon and are currently out-of-date.
+The full album of screenshots is available in the [docs/screenshots](docs/screenshots) directory.
 
-![2023-06-23_11 36 12](docs/screenshots/2023-06-23_11.36.12.png)
+![2023-07-15_12.58.24.png](docs/screenshots/2023-07-15_12.58.24.png)
 
-Screenshot of some Ponderosa progress.
+![2023-07-15_13.17.35.png](docs/screenshots/2023-07-15_13.17.35.png)
 
-![2023-06-23_11 40 20](docs/screenshots/2023-06-23_11.40.20.png)
+![2023-07-15_14.06.13.png](docs/screenshots/2023-07-15_14.06.13.png)
 
-IKB, Ladner clock tower, and Buchanan tower.
-
-![2023-06-23_12 17 01](docs/screenshots/2023-06-23_12.17.01.png)
-
-Wreck Beach south of the stairs, with some residence buildings in the background.
-
-
-![image](https://github.com/ashtanmistal/minecraftUBC/assets/70030490/91dda6d4-b54b-4fef-9cfa-6297f8112a3c)
-
-Render of north campus using Avoyd.
+![2023-07-15_14.32.38.png](docs/screenshots/2023-07-15_14.32.38.png)

@@ -4,7 +4,7 @@ This script transforms a LiDAR dataset into a Minecraft world. It does this by b
 that correspond to Minecraft chunks, and calculating the convex hull of each chunk. This resultant convex hull is then
 treated as a 2d mesh which is then voxelized and denoised. The voxelized mesh is then used as a mask with which to
 place blocks. Height is determined by the LiDAR data, but if none exists, the height is calculated by a weighted average
-of the three nearest points. Below the surface patch, the mesh is then closed by placing blocks all the way down to the
+of the three nearest points. Below the surface patch, the mesh is closed by placing blocks all the way down to the
 minimum y level in Minecraft.
 """
 import math
@@ -80,12 +80,12 @@ def get_convex_hull(chunk_data):
 
 def voxelize_patch(points_inside, chunk, block_id, data):
     """
-    Voxelize the given patch. Patch is in the form of a Delaunay triangulation.
+    Voxelize the given patch. Interpolates the three nearest neighbours if no height data for a given point.
     :param block_id: the block id of default_block in this chunk
     :param points_inside: the points inside the convex hull of the flattened chunk
     :param chunk: the chunk to voxelize
     :param data: the LiDAR data that is within the given chunk
-    :return: chunk
+    :return: chunk object with the height data filled in
     """
     # we need to iterate through points_inside. If height data is available for a given x and z, we use that
     # otherwise we need to calculate using a weighted average of the 3 nearest points
@@ -112,7 +112,7 @@ def voxelize_patch(points_inside, chunk, block_id, data):
 
 def handle_chunk(chunk, data, block_id):
     """
-    Handles the given chunk. This function is called in parallel.
+    Handles the given chunk. If data is too sparse to create a convex hull, the points are placed without interpolation.
     :param block_id: the block id of default_block in this chunk
     :param data: the LiDAR data that is within the given chunk
     :param chunk: the chunk to handle
@@ -134,11 +134,12 @@ def handle_chunk(chunk, data, block_id):
 
 def place_points_manually(chunk, data, block_id):
     """
-    Places the given points into the given chunk. This function is called in parallel.
+    Places the given points into the given chunk without interpolation. This is intended for use where there are not
+    enough data points to calculate the convex hull.
     :param block_id: the block id of default_block in this chunk
     :param data: the LiDAR data that is within the given chunk
     :param chunk: the chunk to handle
-    :return: chunk
+    :return: chunk with data placed
     """
     for x, y, z in data:
         chunk.blocks[x.astype(int), min_height:y.astype(int), z.astype(int)] = block_id

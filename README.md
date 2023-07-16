@@ -1,64 +1,49 @@
 # minecraftUBC
+Ashtan Mistal
 
-The UBC Minecraft Project is a project that aims to recreate the UBC Vancouver Campus inside a Minecraft world, in a 1:1 scale. The project is currently a collaboration between Ashtan Mistal and the UBC Electrical and Computer Engineering Student Society. 
+Table of Contents:
+- [Introduction](#introduction)
+- [Server and World Download](#server-and-world-download)
+- [Helping Out](#helping-out)
+- [Screenshots and Renders](#screenshots-and-renders)
 
-It's built by manipulating LiDAR data (available [here](https://opendata.vancouver.ca/explore/dataset/lidar-2022/information/)) into Minecaft blocks after a series of coordinate transformations and rotations.Then, details such as accurate coloring, windows, and other details are manually added (in-progress). It's therefore a full 1:1 scale recreation, to the extent that Minecraft allows. 
+## Introduction
 
-Right now, the project is available as a world download (see below), but will be hosted on a server soon. 
-
-It is intended to be used as a platform for students to explore the campus, and has a potential for event hosting once it is completed. It'll allow students new to UBC to explore the campus and get a feel for the campus before they arrive, and students who are currently studying at UBC to explore in a new way.
-
-
-Read more about the project and its current progress in the [planning documentation](https://github.com/ashtanmistal/minecraftUBC/blob/master/planning/planning.md). **Interested in helping? Read through the planning document, and then join the [Discord server](https://discord.gg/FqbDJNPgDu) to get in touch with me and other builders, and for more project updates.**
-
-## Download
-
-See [here](https://github.com/ashtanmistal/minecraftUBC/tree/master/world/UBC) for the current world. See an ocean and not UBC? Make sure you're spawning around `2500, 28, -1000`, and that you've copied the `region` folder as well. 
-
-## Screenshots and Renders
-
-The below screenshots and renders is after processing the LiDAR data into Minecraft blocks, with some touch-ups in various buildings. These screenshots will be updated as progress allows.
-
-![2023-06-23_11 36 12](screenshots/2023-06-23_11.36.12.png)
-
-Screenshot of some Ponderosa progress.
-
-![2023-06-23_11 40 20](screenshots/2023-06-23_11.40.20.png)
-
-IKB, Ladner clock tower, and Buchanan tower.
-
-![2023-06-23_12 17 01](screenshots/2023-06-23_12.17.01.png)
-
-Wreck Beach south of the stairs, with some residence buildings in the background.
+The UBC Minecraft Project is a project that aims to recreate the UBC Vancouver Campus inside a Minecraft world, in a 1:1 scale. It's built by transforming LiDAR data, operational geospatial data, and various reference imagery through surface reconstruction, data processing, and machine learning algorithms. **Read more about the development and world-building pipeline in the [transformation pipeline document](docs/transformation_pipeline.md)**. This sculpted world is then manually touched up by a team of builders to add details such as accurate wall coloring, windows, and other details. It's therefore a full 1:1 scale recreation of campus to the extent that Minecraft allows.
 
 
+## Server and World Download
 
-![image](https://github.com/ashtanmistal/minecraftUBC/assets/70030490/91dda6d4-b54b-4fef-9cfa-6297f8112a3c)
+If you're looking to check out the world on the server, please see the [Discord server](https://discord.gg/FqbDJNPgDu) for the IP address. That's where current world progress is now being developed, with backups to GitHub.
 
-Render of north campus using Avoyd.
+Those regular backups to GitHub are available in this repository in the [server auto backups branch](https://github.com/ashtanmistal/minecraftUBC/tree/server-auto-backups), under the `world/UBC` directory. The master branch holds the latest "stable" version in case of corruption or other issues with the server. The world is backed up approximately every 12 hours. 
 
+If you're looking for what the world looks like after various processing steps you can check out the `world/development_layers` directory.
 
-## Current Progress
-
-Right now, I'm working on utilizing a mean shift clustering algorithm to pinpoint the centroid of trees in order to place tree trunks, using a similar method as outlined in [this research paper](https://doi.org/10.3390/rs15051241). Afterwards, I'll be re-assessing the color and texture mapping approach used for matching a given building to a block pallete. The world will then be de-hollowed and then released to the public on a server, where the interiors of buildings will be built by hand (aided by floor plans, 3d scans, and photos where available). 
 
 ## Helping Out
 
-I'm looking for builders to help out with the project. Right now we're in the process of setting up a server, so for now take a look at the world to get a feel of what's required for an individual building and what buildings you'd like to work on.
+We're currently looking for more builders to help out with the manual side of the project! If you're interested in helping out, please join the [Discord server](https://discord.gg/FqbDJNPgDu) and check out the #building-resources channel for more information.
 
-Please visit the [Discord server](https://discord.gg/FqbDJNPgDu) to get in touch with me and other builders, and for more project updates.
+### Project Team
 
-___
+An exhaustive list of builders is available in the spreadsheet listed in the [building document](docs/building.md).
 
-# FAQ
+The following people have contributed to the project outside the manual building process:
+- Ashtan Mistal
+- Hod Kimhi
+- Eve Sankar
+- Bryce Wilson
 
-- I want to build some buildings! How do I get started?
-  - Join the [Discord server](https://discord.gg/FqbDJNPgDu) and we'll get you set up.
-- I want to help out, but I don't want to build buildings. What else can I do?
-  - There's lots of other things to do! See the [planning document](https://github.com/ashtanmistal/minecraftUBC/blob/master/planning/planning.md) for a list of things to do. Mainly it's finding some floor plans and putting them in the spreadsheet, or finding some photos of areas Google Maps doesn't capture. 
-- Why are there lots of holes in the ground?
-  - The LiDAR data is not perfect, and there are lots of holes in the data. I'm working on a way to fill in these holes automatically, but it's a slow process. Right now I'm just filling in the holes by hand as I go along but not worrying about it too much.
-- Why are there lots of floating trees?
-  - Tree trunks usually aren't visible from the sky - it's just the leaves that are - so tree trunks are a work in progress. See mean shift clustering above.
-- Some of the buildings only have partial walls. Why?
-  - See "holes in the ground" above. This doesn't matter too much as the LiDAR data just provides a useful skeleton for the buildings, and the rest is built by hand (using WorldEdit).
+
+## Screenshots and Renders
+
+The full album of screenshots is available in the [docs/screenshots](docs/screenshots) directory.
+
+![2023-07-15_12.58.24.png](docs/screenshots/2023-07-15_12.58.24.png)
+
+![2023-07-15_13.17.35.png](docs/screenshots/2023-07-15_13.17.35.png)
+
+![2023-07-15_14.06.13.png](docs/screenshots/2023-07-15_14.06.13.png)
+
+![2023-07-15_14.32.38.png](docs/screenshots/2023-07-15_14.32.38.png)

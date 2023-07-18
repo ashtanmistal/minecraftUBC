@@ -30,5 +30,5 @@ Most importantly, the tools I've used most often are:
 
 ## Other Useful Tips and Tools
 - Google Earth's 3d data is old but can still be very useful - this is usually my go-to. But note that if a part of a wall sticks out further than the rest (like in Marine Drive) those details are often missed.
-- I've also found the (@ubcresidence)[https://www.instagram.com/ubcresidence/] Instagram account to be another good photo resource if there's not a lot of Google Maps photos.
+- I've also found the ubcresidence Instagram account to be another good photo resource if there's not a lot of Google Maps photos.
 - Lots of the "blocks" in UBC don't align with meter chunks, and so some floors might have to be a block taller or a block shorter than the rest of them - That's okay as the focus is on the exteriors.

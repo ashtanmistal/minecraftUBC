@@ -1,10 +1,9 @@
 # minecraftUBC
-Ashtan Mistal
 
-Table of Contents:
+### Table of Contents:
 - [Introduction](#introduction)
 - [Server and World Download](#server-and-world-download)
-- [Helping Out](#helping-out)
+- [Helping Out + Project Contributors](#helping-out)
 - [Screenshots and Renders](#screenshots-and-renders)
 
 ## Introduction
@@ -25,7 +24,7 @@ If you're looking for what the world looks like after various processing steps y
 
 We're currently looking for more builders to help out with the manual side of the project! If you're interested in helping out, please join the [Discord server](https://discord.gg/FqbDJNPgDu) and check out the #building-resources channel for more information.
 
-### Project Team
+### Project Contributors
 
 An exhaustive list of builders is available in the spreadsheet listed in the [building document](docs/building.md).
 

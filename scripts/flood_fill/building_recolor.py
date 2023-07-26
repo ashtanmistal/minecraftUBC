@@ -4,7 +4,8 @@ from amulet.api.block import Block
 from amulet.utils import block_coords_to_chunk_coords
 from amulet_nbt import StringTag
 from tqdm import tqdm
-from scripts.helpers import convert_lat_long_to_x_z
+
+from scripts.helpers import convert_lat_long_to_x_z, WORLD_DIRECTORY
 
 """
 This is a CLI for recoloring buildings. It works very similarly to the flood_block_replace.py script, except that
@@ -17,7 +18,7 @@ Once we have the list of wall blocks and roof blocks, we can recolor them. The u
 block for the wall and roof blocks. 
 """
 
-default_find_blocks = [
+DEFAULT_FIND_BLOCKS = [
     Block("universal_minecraft", "bricks"),
     Block("universal_minecraft", "stone_bricks"),
     Block("universal_minecraft", "stone_bricks", {
@@ -30,34 +31,20 @@ MIN_HEIGHT = -34
 MAX_HEIGHT = 95
 
 
-def change_default_find_blocks(blocks_string):
-    block_strings = blocks_string.split(",")
-    block_strings = [block_string.strip() for block_string in block_strings]
-    block_strings = ["minecraft:" + block_string if not block_string.startswith("minecraft:")
-                     else block_string for block_string in block_strings]
-    return [Block.from_string_blockstate(block_string) for block_string in block_strings]
-
-
-def change_default_replace_block(block_string):
-    block_string = block_string.strip()
-    block_string = "minecraft:" + block_string if not block_string.startswith("minecraft:") else block_string
-    return Block.from_string_blockstate(block_string)
-
-
 def flood_replace(seed, level, find_blocks, replace_block, replace_roof_block):
     """
-        This function works similarly to the flood void filler, except that the user can select what block they'd
-        like to replace, and what block they'd like to replace it with. This is useful for replacing blocks that
-        all have the incorrect block type within a certain region; the user can just block off the region manually
-        and run this function. It will not replace void blocks, only blocks that are the same as the block_to_replace
-        parameter.
-        :param seed: Numpy coordinates (x,z) to fill in
-        :param level: Amulet level object
-        :param find_blocks: List of Block objects to replace
-        :param replace_block: Block object to replace with
-        :param replace_roof_block: Block object to replace roof blocks with
-        :return: None
-        """
+    This function works similarly to the flood void filler, except that the user can select what block they'd
+    like to replace, and what block they'd like to replace it with. This is useful for replacing blocks that
+    all have the incorrect block type within a certain region; the user can just block off the region manually
+    and run this function. It will not replace void blocks, only blocks that are the same as the block_to_replace
+    parameter.
+    :param seed: Numpy coordinates (x,z) to fill in
+    :param level: Amulet level object
+    :param find_blocks: List of Block objects to replace
+    :param replace_block: Block object to replace with
+    :param replace_roof_block: Block object to replace roof blocks with
+    :return: None
+    """
 
     visited_points = []
     wall_blocks = []
@@ -117,9 +104,10 @@ def flood_replace(seed, level, find_blocks, replace_block, replace_roof_block):
 
 
 def main():
-    # this is where the CLI is written - for now we'll do a stupidly basic one to get things working,
-    # and then we'll make it better later
-    find_block_ids = default_find_blocks
+    """
+    A very basic CLI for the flood fill function. This will be improved later.
+    :return: None
+    """
     replace_roof_block = Block("minecraft", "andesite")
     wall_block = Block("minecraft", "light_gray_concrete")
     while True:
@@ -137,10 +125,10 @@ def main():
                 coords = coords[1:]
             coords = [float(coord) for coord in coords]
             coords = coords[::2]
-        level = amulet.load_level(r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC\world\UBC")
+        level = amulet.load_level(WORLD_DIRECTORY)
         # wall_block = Block.from_string_blockstate(wall_block)
         # replace_roof_block = Block.from_string_blockstate(replace_roof_block)
-        flood_replace(coords, level, find_block_ids, wall_block, replace_roof_block)
+        flood_replace(coords, level, DEFAULT_FIND_BLOCKS, wall_block, replace_roof_block)
         level.save()
         level.close()
 

@@ -6,10 +6,10 @@ operations.
 
 import numpy as np
 
-from scripts.helpers import bresenham_2d, convert_lat_long_to_x_z
+import scripts.helpers
 
-X_CUTOFF_MAX = 5200
-Z_CUTOFF_MAX = 2800
+CUTOFF_MAX_X = 5200
+CUTOFF_MAX_Z = 2800
 
 
 def point_inside_polygon(x_value: int, z_value: int, matrix) -> bool:
@@ -34,9 +34,10 @@ def point_inside_polygon(x_value: int, z_value: int, matrix) -> bool:
         raise ValueError("No outside point found for polygon.")
 
     intersections = 0
-    for x1, z1 in bresenham_2d(x_value, z_value, outside_point[0], outside_point[1]):
+    for x1, z1 in scripts.helpers.bresenham_2d(x_value, z_value, outside_point[0], outside_point[1]):
         if matrix[x1, z1]:
             intersections += 1
+
     return intersections % 2 == 1
 
 
@@ -61,24 +62,20 @@ def find_starting_point(matrix):
             x1, x2 = x_values.flatten()  # Flatten the array to get individual values
             if abs(x1 - x2) > 1:
                 return (x1 + x2) // 2, z
-    return None
+
+    return None  # If no starting point is found, return None
 
 
 def primary_vertices_divider(vertices: list):
     """
-    - take the vertices and translate them into minecraft coordinates, saving the min x and z values and transposing
-            values to be between 0 and max - min
-    - create a large matrix
-    - use bresenham on edges and set matrix to 1 in those cases
-    - find starting point that is valid and inside the polygon
-    - flood fill, setting large matrix values to True
-    - once done, that large matrix needs to be split into chunks
-    - that can be done through array slicing and creating a new chunk object for each chunk
+    This function takes in a list of vertices that define a polygon and returns a large matrix that is filled with
+    True values where the polygon is. This large matrix can then be used to voxelize the polygon.
     :param vertices: The counterclockwise-oriented list of vertices representing the polygon
-    :return: list of PseudoChunk objects representing the chunks that the polygon occupies
+    :return: large matrix that is filled with True values where the polygon is, and the min x and z values
     """
     # First we need to convert the vertices into minecraft coordinates.
-    translated_vertices = np.array([convert_lat_long_to_x_z(vertex[1], vertex[0]) for vertex in vertices]).T
+    translated_vertices = np.array(
+        [scripts.helpers.convert_lat_long_to_x_z(vertex[1], vertex[0]) for vertex in vertices]).T
     min_x, min_z = np.min(translated_vertices, axis=1)
     translated_vertices -= np.array([min_x, min_z]).reshape(2, 1)
     max_x, max_z = np.max(translated_vertices, axis=1)
@@ -87,12 +84,12 @@ def primary_vertices_divider(vertices: list):
     for i in range(len(translated_vertices[0]) - 1):
         x0, z0 = translated_vertices[:, i]
         x1, z1 = translated_vertices[:, i + 1]
-        for x, z in bresenham_2d(x0, z0, x1, z1):
+        for x, z in scripts.helpers.bresenham_2d(x0, z0, x1, z1):
             large_matrix[x, z] = True
     # we should also connect the end to the beginning
     x0, z0 = translated_vertices[:, -1]
     x1, z1 = translated_vertices[:, 0]
-    for x, z in bresenham_2d(x0, z0, x1, z1):
+    for x, z in scripts.helpers.bresenham_2d(x0, z0, x1, z1):
         large_matrix[x, z] = True
     # Now we need to find a starting point for the flood fill algorithm.
     # if there's not enough points to start the flood fill, or if it's all true, then we can just return the matrix
@@ -104,20 +101,21 @@ def primary_vertices_divider(vertices: list):
     x, z = starting_point
     large_matrix = boolean_flood_fill(large_matrix, max_x, max_z, x, z)
     # Now we have a large matrix that is filled with True values where the polygon is.
+
     return large_matrix, min_x, min_z
 
 
-def boolean_flood_fill(large_matrix, max_x, max_z, x, z):
+def boolean_flood_fill(large_matrix, max_x, max_z, seed_x, seed_z):
     """
     Flood fill algorithm that sets all values in the matrix to True that are connected to the starting point
     :param large_matrix: Matrix to be filled
     :param max_x: max x value
     :param max_z: max z value
-    :param x: Seed x value
-    :param z: Seed z value
+    :param seed_x: Seed x value
+    :param seed_z: Seed z value
     :return: Flood filled matrix
     """
-    queue = [(x, z)]
+    queue = [(seed_x, seed_z)]
     while len(queue) > 0:
         x, z = queue.pop(0)
         if large_matrix[x, z]:
@@ -145,7 +143,8 @@ def secondary_vertices_divider(vertices: list, large_matrix, min_x, min_z):
     :param min_z: min z value of the primary polygon
     :return: secondary large matrix
     """
-    translated_vertices = np.array([convert_lat_long_to_x_z(vertex[1], vertex[0]) for vertex in vertices]).T
+    translated_vertices = np.array(
+        [scripts.helpers.convert_lat_long_to_x_z(vertex[1], vertex[0]) for vertex in vertices]).T
     translated_vertices -= np.array([min_x, min_z]).reshape(2, 1)
 
     # we need to create another large_matrix object with which to flood fill these vertices. That new object we will
@@ -155,12 +154,12 @@ def secondary_vertices_divider(vertices: list, large_matrix, min_x, min_z):
     for i in range(len(translated_vertices[0]) - 1):
         x0, z0 = translated_vertices[:, i]
         x1, z1 = translated_vertices[:, i + 1]
-        for x, z in bresenham_2d(x0, z0, x1, z1):
+        for x, z in scripts.helpers.bresenham_2d(x0, z0, x1, z1):
             secondary_large_matrix[x, z] = True
     # we should also connect the end to the beginning
     x0, z0 = translated_vertices[:, -1]
     x1, z1 = translated_vertices[:, 0]
-    for x, z in bresenham_2d(x0, z0, x1, z1):
+    for x, z in scripts.helpers.bresenham_2d(x0, z0, x1, z1):
         secondary_large_matrix[x, z] = True
     # Now we need to find a starting point for the flood fill algorithm. We will use the find_starting_point function
     # for this.
@@ -213,8 +212,8 @@ def polygon_divider(coordinates):
     min_z -= offset_min[1]
 
     # we need to cut off the bounds of some of the data as it goes outside the map
-    if large_matrix.shape[0] + min_x > X_CUTOFF_MAX:
-        large_matrix = large_matrix[:X_CUTOFF_MAX - min_x, :]
-    if large_matrix.shape[1] + min_z > Z_CUTOFF_MAX:
-        large_matrix = large_matrix[:, :Z_CUTOFF_MAX - min_z]
+    if large_matrix.shape[0] + min_x > CUTOFF_MAX_X:
+        large_matrix = large_matrix[:CUTOFF_MAX_X - min_x, :]
+    if large_matrix.shape[1] + min_z > CUTOFF_MAX_Z:
+        large_matrix = large_matrix[:, :CUTOFF_MAX_Z - min_z]
     return large_matrix, min_x, min_z

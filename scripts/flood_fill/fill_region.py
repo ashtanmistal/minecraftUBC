@@ -10,7 +10,7 @@ from amulet.api.block import Block
 from tqdm import tqdm
 
 from hole_filler import hole_filler
-from scripts.helpers import region_setup
+from scripts.helpers import region_setup, MIN_HEIGHT
 
 
 def main():
@@ -20,7 +20,6 @@ def main():
     call hole_filler.py to fill in the void.
     :return: None
     """
-    min_height = -64
     air_block = Block("minecraft", "air")
     cx, cx2, cz, cz2, level = region_setup()
 
@@ -32,7 +31,7 @@ def main():
             block_id = level.block_palette.get_add_block(universal_block)
             for x in range(16):
                 for z in range(16):
-                    if chunk.blocks[x, min_height, z] == block_id:
+                    if chunk.blocks[x, MIN_HEIGHT, z] == block_id:
                         void_coords = np.array([chunk_x * 16 + x, chunk_z * 16 + z])
                         hole_filler(void_coords, level)
     level.save()

@@ -4,30 +4,37 @@ placed trunks on campus.
 """
 
 import json
+import os
 
 import amulet
 import numpy as np
-from amulet import Block
 from amulet.api.errors import ChunkDoesNotExist
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
+import scripts.helpers
 from scripts.geojson.polygon_divider import polygon_divider
+from scripts.lidar.tree_trunk_placer import TRUNK_BLOCK
 
-trunk_block = Block("minecraft", "spruce_log")
-
-min_height = -64
-max_height = 100
+LANDSCAPE_HARD_FILE = os.path.join(scripts.helpers.PROJECT_DIRECTORY,
+                                   r"resources\geojson_ubcv\landscape\geojson\ubcv_landscape_hard.geojson")
 
 
 def convert_feature(feature, level, trunk_block_id):
-    # if the geometry type is a polygon, that's fine
+    """
+    Calls the geometry handler on a feature. If the feature is a multipolygon, it will call the geometry handler on each
+    polygon.
+    :param feature: geojson feature to convert
+    :param level: Amulet level object
+    :param trunk_block_id: ID of the trunk block
+    :return: None
+    """
     try:
         if feature["geometry"]["type"] == "Polygon":
             coordinates, properties = feature["geometry"]["coordinates"], feature["properties"]
-            # get the ls type
             geometry_handler(coordinates, level, trunk_block_id)
         elif feature["geometry"]["type"] == "MultiPolygon":
+            # if it's a multipolygon, we need to iterate through each polygon
             coordinates, properties = feature["geometry"]["coordinates"], feature["properties"]
             for polygon in coordinates:
                 geometry_handler(polygon, level, trunk_block_id)
@@ -38,6 +45,14 @@ def convert_feature(feature, level, trunk_block_id):
 
 
 def geometry_handler(coordinates, level, trunk_block_id):
+    """
+    Converts a polygon to a numpy array and then iterates through each chunk in the polygon, replacing any intersecting
+    tree trunks with air.
+    :param coordinates: coordinates of the polygon
+    :param level: Amulet level object
+    :param trunk_block_id: ID of the trunk block to replace
+    :return: None
+    """
     matrix, min_x, min_z = polygon_divider(coordinates)
     for cx in range(0, matrix.shape[0], 16):
         for cz in range(0, matrix.shape[1], 16):
@@ -61,11 +76,11 @@ def geometry_handler(coordinates, level, trunk_block_id):
                             try:
                                 # see if there are any trunk blocks in this column
                                 # If there are, replace them with air
-                                column = chunk.blocks[x, min_height:max_height, z]
+                                column = chunk.blocks[x, scripts.helpers.MIN_HEIGHT:scripts.helpers.MAX_HEIGHT, z]
                                 np.array(column).flatten()
                                 trunk_block_indices = np.where(column == trunk_block_id)
                                 if len(trunk_block_indices[1]) > 0:
-                                    indices_to_replace = trunk_block_indices[1] + min_height
+                                    indices_to_replace = trunk_block_indices[1] + scripts.helpers.MIN_HEIGHT
                                     for index in indices_to_replace:
                                         chunk.blocks[x, index, z] = 0
                             except ValueError:
@@ -76,33 +91,43 @@ def geometry_handler(coordinates, level, trunk_block_id):
 
 
 def convert_features(features, level, trunk_block_id):
-    failed_features = []
+    """
+    Calls the convert_feature function on each feature in the list. If the feature fails to convert, it will be skipped.
+    :param features:
+    :param level:
+    :param trunk_block_id:
+    :return:
+    """
     for feature in tqdm(features):
         try:
             convert_feature(feature, level, trunk_block_id)
         except ValueError:
             pass
-        #     failed_features.append(feature)
-    return failed_features
 
 
 def convert_features_from_file(file, level):
+    """
+    Loads the features from a file and calls the convert_features function on them.
+    :param file: the file to load the features from
+    :param level: Amulet level object
+    :return: None
+    """
     trunk_block_universal, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
-        trunk_block)
+        TRUNK_BLOCK)
     trunk_block_id = level.block_palette.get_add_block(trunk_block_universal)
     with open(file, "r") as f:
         features = json.load(f)
     features = features["features"]
-    failed = convert_features(features, level, trunk_block_id)
-    # write failed to a file
-    with open(file + ".failed", "w") as f:
-        json.dump(failed, f)
+    convert_features(features, level, trunk_block_id)
 
 
 def main():
-    file = r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC\resources\geojson_ubcv\landscape\geojson\ubcv_landscape_hard.geojson"
-    level = amulet.load_level(r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC\world\UBC")
-    convert_features_from_file(file, level)
+    """
+    Main function. Loads the level, converts the features, and saves the level.
+    :return: None
+    """
+    level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
+    convert_features_from_file(LANDSCAPE_HARD_FILE, level)
     print(f"Finished removing trees in hard landscaping")
     level.save()
     level.close()

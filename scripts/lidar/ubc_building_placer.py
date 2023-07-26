@@ -1,46 +1,22 @@
-import math
-
 import amulet
 import numpy as np
-from PIL import Image
 from amulet.api.block import Block
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-from scripts.helpers import dataset_iterator
+import scripts.helpers
 
-game_version = ("java", (1, 19, 4))
-
-x_offset = 480000
-y_offset = 5455000
-z_offset = 59
-
-blocks = {
+BUILDING_BLOCKS = {
     "bricks": Block("minecraft", "bricks"),
     "stone bricks": Block("minecraft", "stone_bricks"),
-    "iron_block": Block("minecraft", "iron_block"),
+    "iron block": Block("minecraft", "iron_block"),
     "deepslate tiles": Block("minecraft", "deepslate_tiles"),
 }
 
-rotation_degrees = 28.000
-rotation = math.radians(rotation_degrees)
-inverse_rotation_matrix = np.array([[math.cos(rotation), math.sin(rotation), 0],
-                                    [-math.sin(rotation), math.cos(rotation), 0],
-                                    [0, 0, 1]])
-
-texture_location = "resources/block"
-
-
-def get_average_rgb(block_object):
-    texture = Image.open(texture_location + "/" + block_object.base_name + ".png").convert("RGB")
-
-    return texture.resize((1, 1), resample=Image.BILINEAR).getpixel((0, 0))
-
-
-block_textures = {
-    block: get_average_rgb(block_object)
-    for block, block_object in blocks.items()
+BUILDING_BLOCKS_TEXTURES = {
+    block: scripts.helpers.get_average_rgb(block_object) for block, block_object in BUILDING_BLOCKS.items()
 }
+BUILDING_LABEL = 6
 
 
 def transform_chunk(data, level):
@@ -51,30 +27,32 @@ def transform_chunk(data, level):
     :param level: Amulet level object
     :return: None
     """
-    x, y, z, red, green, blue = data
-    if len(x) == 0 or len(y) == 0 or len(z) == 0:
+    chunk_data_x, chunk_data_y, chunk_data_z, chunk_data_red, chunk_data_green, chunk_data_blue = data
+    if len(chunk_data_x) == 0 or len(chunk_data_y) == 0 or len(chunk_data_z) == 0:
         return
-    # x, y, z = np.round(x).astype(int), np.round(y).astype(int), np.round(z).astype(int)
 
     # now we need to group the data into meter sized cubes
-    unique_x, x_indices = np.unique(x, return_index=True)
-    unique_y, y_indices = np.unique(y, return_index=True)
-    unique_z, z_indices = np.unique(z, return_index=True)
-    cx, cz = block_coords_to_chunk_coords(unique_x[0], unique_z[0])
-    chunk = level.get_chunk(cx, cz, "minecraft:overworld")
+    unique_x, x_indices = np.unique(chunk_data_x, return_index=True)
+    unique_y, y_indices = np.unique(chunk_data_y, return_index=True)
+    unique_z, z_indices = np.unique(chunk_data_z, return_index=True)
+    chunk_x, chunk_z = block_coords_to_chunk_coords(unique_x[0], unique_z[0])
+    chunk = level.get_chunk(chunk_x, chunk_z, "minecraft:overworld")
 
     for i, j, k in np.ndindex(len(unique_x), len(unique_y), len(unique_z)):
-        matching_indices = np.where((x == unique_x[i]) & (y == unique_y[j]) & (z == unique_z[k]))
-        offset_x, offset_z = unique_x[i] - cx * 16, unique_z[k] - cz * 16
+        matching_indices = np.where(
+            (chunk_data_x == unique_x[i]) & (chunk_data_y == unique_y[j]) & (chunk_data_z == unique_z[k]))
+        offset_x, offset_z = unique_x[i] - chunk_x * 16, unique_z[k] - chunk_z * 16
         if matching_indices[0].size == 0 or chunk.blocks[int(offset_x), int(unique_y[j]), int(offset_z)] != 0:
             continue
         # now we have all the points that are in the same meter cube
         # we need to find the average color, but this time we'll normalize the color to get rid of shadows
         # this average color will be matched to a block from the selection above
-        average_color = np.mean(np.array([red[matching_indices], green[matching_indices], blue[matching_indices]]),
+        average_color = np.mean(np.array(
+            [chunk_data_red[matching_indices], chunk_data_green[matching_indices], chunk_data_blue[matching_indices]]),
                                 axis=1)
-        mapped_color = min(block_textures, key=lambda b: np.linalg.norm(block_textures[b] - average_color))
-        mapped_block = blocks[mapped_color]
+        mapped_color = min(BUILDING_BLOCKS_TEXTURES, key=lambda b: np.linalg.norm(BUILDING_BLOCKS_TEXTURES[b] -
+                                                                                  average_color))
+        mapped_block = BUILDING_BLOCKS[mapped_color]
 
         universal_block, universal_block_entity, universal_extra = level.translation_manager.get_version("java", (
             1, 19, 4)).block.to_universal(mapped_block)
@@ -83,35 +61,30 @@ def transform_chunk(data, level):
     chunk.changed = True
 
 
-def transform_dataset(ds):
-    level = amulet.load_level("/world/UBC")
-    x, y, z, r, g, b, c = ds.x, ds.y, ds.z, ds.red, ds.green, ds.blue, ds.classification
-    x, y, z = np.matmul(inverse_rotation_matrix, np.array([x - x_offset, y - y_offset, z - z_offset]))
-    r, g, b = (r / 256).astype(int), (g / 256).astype(int), (b / 256).astype(int)
-    z, y = y, z  # translating from lidar coordinates to minecraft coordinates
-    indices = np.where((y < 256) & (y >= -64) & (c == 6))
+def transform_dataset(dataset, _):
+    level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
+    red, green, blue = (dataset.red / 256).astype(int), (dataset.green / 256).astype(int), (
+            dataset.blue / 256).astype(int)
+    indices = np.where(dataset.classification == 6)
     if len(indices[0]) == 0:
         return
-    x, y, z, r, g, b = x[indices], y[indices], z[indices], r[indices], g[indices], b[indices]
-    z = -z
-    min_x, min_y, min_z = np.floor(np.min(x)), np.floor(np.min(y)), np.floor(np.min(z))
-    max_x, max_y, max_z = np.ceil(np.max(x)), np.ceil(np.max(y)), np.ceil(np.max(z))
-    # round all the points to the nearest meter
-    x, y, z = np.round(x).astype(int), np.round(y).astype(int), np.round(z).astype(int)
-    # round to nearest chunk
-    min_x, min_z = min_x - min_x % 16, min_z - min_z % 16
-    max_x, max_z = max_x - max_x % 16, max_z - max_z % 16
-    for cx in tqdm(range(min_x.astype(int), max_x.astype(int), 16)):
-        for cz in range(min_z.astype(int), max_z.astype(int), 16):
-            chunk_indices = np.where((x >= cx) & (x < cx + 16) & (z >= cz) & (z < cz + 16))
+    filtered_red, filtered_green, filtered_blue = red[indices], green[indices], blue[indices]
+    max_x, max_z, min_x, min_z, rounded_x, rounded_y, rounded_z = scripts.helpers.preprocess_dataset(dataset,
+                                                                                                     BUILDING_LABEL)
+
+    for chunk_x in tqdm(range(min_x.astype(int), max_x.astype(int), 16)):
+        for chunk_z in range(min_z.astype(int), max_z.astype(int), 16):
+            chunk_indices = np.where((rounded_x >= chunk_x) & (rounded_x < chunk_x + 16) & (rounded_z >= chunk_z) & (
+                    rounded_z < chunk_z + 16))
             chunk_data = np.array(
-                [x[chunk_indices], y[chunk_indices], z[chunk_indices], r[chunk_indices], g[chunk_indices],
-                 b[chunk_indices]])
+                [rounded_x[chunk_indices], rounded_y[chunk_indices], rounded_z[chunk_indices],
+                 filtered_red[chunk_indices],
+                 filtered_green[chunk_indices],
+                 filtered_blue[chunk_indices]])
             transform_chunk(chunk_data, level)
     level.save()
     level.close()
 
 
 if __name__ == "__main__":
-    lidar_dir = "/resources/LiDAR LAS Data/las"
-    dataset_iterator(lidar_dir, transform_dataset)
+    scripts.helpers.dataset_iterator(transform_dataset)

@@ -4,6 +4,7 @@ It finds the side of the road and places relevant things such as stop signs, yie
 """
 
 import json
+import os
 
 import amulet
 import numpy as np
@@ -11,41 +12,43 @@ from amulet import Block
 from amulet.api.errors import ChunkDoesNotExist
 from tqdm import tqdm
 
-from scripts.helpers import bresenham_2d, convert_lat_long_to_x_z, get_height
+import scripts.helpers
 
-game_version = ("java", (1, 19, 4))
-
-json_path = "/resources/BC_Road_Data_Selected.geojson"
+ROAD_DATA_JSON_PATH = os.path.join(scripts.helpers.PROJECT_DIRECTORY, "resources", "BC_Road_Data_Selected.geojson")
 
 MAX_PERPENDICULAR_SEARCH_DISTANCE = 20
 IMPACTOR_DISTANCE = 10
 
-yield_sign = [
+YIELD_SIGN_CONFIGURATION = [
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "target"),
 ]
 
-dead_end_sign = [
+DEAD_END_SIGN_CONFIGURATION = [
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "yellow_concrete"),
 ]
 
-stop_sign = [
+STOP_SIGN_CONFIGURATION = [
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "polished_blackstone_wall"),
     Block("minecraft", "red_concrete"),
 ]
 
-traffic_light_vertical = [  # just the stick part of the traffic light
-    Block("minecraft", "pink_wool")  # we'll just do the traffic lights manually as it'll take less time than debugging
+TRAFFIC_LIGHT_CONFIGURATION = [
+    Block("minecraft", "pink_wool")  # TODO we'll just do the traffic lights manually as it'll take less time
 ]
 
-height_blocks_ignore = [
+BOLLARDS_CONFIGURATION = [
+    Block("minecraft", "polished_blackstone_wall"),
+]
+
+BLOCKS_TO_IGNORE = [  # blocks to ignore when calculating the height of a block
     Block("minecraft", "red_concrete"),
     Block("minecraft", "yellow_concrete"),
     Block("minecraft", "green_concrete"),
@@ -54,30 +57,26 @@ height_blocks_ignore = [
     Block("minecraft", "target"),
 ]
 
-road_materials = [
+ROAD_MATERIALS = [
     "gray_concrete",
     "gray_concrete_powder",
     "white_concrete",
 ]
 
-bollards = [
-    Block("minecraft", "polished_blackstone_wall"),
-]  # we don't need to place a lantern here as all lit bollards are placed in the streetlight handler
-
-traffic_impactor_translation = {
+TRAFFIC_IMPACTOR_TRANSLATION = {
     "C": None,  # cul-de-sac
-    "L": traffic_light_vertical,
+    "L": TRAFFIC_LIGHT_CONFIGURATION,
     # This is a traffic light and needs to be handled differently; this will get caught in the main function here
     "O": None,  # overpass
-    "R": yield_sign,  # vehicles must yield to traffic in the roundabout
-    "S": stop_sign,
+    "R": YIELD_SIGN_CONFIGURATION,  # vehicles must yield to traffic in the roundabout
+    "S": STOP_SIGN_CONFIGURATION,
     "U": None,  # underpass
-    "Y": yield_sign,
+    "Y": YIELD_SIGN_CONFIGURATION,
     "G": None,  # community gate - this is horizontal and will also need to be handled differently
-    "B": bollards,
-    "M": bollards,  # represents a gate or bollards that restrict access to a pedestrian mall
+    "B": BOLLARDS_CONFIGURATION,
+    "M": BOLLARDS_CONFIGURATION,  # represents a gate or bollards that restrict access to a pedestrian mall
     "T": None,  # there are no toll booths in the area
-    "D": dead_end_sign,
+    "D": DEAD_END_SIGN_CONFIGURATION,
 }
 
 
@@ -94,9 +93,10 @@ def vertical_traffic_impactor_placer(level, x, y, z, sign_type):
     """
     if y is None:
         return None
-    blocks = traffic_impactor_translation[sign_type]
+    blocks = TRAFFIC_IMPACTOR_TRANSLATION[sign_type]
     for i, block in enumerate(blocks):
-        level.set_version_block(int(x), int(y) + i + 1, int(z), "minecraft:overworld", game_version, block)
+        level.set_version_block(int(x), int(y) + i + 1, int(z), "minecraft:overworld", scripts.helpers.GAME_VERSION,
+                                block)
 
     return None
 
@@ -115,69 +115,82 @@ def find_road_edge(from_x, from_z, to_x, to_z, direction, level):
     :return: (x,y,z) of the furthest road material block in the direction specified
     """
     if from_x == to_x and from_z == to_z:
-        return from_x, get_height(from_x, from_z, level), from_z
+        return from_x, scripts.helpers.get_height(from_x, from_z, level), from_z
     # find the direction of the line from (from_x, from_z) to (to_x, to_z)
     direction_vector = np.array([to_x - from_x, to_z - from_z])
-    direction_vector = direction_vector / np.linalg.norm(direction_vector)
+    normalized_direction_vector = direction_vector / np.linalg.norm(direction_vector)
     # find the perpendicular vector
     if direction == "right":
-        perpendicular_vector = np.array([-direction_vector[1], direction_vector[0]])
+        perpendicular_vector = np.array([-normalized_direction_vector[1], normalized_direction_vector[0]])
     elif direction == "left":
-        perpendicular_vector = np.array([direction_vector[1], -direction_vector[0]])
+        perpendicular_vector = np.array([normalized_direction_vector[1], -normalized_direction_vector[0]])
     else:
         raise ValueError("Direction must be either 'right' or 'left'")
     # the magnitude of this line is MAX_PERPENDICULAR_SEARCH_DISTANCE
     end_search_x = to_x + perpendicular_vector[0] * MAX_PERPENDICULAR_SEARCH_DISTANCE
     end_search_z = to_z + perpendicular_vector[1] * MAX_PERPENDICULAR_SEARCH_DISTANCE
-    search_blocks = bresenham_2d(to_x, to_z, end_search_x, end_search_z)
+    search_blocks = scripts.helpers.bresenham_2d(to_x, to_z, end_search_x, end_search_z)
     for (x, z) in search_blocks:
-        height = get_height(x, z, level)
+        height = scripts.helpers.get_height(x, z, level)
         if height is None:
             continue
-        block, _ = level.get_version_block(x, height, z, "minecraft:overworld", game_version)
-        if block.base_name in road_materials:
+        block, _ = level.get_version_block(x, height, z, "minecraft:overworld", scripts.helpers.GAME_VERSION)
+        if block.base_name in ROAD_MATERIALS:
             continue
         else:
             return x, height, z
-    return search_blocks[-1][0], get_height(search_blocks[-1][0], search_blocks[-1][1], level), search_blocks[-1][1]
+
+    return search_blocks[-1][0], scripts.helpers.get_height(search_blocks[-1][0], search_blocks[-1][1], level), \
+        search_blocks[-1][1]
 
 
 def traffic_sign_handler(from_x, from_z, to_x, to_z, level, sign_type):
+    """
+    This function places traffic signs in the world by finding the edge of the road and placing the sign there.
+    :param from_x: the x coordinate of the start of the line
+    :param from_z: the z coordinate of the start of the line
+    :param to_x: the x coordinate of the end of the line
+    :param to_z: the z coordinate of the end of the line
+    :param level: the Amulet level object
+    :param sign_type: the type of traffic sign to place (string, 1 character)
+    :return: None
+    """
     right_edge_x, right_edge_y, right_edge_z = find_road_edge(from_x, from_z, to_x, to_z, "right", level)
     vertical_traffic_impactor_placer(level, right_edge_x, right_edge_y, right_edge_z, sign_type)
 
 
 def convert_feature(feature, level):
+    """
+    Converts a feature from the geojson file into the Minecraft world. This function is called for each feature.
+    :param feature: json object representing a feature
+    :param level: the Amulet level object
+    :return: None
+    """
     coordinates, properties = feature["geometry"]["coordinates"][0], feature["properties"]
     from_traffic_impactor = properties["FROM_TRAFFIC_IMPACTOR_CODE"]
     to_traffic_impactor = properties["TO_TRAFFIC_IMPACTOR_CODE"]
-    from_x, from_z = convert_lat_long_to_x_z(coordinates[0][1], coordinates[0][0])
-    to_x, to_z = convert_lat_long_to_x_z(coordinates[-1][1], coordinates[-1][0])
+    from_x, from_z = scripts.helpers.convert_lat_long_to_x_z(coordinates[0][1], coordinates[0][0])
+    to_x, to_z = scripts.helpers.convert_lat_long_to_x_z(coordinates[-1][1], coordinates[-1][0])
     try:
-        if to_traffic_impactor is not None and traffic_impactor_translation[to_traffic_impactor] is not None:
+        if to_traffic_impactor is not None and TRAFFIC_IMPACTOR_TRANSLATION[to_traffic_impactor] is not None:
             # We don't want to place the feature *right* at the end of the segment, as that's almost always in the
             # middle of an intersection. Instead, we want to place it close to the end of the segment. As a result
             # we'll use Bresenham's line algorithm to draw a line from the second last coordinate to the last
             # coordinate, backtrack 15 blocks (or the second last coordinate if the line is shorter than 15 blocks),
             # and place the feature there.
-            # if to_traffic_impactor == "L":
-            #     traffic_light_handler(from_x, from_z, to_x, to_z, level)
-            # else:
-            second_last_x, second_last_z = convert_lat_long_to_x_z(coordinates[-2][1], coordinates[-2][0])
-            line = bresenham_2d(second_last_x, second_last_z, to_x, to_z)
+            second_last_x, second_last_z = scripts.helpers.convert_lat_long_to_x_z(coordinates[-2][1],
+                                                                                   coordinates[-2][0])
+            line = scripts.helpers.bresenham_2d(second_last_x, second_last_z, to_x, to_z)
             if len(line) > IMPACTOR_DISTANCE:
                 to_x, to_z = line[-IMPACTOR_DISTANCE]
             else:
                 to_x, to_z = line[0]
             traffic_sign_handler(from_x, from_z, to_x, to_z, level,
                                  to_traffic_impactor)
-        if from_traffic_impactor is not None and traffic_impactor_translation[from_traffic_impactor] is not None:
-            # if from_traffic_impactor == "L":
-            #     traffic_light_handler(to_x, to_z, from_x, from_z, level)  # switching "from" and "to" as the traffic
-            #     # impactor is at the start of the segment
-            # else:
-            second_first_x, second_first_z = convert_lat_long_to_x_z(coordinates[1][1], coordinates[1][0])
-            line = bresenham_2d(from_x, from_z, second_first_x, second_first_z)
+        if from_traffic_impactor is not None and TRAFFIC_IMPACTOR_TRANSLATION[from_traffic_impactor] is not None:
+            second_first_x, second_first_z = scripts.helpers.convert_lat_long_to_x_z(coordinates[1][1],
+                                                                                     coordinates[1][0])
+            line = scripts.helpers.bresenham_2d(from_x, from_z, second_first_x, second_first_z)
             if len(line) > IMPACTOR_DISTANCE:
                 from_x, from_z = line[-IMPACTOR_DISTANCE]
             else:
@@ -186,12 +199,16 @@ def convert_feature(feature, level):
                                  from_traffic_impactor)
     except ChunkDoesNotExist:
         pass
-    # other errors we still want to raise
 
 
 def main():
-    level = amulet.load_level("/world/UBC")
-    with open(json_path) as f:
+    """
+    Main function that loads the Minecraft world and the geojson file, and calls the convert_feature function for each
+    feature in the geojson file.
+    :return: None
+    """
+    level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
+    with open(ROAD_DATA_JSON_PATH) as f:
         data = json.load(f)
 
     features = data["features"]

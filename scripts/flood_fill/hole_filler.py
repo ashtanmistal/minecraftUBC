@@ -2,7 +2,7 @@ import numpy as np
 from amulet.api.block import Block
 from tqdm import tqdm
 
-from scripts.helpers import seed_setup
+from scripts.helpers import seed_setup, MIN_HEIGHT, GAME_VERSION
 
 
 def hole_filler(points_to_fill, level, single=False):
@@ -16,11 +16,8 @@ def hole_filler(points_to_fill, level, single=False):
     :param single: If True, will use tqdm to show progress. If False, will not show progress.
     :return: None
     """
-
-    min_height = -64
     max_height = 45
     default_block = Block("minecraft", "stone")
-    game_version = ("java", (1, 19, 4))
 
     visited_points = []
     queue = [points_to_fill]
@@ -32,7 +29,7 @@ def hole_filler(points_to_fill, level, single=False):
             raise Exception("Too many points to fill. Likely reached a void ocean.")
         point = queue.pop()
         point = ([int(point[0]), int(point[1])])
-        block, _ = level.get_version_block(point[0], min_height, point[1], "minecraft:overworld", game_version)
+        block, _ = level.get_version_block(point[0], MIN_HEIGHT, point[1], "minecraft:overworld", GAME_VERSION)
         if block.base_name == "air" and point not in visited_points:
             visited_points.append(point)
             queue.append(point + np.array([1, 0]))
@@ -47,9 +44,9 @@ def hole_filler(points_to_fill, level, single=False):
     # of the weighted average of the 3 nearest wall blocks.
     wall_heights = []
     for point in wall_blocks:
-        height = min_height
+        height = MIN_HEIGHT
         while height < max_height:
-            block, _ = level.get_version_block(point[0], height, point[1], "minecraft:overworld", game_version)
+            block, _ = level.get_version_block(point[0], height, point[1], "minecraft:overworld", GAME_VERSION)
             if block.base_name != "stone":
                 wall_heights.append(height - 1)
                 break
@@ -65,8 +62,8 @@ def hole_filler(points_to_fill, level, single=False):
         heights = np.array(wall_heights)[nearest_indices]
         weights = 1 / (np.linalg.norm(nearest_points[:, 0:2] - point, axis=1) + 1) ** 2
         height = np.sum(weights * heights) / np.sum(weights)
-        for y in range(min_height, int(height)):
-            level.set_version_block(point[0], y, point[1], "minecraft:overworld", game_version, default_block)
+        for y in range(MIN_HEIGHT, int(height)):
+            level.set_version_block(point[0], y, point[1], "minecraft:overworld", GAME_VERSION, default_block)
         wall_blocks.append(point)
         wall_heights.append(height)
 
@@ -75,6 +72,10 @@ def hole_filler(points_to_fill, level, single=False):
 
 
 def main():
+    """
+    A simple wrapper function to call hole_filler.py
+    :return: None
+    """
     while True:
         level, points_to_fill = seed_setup()
         hole_filler(points_to_fill, level, single=True)

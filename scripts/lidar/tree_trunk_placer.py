@@ -15,17 +15,12 @@ from amulet_nbt import StringTag
 from sklearn.cluster import MeanShift, DBSCAN
 from tqdm import tqdm
 
-from scripts.helpers import dataset_iterator, bresenham_3d, min_height, max_height
-from scripts.lidar.lidar_surface_reconstruction import rotate_dataset, x_offset, y_offset, z_offset
+import scripts.helpers
 
 MIN_BIN_FREQUENCY = 4
-
-trunk_block = Block("minecraft", "spruce_log")
-leaves_block = Block("minecraft", "spruce_leaves", {"persistent": StringTag("true")})
-
-
-# We'll use spruce as it's what most of the trees in PSRP are -- campus trees can be adjusted later using a modified
-# flood fill algorithm
+TRUNK_BLOCK = Block("minecraft", "spruce_log")
+LEAVES_BLOCK = Block("minecraft", "spruce_leaves", {"persistent": StringTag("true")})
+TALL_VEGETATION_LABEL = 5
 
 
 def transform_dataset(ds, start_time):
@@ -36,39 +31,14 @@ def transform_dataset(ds, start_time):
     :param start_time: the start time of the program
     :return: None
     """
-
-    level = amulet.load_level(r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC\world\UBC")
-    # (issues with relative paths when calling Amulet from scripts in other modules)
-    x, y, z, labels = ds.x, ds.y, ds.z, ds.classification
-    # class 5 is tall vegetation; the data we want to keep
-    not_tree = np.where(labels != 5)
-    x, y, z = np.delete(x, not_tree), np.delete(y, not_tree), np.delete(z, not_tree)
-    dataset = rotate_dataset(np.array([x - x_offset, y - y_offset, z - z_offset]))
-    if len(dataset) == 0 or len(dataset[0]) == 0:
-        return
-    x, z, y = dataset[0], dataset[1], dataset[2]
-    z = -z  # flip z axis to match Minecraft
-
-    # Right now it's incredibly slow. It's *working*, but because of the sheer number of datapoints, it's taking a
-    # very long time to process a single dataset. As a result, we'll reduce the number of datapoints by rounding to the
-    # nearest 1, and taking only the unique values. This will provide a less accurate approach but will be much faster.
-    x = np.floor(x)
-    y = np.floor(y)
-    z = np.floor(z)
-    # remove duplicate points (considering x, y, z pairs)
-    unique_indices = np.unique(np.array([x, y, z]), axis=1, return_index=True)[1]
-    x, y, z = x[unique_indices], y[unique_indices], z[unique_indices]
-
-    min_x, min_y, min_z = np.floor(np.min(x)), np.floor(np.min(y)), np.floor(np.min(z))
-    max_x, max_y, max_z = np.ceil(np.max(x)), np.ceil(np.max(y)), np.ceil(np.max(z))
-    min_x, min_z = np.floor(min_x / 16) * 16, np.floor(min_z / 16) * 16  # rounding to nearest chunk
-    max_x, max_z = np.ceil(max_x / 16) * 16, np.ceil(max_z / 16) * 16  # rounding to nearest chunk
+    level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
+    max_x, max_z, min_x, min_z, x, y, z = scripts.helpers.preprocess_dataset(ds, TALL_VEGETATION_LABEL)
 
     trunk_block_universal, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
-        trunk_block)
+        TRUNK_BLOCK)
     trunk_block_id = level.block_palette.get_add_block(trunk_block_universal)
     leaves_block_universal, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
-        leaves_block)
+        LEAVES_BLOCK)
     leaves_block_id = level.block_palette.get_add_block(leaves_block_universal)
 
     print("Finished preprocessing. Starting chunk processing.", time.time() - start_time)
@@ -96,9 +66,9 @@ def handle_chunk(chunk, x, y, z, trunk_block_id, leaves_block_id):
     where we'll use the trunks and the corresponding leaves to cluster the leaves and place branches outwards from the
     trunks.
     :param chunk: the chunk to handle
-    :param x: the x coordinates of the chunk
-    :param y: the y coordinates of the chunk
-    :param z: the z coordinates of the chunk
+    :param x: the x data within the chunk
+    :param y: the y data within the chunk
+    :param z: the z data within the chunk
     :param trunk_block_id: the block ID of the trunk block
     :param leaves_block_id: the block ID of the leaves block
     :return: the chunk with the tree trunks, branches, and leaves placed
@@ -115,12 +85,12 @@ def handle_chunk(chunk, x, y, z, trunk_block_id, leaves_block_id):
         for iz in range(16):
             indices = np.where((x >= cx * 16 + ix) & (x < cx * 16 + ix + 1) & (z >= cz * 16 + iz) & (
                     z < cz * 16 + iz + 1))
-            column = chunk.blocks[ix, min_height:max_height, iz]
+            column = chunk.blocks[ix, scripts.helpers.MIN_HEIGHT:scripts.helpers.MAX_HEIGHT, iz]
             column = np.array(column).flatten()
             non_air_indices = np.where(column != 0)
             if len(non_air_indices[0]) == 0:
                 return chunk
-            dem_height = np.max(non_air_indices) + min_height
+            dem_height = np.max(non_air_indices) + scripts.helpers.MIN_HEIGHT
             y[indices] -= dem_height
             ground_heights[ix, iz] = dem_height
     # We should remove outliers now. Any point with a height of less than or equal to 2 is too close to the ground to be
@@ -139,19 +109,15 @@ def handle_chunk(chunk, x, y, z, trunk_block_id, leaves_block_id):
     # Now the horizontal mean shift clustering means that instead of providing the heights of the points, we need to
     # just provide the x and z axes. The MeanShift algorithm itself performs the binning and density estimation.
 
-    # We should only perform mean shift if the number of points is enough to actually perform the algorithm. Otherwise,
-    # we will just return the chunk with the leaves placed.
-
     chunk = place_leaves(chunk, cx, cz, ground_heights, leaves_block_id, x, y, z)
-
-    if len(x) < 3 * MIN_BIN_FREQUENCY:
-        return chunk
     try:
         ms = MeanShift(bin_seeding=True, min_bin_freq=MIN_BIN_FREQUENCY, cluster_all=False, max_iter=127, n_jobs=6)
         ms.fit(np.array([x, z]).T)
         ms_labels = ms.labels_
         cluster_centers = ms.cluster_centers_
     except ValueError:
+        # We should only perform mean shift if the number of points is enough to actually perform the algorithm.
+        # Otherwise, we will just return the chunk with the leaves placed.
         return chunk
 
     # Now we need to do the vertical strata analysis.
@@ -187,11 +153,11 @@ def handle_chunk(chunk, x, y, z, trunk_block_id, leaves_block_id):
         for cluster_center, cluster_height in zip(cluster_centers, cluster_heights):
             ix, iz = int(cluster_center[0] - cx * 16), int(cluster_center[1] - cz * 16)
             dem_height = ground_heights[ix, iz].astype(int)
-            column = chunk.blocks[ix, min_height:max_height, iz]
+            column = chunk.blocks[ix, scripts.helpers.MIN_HEIGHT:scripts.helpers.MAX_HEIGHT, iz]
             column = np.array(column).flatten()
             leaf_block_indices = np.where(column == leaves_block_id)
             if len(leaf_block_indices[0]) > 0:
-                max_leaf_height = np.max(leaf_block_indices) + min_height
+                max_leaf_height = np.max(leaf_block_indices) + scripts.helpers.MIN_HEIGHT
                 chunk.blocks[ix, int(dem_height):max_leaf_height, iz] = trunk_block_id
         # Now it's time to create tree branches. The best way to do this is via DBSCAN. This will be done per tree,
         # so we'll need to iterate over each tree cluster and call a helper function to do the DBSCAN on it and
@@ -267,28 +233,29 @@ def create_branches(x, y, z, ms_labels, cluster_centers, cluster_heights, chunk,
                     distances.append(np.sum(distance))
                 best_height = np.argmin(distances)
                 offset_x, offset_z = -cx * 16, -cz * 16
-                # A lot of this code in here was left from debugging out-of-bounds errors. I believe this was fixed
-                # above in the point rounding, but I'm leaving it here because the script has already ran and it works.
-                cluster_center_x = int(cluster_center[0] + offset_x)
-                cluster_center_z = int(cluster_center[1] + offset_z)
-                centroid_x = int(centroid[0] + offset_x)
-                centroid_z = int(centroid[2] + offset_z)
-                cluster_center_x = max(0, min(cluster_center_x, 15))
-                cluster_center_z = max(0, min(cluster_center_z, 15))
-                centroid_x = max(0, min(centroid_x, 15))
-                centroid_z = max(0, min(centroid_z, 15))
-                branch_blocks = bresenham_3d(cluster_center_x, int(best_height + tree_height), cluster_center_z,
-                                             centroid_x, int(centroid[1] + tree_height), centroid_z)
-                if len(branch_blocks) > 7:
+                # The max/min bounding below is resultant from debugging out-of-bounds errors. Not sure if they're
+                # necessary anymore.
+                cluster_center_x = max(0, min(int(cluster_center[0] + offset_x), 15))
+                cluster_center_z = max(0, min(int(cluster_center[1] + offset_z), 15))
+                centroid_x = max(0, min(int(centroid[0] + offset_x), 15))
+                centroid_z = max(0, min(int(centroid[2] + offset_z), 15))
+                branch_blocks = scripts.helpers.bresenham_3d(cluster_center_x, int(best_height + tree_height),
+                                                             cluster_center_z, centroid_x,
+                                                             int(centroid[1] + tree_height), centroid_z)
+                if len(branch_blocks) > 7:  # Removing long branches due to the inherent errors in selecting a maximum
+                    # window size for the horizontal mean shift clustering: crown clusters are assigned to the closest
+                    # tree *in the same chunk* which may not be the actual closest tree.
                     continue
                 for block in branch_blocks:
-                    column = chunk.blocks[block[0], min_height:max_height, block[2]]
+                    column = chunk.blocks[block[0], scripts.helpers.MIN_HEIGHT:scripts.helpers.MAX_HEIGHT, block[2]]
                     column = np.array(column).flatten()
                     leaf_block_indices = np.where(column == leaves_block_id)
                     if len(leaf_block_indices[0]) > 0:  # if there exists a leaf block in the column, we're under a tree
                         # and it makes sense to place a branch. Otherwise, it was an error, and we shouldn't place one.
+                        # Again a resultant error from large constraints placed on the horizontal mean shift clustering.
                         chunk.blocks[block[0], block[1], block[2]] = trunk_block_id
                 chunk.changed = True
+
     return chunk
 
 
@@ -325,7 +292,7 @@ def vertical_strata_analysis(cluster_centers, meanshift_labels, x, y, z):
         vlr = (np.max(cluster_y) - np.min(cluster_y)) / np.max(cluster_y)
         # A high VLR cluster is a tree cluster, a low VLR cluster is a crown cluster
         cutoff = 0.62  # Modified cutoff value from the study to try and get more tree clusters given the fact that we
-        # a) are taking into account less data points, and b) are limiting the meanshift to a per-chunk basis
+        # a. are taking into account less data points, and b. are limiting the meanshift to a per-chunk basis
         if vlr < cutoff:
             crown_clusters.append(cluster)  # crown cluster. We need to assign these points to the nearest tree
             # cluster later.
@@ -333,14 +300,14 @@ def vertical_strata_analysis(cluster_centers, meanshift_labels, x, y, z):
         else:
             tree_clusters.append(cluster)
             tree_cluster_centers.append(cluster_centers[cluster])
+
     return crown_clusters, non_ground_points, tree_cluster_centers, tree_clusters
 
 
 if __name__ == "__main__":
-    lidar_path = r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC\resources\LiDAR LAS Data\las"
     finished_datasets = ["480000_5454000.las", "480000_5455000.las", "480000_5456000.las", "480000_5457000.las",
                          "481000_5454000.las", "481000_5455000.las", "481000_5456000.las", "481000_5457000.las",
                          "481000_5458000.las", "482000_5454000.las", "482000_5455000.las", "482000_5456000.las",
                          "482000_5457000.las", "482000_5458000.las", "483000_5454000.las", "483000_5455000.las",
                          "483000_5456000.las", "483000_5457000.las"]
-    dataset_iterator(lidar_path, transform_dataset, finished_datasets)
+    scripts.helpers.dataset_iterator(transform_dataset, finished_datasets)

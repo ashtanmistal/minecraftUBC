@@ -61,6 +61,10 @@ def flood_replace(seed, level, find_block, replace_block, min_height, max_height
 
 
 def main():
+    """
+    A very basic CLI for the flood_replace function. Not fully implemented with all the options yet.
+    :return: None
+    """
     while True:
         level, points_to_fill = seed_setup()
         input_block = Block("minecraft", "smooth_red_sandstone")

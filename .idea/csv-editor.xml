@@ -3,6 +3,34 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="\resources\geojson_ubcv\context\metadata\ubcv_beach.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\context\metadata\ubcv_psrp.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\context\metadata\ubcv_psrp_trail.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\context\metadata\ubcv_uel.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\resources\geojson_ubcv\landscape\csv\ubcv_campus_trees.csv">
           <value>
             <Attribute>
@@ -11,6 +39,13 @@
           </value>
         </entry>
         <entry key="\resources\geojson_ubcv\landscape\metadata\ubcv_softlandscape.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\landscape\metadata\ubcv_trees_fields.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -46,6 +81,83 @@
           </value>
         </entry>
         <entry key="\resources\geojson_ubcv\locations\csv\ubcv_poi.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\locations\metadata\ubcv_address_fields.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\locations\metadata\ubcv_buildings_fields.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\locations\metadata\ubcv_buildings_simple_fields.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\locations\metadata\ubcv_poi.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\planning\csv\ubcv_landuse.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\planning\csv\ubcv_neighbourhoods.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\planning\metadata\ubcv_landuse.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\planning\metadata\ubcv_neighbourhoods.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\transportation\metadata\ubcv_bollards.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\transportation\metadata\ubcv_roads_simple.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\resources\geojson_ubcv\transportation\metadata\ubcv_routes.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

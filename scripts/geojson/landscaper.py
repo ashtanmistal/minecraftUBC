@@ -3,25 +3,26 @@ This script iterates through the polygons defined in the geojson file, voxelizes
 utilizes various attributes of the feature to place blocks in the world.
 """
 import json
+import os
 import random
 
 import amulet
 import numpy as np
 from amulet import Block
 from amulet.api.errors import ChunkDoesNotExist
+from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-from scripts.geojson.polygon_divider import polygon_divider
-from amulet.utils import block_coords_to_chunk_coords
+import scripts.helpers
 from scripts.deprecated.geojson import sidewalk_placer
 from scripts.geojson import streetlight_handler
+from scripts.geojson.polygon_divider import polygon_divider
 
-min_height = -63
-max_height = 45
-game_version = ("java", (1, 19, 4))
-default_block = Block("minecraft", "stone")
+MIN_HEIGHT = -63
+MAX_HEIGHT = 45
+DEFAULT_BLOCK = Block("minecraft", "stone")
 
-LSHARD_TYPE_conversion = {
+LSHARD_TYPE_CONVERSION = {
     "Concrete": {
         "block": Block("minecraft", "gray_concrete_powder"),
         "depth": 2,
@@ -44,7 +45,7 @@ LSHARD_TYPE_conversion = {
     },
 }
 
-LSSOFT_TYPE_conversion = {
+LSSOFT_TYPE_CONVERSION = {
     "Wild": {
         "block": random.choices(
             [Block("minecraft", "moss_block"), Block("minecraft", "dirt"), Block("minecraft", "grass_block")],
@@ -87,7 +88,7 @@ LSSOFT_TYPE_conversion = {
     }
 }
 
-FID_LANDUS_conversion = {
+FID_LANDUS_CONVERSION = {
     "ROAD": {
         "block": Block("minecraft", "gray_concrete_powder"),
         "depth": 2,
@@ -140,6 +141,11 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
         if properties["FID_LANDUS"] == "IGNORE":
             return
 
+    universal_default_block, _, _ = level.translation_manager.get_version("java",
+                                                                          (1, 19, 4)).block.to_universal(
+        DEFAULT_BLOCK)
+    default_block_id = level.block_palette.get_add_block(universal_default_block)
+
     # get the flooded matrix
     matrix, min_x, min_z = polygon_divider(coordinates)
     for cx in range(0, matrix.shape[0], 16):
@@ -155,11 +161,6 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
                 blocks = chunk.blocks
                 if blocks is None:
                     continue
-
-                universal_default_block, _, _ = level.translation_manager.get_version("java",
-                                                                                      (1, 19, 4)).block.to_universal(
-                    default_block)
-                default_block_id = level.block_palette.get_add_block(universal_default_block)
                 for x in range(16):
                     for z in range(16):
                         if matrix_slice[x, z]:
@@ -169,7 +170,7 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
                                 universal_block, _, _ = level.translation_manager.get_version("java", (
                                     1, 19, 4)).block.to_universal(block)
                                 block_id = level.block_palette.get_add_block(universal_block)
-                                height = min_height + np.max(np.where(blocks[x, min_height:, z] == default_block_id))
+                                height = MIN_HEIGHT + np.max(np.where(blocks[x, MIN_HEIGHT:, z] == default_block_id))
                                 chunk.blocks[x, int(height - depth):int(height) + depth, z] = block_id
                             except ValueError:
                                 pass
@@ -188,12 +189,13 @@ def get_block_type(block_override, depth_override, landscape_type, properties):
     :param properties: Properties of the feature
     :return: None
     """
+    # TODO this function ought to be a constant dictionary lookup
     if landscape_type == "hard":
         ls_type = properties["LSHARD_TYPE"]
-        block, depth = LSHARD_TYPE_conversion[ls_type]["block"], LSHARD_TYPE_conversion[ls_type]["depth"]
+        block, depth = LSHARD_TYPE_CONVERSION[ls_type]["block"], LSHARD_TYPE_CONVERSION[ls_type]["depth"]
     elif landscape_type == "soft":
         ls_type = properties["LSSOFT_TYPE"]
-        block, depth = LSSOFT_TYPE_conversion[ls_type]["block"], LSSOFT_TYPE_conversion[ls_type]["depth"]
+        block, depth = LSSOFT_TYPE_CONVERSION[ls_type]["block"], LSSOFT_TYPE_CONVERSION[ls_type]["depth"]
     elif landscape_type == "beach":
         block = random.choices(
             [Block("minecraft", "sand"), Block("minecraft", "sandstone")],
@@ -215,8 +217,8 @@ def get_block_type(block_override, depth_override, landscape_type, properties):
         )[0]
         depth = 2
     elif landscape_type == "uel":
-        block, depth = FID_LANDUS_conversion[properties["FID_LANDUS"]]["block"], \
-            FID_LANDUS_conversion[properties["FID_LANDUS"]]["depth"]
+        block, depth = FID_LANDUS_CONVERSION[properties["FID_LANDUS"]]["block"], \
+            FID_LANDUS_CONVERSION[properties["FID_LANDUS"]]["depth"]
     else:
         raise ValueError("Invalid landscape type")
     if block_override is not None:
@@ -228,6 +230,7 @@ def get_block_type(block_override, depth_override, landscape_type, properties):
     else:
         if depth_override is not None:
             depth = depth_override  # it's okay to have a depth override without a block override
+
     return block, depth
 
 
@@ -256,22 +259,26 @@ def convert_features_from_file(file, level, landscape_type, block_override=None,
     :param landscape_type: Type of landscape to convert
     :param block_override: Manual block override
     :param depth_override: Manual depth override
-    :return:
+    :return: None
     """
     with open(file, "r") as f:
         features = json.load(f)
-    features = features["features"]
-    convert_features(features, level, landscape_type, block_override, depth_override)
+    convert_features(features["features"], level, landscape_type, block_override, depth_override)
 
 
 def main():
+    """
+    Main function to convert all the geojson files into blocks in the Minecraft world
+    :return: None
+    """
+    geojson_directory = os.path.join(scripts.helpers.PROJECT_DIRECTORY, "resources", "geojson_ubcv")
     files = [
-        "resources/geojson_ubcv/landscape/geojson/ubcv_landscape_soft.geojson",
-        "resources/geojson_ubcv/landscape/geojson/ubcv_landscape_hard.geojson",
-        "resources/geojson_ubcv/landscape/geojson/ubcv_municipal_waterfeatures.geojson",
-        "resources/geojson_ubcv/context/geojson/ubcv_beach.geojson",
-        "resources/geojson_ubcv/context/geojson/ubcv_psrp.geojson",
-        "resources/geojson_ubcv/context/geojson/ubcv_uel.geojson"
+        os.path.join(geojson_directory, "landscape", "geojson", "ubcv_landscape_soft.geojson"),
+        os.path.join(geojson_directory, "landscape", "geojson", "ubcv_landscape_hard.geojson"),
+        os.path.join(geojson_directory, "landscape", "geojson", "ubcv_municipal_waterfeatures.geojson"),
+        os.path.join(geojson_directory, "context", "geojson", "ubcv_beach.geojson"),
+        os.path.join(geojson_directory, "context", "geojson", "ubcv_psrp.geojson"),
+        os.path.join(geojson_directory, "context", "geojson", "ubcv_uel.geojson")
     ]
     landscape_types = [
         "soft",
@@ -282,7 +289,7 @@ def main():
         "uel"
     ]
     for file, landscape_type in zip(files, landscape_types):
-        level = amulet.load_level("/world/UBC")
+        level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
         convert_features_from_file(file, level, landscape_type)
         print(f"Finished {landscape_type}")
         level.save()

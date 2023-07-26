@@ -2,13 +2,8 @@
 
 Interested in helping build? Make sure you've joined the [Discord server](https://discord.gg/FqbDJNPgDu) and then read through this document to get started.
 
-## Useful Links
-- [Discord server](https://discord.gg/FqbDJNPgDu)
-- [Building Spreadsheet](https://docs.google.com/spreadsheets/d/16vR1eYbdkNVdfTgkR4nw5c2QBYRDDq_WJ4L-AfOAfrM/edit?usp=sharing)
-  - If you're a builder, please request edit access to this spreadsheet
-
 ## The Building Process
-1. Put your name, discord name, and Minecraft name into the Builders sheet under the [Building Spreadsheet](https://docs.google.com/spreadsheets/d/16vR1eYbdkNVdfTgkR4nw5c2QBYRDDq_WJ4L-AfOAfrM/edit?usp=sharing).
+1. Put your name, discord name, and Minecraft name into the Builders sheet under the [Building Spreadsheet](https://docs.google.com/spreadsheets/d/16vR1eYbdkNVdfTgkR4nw5c2QBYRDDq_WJ4L-AfOAfrM/edit?usp=sharing). Request edit access.
 2. Claim a building on the spreadsheet (if already claimed, check with initial builder to join).
 3. Please update your progress as you go along on the spreadsheet.
 4. Outdoors are the most important part. Interior detailing isn't necessary at this point.

@@ -6,8 +6,8 @@ drwxrwx---   3 mc519861 mc519861     4096 Jun 27 17:59 data
 drwxr-xr-x   3 mc519861 mc519861       19 Jun 24 19:15 datapacks
 drwxr-xr-x   2 mc519861 mc519861     4096 Jul 15 23:08 entities
 -rwxrwx---   1 mc519861 mc519861     5535 Jun 24 19:45 icon.png
--rw-r--r--   1 mc519861 mc519861     4370 Aug 21 07:59 level.dat
--rw-r--r--   1 mc519861 mc519861     4370 Aug 21 07:54 level.dat_old
+-rw-r--r--   1 mc519861 mc519861     4370 Aug 21 19:59 level.dat
+-rw-r--r--   1 mc519861 mc519861     4371 Aug 21 19:54 level.dat_old
 -rw-r--r--   1 mc519861 mc519861      218 Aug 21 01:49 paper-world.yml
 drwxrwx---   2 mc519861 mc519861     8192 Aug 19 04:22 playerdata
 drwxr-xr-x   2 mc519861 mc519861     4096 Jun 24 19:46 poi

@@ -2,20 +2,18 @@
 This script iterates through the polygons defined in the geojson file, voxelizes them through polygon_divider.py, and
 utilizes various attributes of the feature to place blocks in the world.
 """
+import amulet
 import json
+import numpy as np
 import os
 import random
-
-import amulet
-import numpy as np
 from amulet import Block
 from amulet.api.errors import ChunkDoesNotExist
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
 import scripts.helpers
-from scripts.deprecated.geojson import sidewalk_placer
-from scripts.geojson import streetlight_handler
+from scripts.geojson import streetlight_handler, sidewalk_placer
 from scripts.geojson.polygon_divider import polygon_divider
 
 MIN_HEIGHT = -63

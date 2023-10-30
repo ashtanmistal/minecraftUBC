@@ -1,11 +1,11 @@
+import amulet
 import json
 import math
-
-import amulet
 from amulet.api.block import Block
 from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from tqdm import tqdm
+
 from scripts.helpers import bresenham_3d, convert_lat_long_to_x_z
 
 """This script transforms a geojson file of sidewalks, trails, and similar walkways, and places them in the UBC 

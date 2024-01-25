@@ -4,7 +4,7 @@ from amulet.api.block import Block
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-import scripts.helpers
+import src.helpers
 
 BUILDING_BLOCKS = {
     "bricks": Block("minecraft", "bricks"),
@@ -14,7 +14,7 @@ BUILDING_BLOCKS = {
 }
 
 BUILDING_BLOCKS_TEXTURES = {
-    block: scripts.helpers.get_average_rgb(block_object) for block, block_object in BUILDING_BLOCKS.items()
+    block: src.helpers.get_average_rgb(block_object) for block, block_object in BUILDING_BLOCKS.items()
 }
 BUILDING_LABEL = 6
 
@@ -62,15 +62,15 @@ def transform_chunk(data, level):
 
 
 def transform_dataset(dataset, _):
-    level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
+    level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
     red, green, blue = (dataset.red / 256).astype(int), (dataset.green / 256).astype(int), (
             dataset.blue / 256).astype(int)
     indices = np.where(dataset.classification == 6)
     if len(indices[0]) == 0:
         return
     filtered_red, filtered_green, filtered_blue = red[indices], green[indices], blue[indices]
-    max_x, max_z, min_x, min_z, rounded_x, rounded_y, rounded_z = scripts.helpers.preprocess_dataset(dataset,
-                                                                                                     BUILDING_LABEL)
+    max_x, max_z, min_x, min_z, rounded_x, rounded_y, rounded_z = src.helpers.preprocess_dataset(dataset,
+                                                                                                 BUILDING_LABEL)
 
     for chunk_x in tqdm(range(min_x.astype(int), max_x.astype(int), 16)):
         for chunk_z in range(min_z.astype(int), max_z.astype(int), 16):
@@ -87,4 +87,4 @@ def transform_dataset(dataset, _):
 
 
 if __name__ == "__main__":
-    scripts.helpers.dataset_iterator(transform_dataset)
+    src.helpers.dataset_iterator(transform_dataset)

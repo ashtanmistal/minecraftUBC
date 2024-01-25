@@ -12,9 +12,9 @@ from amulet import Block
 from amulet.api.errors import ChunkDoesNotExist
 from tqdm import tqdm
 
-import scripts.helpers
+import src.helpers
 
-ROAD_DATA_JSON_PATH = os.path.join(scripts.helpers.PROJECT_DIRECTORY, "resources", "BC_Road_Data_Selected.geojson")
+ROAD_DATA_JSON_PATH = os.path.join(src.helpers.PROJECT_DIRECTORY, "resources", "BC_Road_Data_Selected.geojson")
 
 MAX_PERPENDICULAR_SEARCH_DISTANCE = 20
 IMPACTOR_DISTANCE = 10
@@ -95,7 +95,7 @@ def vertical_traffic_impactor_placer(level, x, y, z, sign_type):
         return None
     blocks = TRAFFIC_IMPACTOR_TRANSLATION[sign_type]
     for i, block in enumerate(blocks):
-        level.set_version_block(int(x), int(y) + i + 1, int(z), "minecraft:overworld", scripts.helpers.GAME_VERSION,
+        level.set_version_block(int(x), int(y) + i + 1, int(z), "minecraft:overworld", src.helpers.GAME_VERSION,
                                 block)
 
     return None
@@ -115,7 +115,7 @@ def find_road_edge(from_x, from_z, to_x, to_z, direction, level):
     :return: (x,y,z) of the furthest road material block in the direction specified
     """
     if from_x == to_x and from_z == to_z:
-        return from_x, scripts.helpers.get_height(from_x, from_z, level), from_z
+        return from_x, src.helpers.get_height(from_x, from_z, level), from_z
     # find the direction of the line from (from_x, from_z) to (to_x, to_z)
     direction_vector = np.array([to_x - from_x, to_z - from_z])
     normalized_direction_vector = direction_vector / np.linalg.norm(direction_vector)
@@ -129,18 +129,18 @@ def find_road_edge(from_x, from_z, to_x, to_z, direction, level):
     # the magnitude of this line is MAX_PERPENDICULAR_SEARCH_DISTANCE
     end_search_x = to_x + perpendicular_vector[0] * MAX_PERPENDICULAR_SEARCH_DISTANCE
     end_search_z = to_z + perpendicular_vector[1] * MAX_PERPENDICULAR_SEARCH_DISTANCE
-    search_blocks = scripts.helpers.bresenham_2d(to_x, to_z, end_search_x, end_search_z)
+    search_blocks = src.helpers.bresenham_2d(to_x, to_z, end_search_x, end_search_z)
     for (x, z) in search_blocks:
-        height = scripts.helpers.get_height(x, z, level)
+        height = src.helpers.get_height(x, z, level)
         if height is None:
             continue
-        block, _ = level.get_version_block(x, height, z, "minecraft:overworld", scripts.helpers.GAME_VERSION)
+        block, _ = level.get_version_block(x, height, z, "minecraft:overworld", src.helpers.GAME_VERSION)
         if block.base_name in ROAD_MATERIALS:
             continue
         else:
             return x, height, z
 
-    return search_blocks[-1][0], scripts.helpers.get_height(search_blocks[-1][0], search_blocks[-1][1], level), \
+    return search_blocks[-1][0], src.helpers.get_height(search_blocks[-1][0], search_blocks[-1][1], level), \
         search_blocks[-1][1]
 
 
@@ -169,8 +169,8 @@ def convert_feature(feature, level):
     coordinates, properties = feature["geometry"]["coordinates"][0], feature["properties"]
     from_traffic_impactor = properties["FROM_TRAFFIC_IMPACTOR_CODE"]
     to_traffic_impactor = properties["TO_TRAFFIC_IMPACTOR_CODE"]
-    from_x, from_z = scripts.helpers.convert_lat_long_to_x_z(coordinates[0][1], coordinates[0][0])
-    to_x, to_z = scripts.helpers.convert_lat_long_to_x_z(coordinates[-1][1], coordinates[-1][0])
+    from_x, from_z = src.helpers.convert_lat_long_to_x_z(coordinates[0][1], coordinates[0][0])
+    to_x, to_z = src.helpers.convert_lat_long_to_x_z(coordinates[-1][1], coordinates[-1][0])
     try:
         if to_traffic_impactor is not None and TRAFFIC_IMPACTOR_TRANSLATION[to_traffic_impactor] is not None:
             # We don't want to place the feature *right* at the end of the segment, as that's almost always in the
@@ -178,9 +178,9 @@ def convert_feature(feature, level):
             # we'll use Bresenham's line algorithm to draw a line from the second last coordinate to the last
             # coordinate, backtrack 15 blocks (or the second last coordinate if the line is shorter than 15 blocks),
             # and place the feature there.
-            second_last_x, second_last_z = scripts.helpers.convert_lat_long_to_x_z(coordinates[-2][1],
-                                                                                   coordinates[-2][0])
-            line = scripts.helpers.bresenham_2d(second_last_x, second_last_z, to_x, to_z)
+            second_last_x, second_last_z = src.helpers.convert_lat_long_to_x_z(coordinates[-2][1],
+                                                                               coordinates[-2][0])
+            line = src.helpers.bresenham_2d(second_last_x, second_last_z, to_x, to_z)
             if len(line) > IMPACTOR_DISTANCE:
                 to_x, to_z = line[-IMPACTOR_DISTANCE]
             else:
@@ -188,9 +188,9 @@ def convert_feature(feature, level):
             traffic_sign_handler(from_x, from_z, to_x, to_z, level,
                                  to_traffic_impactor)
         if from_traffic_impactor is not None and TRAFFIC_IMPACTOR_TRANSLATION[from_traffic_impactor] is not None:
-            second_first_x, second_first_z = scripts.helpers.convert_lat_long_to_x_z(coordinates[1][1],
-                                                                                     coordinates[1][0])
-            line = scripts.helpers.bresenham_2d(from_x, from_z, second_first_x, second_first_z)
+            second_first_x, second_first_z = src.helpers.convert_lat_long_to_x_z(coordinates[1][1],
+                                                                                 coordinates[1][0])
+            line = src.helpers.bresenham_2d(from_x, from_z, second_first_x, second_first_z)
             if len(line) > IMPACTOR_DISTANCE:
                 from_x, from_z = line[-IMPACTOR_DISTANCE]
             else:
@@ -207,7 +207,7 @@ def main():
     feature in the geojson file.
     :return: None
     """
-    level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
+    level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
     with open(ROAD_DATA_JSON_PATH) as f:
         data = json.load(f)
 

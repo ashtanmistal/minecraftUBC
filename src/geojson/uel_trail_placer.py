@@ -12,10 +12,10 @@ from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-import scripts.helpers
+import src.helpers
 
 # path = "/resources/geojson_ubcv/context/geojson/ubcv_psrp_trail.geojson"
-TRAIL_GEOJSON_PATH = os.path.join(scripts.helpers.PROJECT_DIRECTORY,
+TRAIL_GEOJSON_PATH = os.path.join(src.helpers.PROJECT_DIRECTORY,
                                   "resources", "geojson_ubcv", "context", "geojson", "ubcv_psrp_trail.geojson")
 
 DEFAULT_PATH_BLOCK = Block("minecraft", "dirt_path")
@@ -49,8 +49,8 @@ def convert_feature(feature, level):
         return  # skip this trail if it has no surface material
     line_segments = []
     for i in range(len(coordinates) - 1):
-        x1, z1 = scripts.helpers.convert_lat_long_to_x_z(coordinates[i][1], coordinates[i][0])
-        x2, z2 = scripts.helpers.convert_lat_long_to_x_z(coordinates[i + 1][1], coordinates[i + 1][0])
+        x1, z1 = src.helpers.convert_lat_long_to_x_z(coordinates[i][1], coordinates[i][0])
+        x2, z2 = src.helpers.convert_lat_long_to_x_z(coordinates[i + 1][1], coordinates[i + 1][0])
         # see if it's within the chunk bounds
         if x1 < MIN_BOUND_X or x1 > MAX_BOUND_X or z1 < MIN_BOUND_Z or z1 > MAX_BOUND_Z:
             continue
@@ -68,15 +68,15 @@ def place_line_segment(line_segment, level, surface_material):
     :param surface_material: The surface material of the trail
     :return: None
     """
-    intersecting_blocks = scripts.helpers.bresenham_2d(line_segment[0], line_segment[1], line_segment[2],
-                                                       line_segment[3])
+    intersecting_blocks = src.helpers.bresenham_2d(line_segment[0], line_segment[1], line_segment[2],
+                                                   line_segment[3])
     for i in range(DEFAULT_PATH_WIDTH):
         angle = math.atan2(line_segment[3] - line_segment[1], line_segment[2] - line_segment[0])
         start_x_new = line_segment[0] + i * math.sin(angle)
         start_z_new = line_segment[1] + i * math.cos(angle)
         end_x_new = line_segment[2] + i * math.sin(angle)
         end_z_new = line_segment[3] + i * math.cos(angle)
-        intersecting_blocks.extend(scripts.helpers.bresenham_2d(start_x_new, start_z_new, end_x_new, end_z_new))
+        intersecting_blocks.extend(src.helpers.bresenham_2d(start_x_new, start_z_new, end_x_new, end_z_new))
     for block in intersecting_blocks:
         cx, cz = block_coords_to_chunk_coords(block[0], block[1])
         try:
@@ -86,7 +86,7 @@ def place_line_segment(line_segment, level, surface_material):
 
         blocks = chunk.blocks
         height = np.max(np.nonzero(
-            blocks[block[0] % 16, scripts.helpers.MIN_HEIGHT:MAX_HEIGHT, block[1] % 16])) + scripts.helpers.MIN_HEIGHT
+            blocks[block[0] % 16, src.helpers.MIN_HEIGHT:MAX_HEIGHT, block[1] % 16])) + src.helpers.MIN_HEIGHT
         if height is None:
             continue
         else:
@@ -95,7 +95,7 @@ def place_line_segment(line_segment, level, surface_material):
                 height,
                 block[1],
                 "minecraft:overworld",
-                scripts.helpers.GAME_VERSION,
+                src.helpers.GAME_VERSION,
                 SURFACEMAT_CONVERSION[surface_material]
             )
 
@@ -105,7 +105,7 @@ def place_trails():
     Places the trails in the Minecraft world.
     :return: None
     """
-    level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
+    level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
     with open(TRAIL_GEOJSON_PATH) as f:
         data = json.load(f)
     for feature in tqdm(data["features"]):

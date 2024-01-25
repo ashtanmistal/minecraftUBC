@@ -8,6 +8,8 @@ import pylas
 import pyproj
 from PIL import Image
 from amulet.utils import block_coords_to_chunk_coords
+import sys
+import os
 
 MIN_HEIGHT = -64
 MAX_HEIGHT = 100
@@ -20,19 +22,20 @@ BLOCK_OFFSET_X = 480000
 BLOCK_OFFSET_Z = 5455000
 HEIGHT_OFFSET = 59
 GAME_VERSION = ("java", (1, 19, 4))
-# TODO Absolute paths not ideal: temporary fix to Amulet runtime errors from scripts in different directories
-PROJECT_DIRECTORY = r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC"
+# PROJECT_DIRECTORY = r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC"
+PROJECT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORLD_DIRECTORY = os.path.join(PROJECT_DIRECTORY, "world/UBC")
 LIDAR_DIRECTORY = os.path.join(PROJECT_DIRECTORY, "resources/LiDAR LAS Data/las")
 TEXTURE_DIRECTORY = os.path.join(PROJECT_DIRECTORY, "resources/block")
 
 
-def convert_lat_long_to_x_z(lat, long):
+def convert_lat_long_to_x_z(lat, long, return_int=True):
     """
     Converts the given latitude and longitude coordinates to Minecraft x and z coordinates. Uses a pipeline to convert
     from EPSG:4326 (lat/lon) to EPSG:26910 (UTM zone 10N).
     :param lat: the latitude coordinate
     :param long: the longitude coordinate
+    :param return_int: whether to return the coordinates as integers or not
     :return: the Minecraft x and z coordinates of the given latitude and longitude
     """
     pipeline = "+proj=pipeline +step +proj=axisswap +order=2,1 +step +proj=unitconvert +xy_in=deg +xy_out=rad +step " \
@@ -44,7 +47,10 @@ def convert_lat_long_to_x_z(lat, long):
                                                            1]))
     z = -z  # flip z axis to match Minecraft
 
-    return int(x), int(z)
+    if return_int:
+        return int(x), int(z)
+    else:
+        return x, z
 
 
 def bresenham_3d(x1, y1, z1, x2, y2, z2):

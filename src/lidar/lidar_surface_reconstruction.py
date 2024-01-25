@@ -17,7 +17,7 @@ from amulet.utils import block_coords_to_chunk_coords
 from scipy.spatial import QhullError, ConvexHull
 from tqdm import tqdm
 
-import scripts.helpers
+import src.helpers
 
 DEFAULT_BLOCK = Block("minecraft", "stone")
 GROUND_LABEL = 2
@@ -35,7 +35,7 @@ def get_convex_hull(chunk_data):
     for i in range(0, len(hull_vertices)):
         vertex = hull_vertices[i]
         next_vertex = hull_vertices[(i + 1) % len(hull_vertices)]
-        line = scripts.helpers.bresenham_2d(vertex[0], vertex[1], next_vertex[0], next_vertex[1])
+        line = src.helpers.bresenham_2d(vertex[0], vertex[1], next_vertex[0], next_vertex[1])
         for point in line:
             points_inside[point[0], point[1]] = 1
     # calculate the centroid of the convex hull; we will use this as a starting point for a flood fill algorithm
@@ -80,7 +80,7 @@ def voxelize_patch(points_inside, chunk, block_id, data):
                 sliced_data = data[indices]
                 if len(sliced_data) > 0:
                     y = np.max(sliced_data[:, 1]).astype(int)
-                    chunk.blocks[x, scripts.helpers.MIN_HEIGHT:y, z] = block_id
+                    chunk.blocks[x, src.helpers.MIN_HEIGHT:y, z] = block_id
                 else:
                     # calculate the weighted average of the 3 nearest points
                     nearest_points = data[np.argsort(np.linalg.norm(data[:, [0, 2]] - [x, z], axis=1))[:3], :]
@@ -90,7 +90,7 @@ def voxelize_patch(points_inside, chunk, block_id, data):
                         pass
                     else:
                         y = int(np.round(y))
-                        chunk.blocks[x, scripts.helpers.MIN_HEIGHT:y, z] = block_id
+                        chunk.blocks[x, src.helpers.MIN_HEIGHT:y, z] = block_id
 
     return chunk
 
@@ -127,7 +127,7 @@ def place_points_manually(chunk, data, block_id):
     :return: chunk with data placed
     """
     for x, y, z in data:
-        chunk.blocks[x.astype(int), scripts.helpers.MIN_HEIGHT:y.astype(int), z.astype(int)] = block_id
+        chunk.blocks[x.astype(int), src.helpers.MIN_HEIGHT:y.astype(int), z.astype(int)] = block_id
 
     return chunk
 
@@ -140,8 +140,8 @@ def transform_dataset(ds, start_time):
     :return: None
     """
     if __name__ == '__main__':
-        level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
-        max_x, max_z, min_x, min_z, x, y, z = scripts.helpers.preprocess_dataset(ds, GROUND_LABEL)
+        level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
+        max_x, max_z, min_x, min_z, x, y, z = src.helpers.preprocess_dataset(ds, GROUND_LABEL)
         for ix in tqdm(range(min_x.astype(int), max_x.astype(int), 16)):
             for iz in range(min_z.astype(int), max_z.astype(int), 16):
                 chunk_indices = np.where((x >= ix) & (x < ix + 16) & (z >= iz) & (z < iz + 16))
@@ -170,4 +170,4 @@ def transform_dataset(ds, start_time):
 
 
 if __name__ == "__main__":
-    scripts.helpers.dataset_iterator(transform_dataset)
+    src.helpers.dataset_iterator(transform_dataset)

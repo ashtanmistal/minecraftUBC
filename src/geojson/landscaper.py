@@ -12,9 +12,9 @@ from amulet.api.errors import ChunkDoesNotExist
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-import scripts.helpers
-from scripts.geojson import streetlight_handler, sidewalk_placer
-from scripts.geojson.polygon_divider import polygon_divider
+import src.helpers
+from src.geojson import streetlight_handler, sidewalk_placer
+from src.geojson.polygon_divider import polygon_divider
 
 MIN_HEIGHT = -63
 MAX_HEIGHT = 45
@@ -269,7 +269,7 @@ def main():
     Main function to convert all the geojson files into blocks in the Minecraft world
     :return: None
     """
-    geojson_directory = os.path.join(scripts.helpers.PROJECT_DIRECTORY, "resources", "geojson_ubcv")
+    geojson_directory = os.path.join(src.helpers.PROJECT_DIRECTORY, "resources", "geojson_ubcv")
     files = [
         os.path.join(geojson_directory, "landscape", "geojson", "ubcv_landscape_soft.geojson"),
         os.path.join(geojson_directory, "landscape", "geojson", "ubcv_landscape_hard.geojson"),
@@ -287,7 +287,7 @@ def main():
         "uel"
     ]
     for file, landscape_type in zip(files, landscape_types):
-        level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
+        level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
         convert_features_from_file(file, level, landscape_type)
         print(f"Finished {landscape_type}")
         level.save()

@@ -6,7 +6,7 @@ from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-from scripts.helpers import bresenham_3d, convert_lat_long_to_x_z
+from src.helpers import bresenham_3d, convert_lat_long_to_x_z
 
 """This script transforms a geojson file of sidewalks, trails, and similar walkways, and places them in the UBC 
 Vancouver Minecraft world. To do this, we will calculate the height of the start and end points of the sidewalk, 

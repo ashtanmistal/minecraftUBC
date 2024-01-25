@@ -15,7 +15,7 @@ from amulet_nbt import StringTag
 from sklearn.cluster import MeanShift, DBSCAN
 from tqdm import tqdm
 
-import scripts.helpers
+import src.helpers
 
 MIN_BIN_FREQUENCY = 4
 TRUNK_BLOCK = Block("minecraft", "spruce_log")
@@ -31,8 +31,8 @@ def transform_dataset(ds, start_time):
     :param start_time: the start time of the program
     :return: None
     """
-    level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
-    max_x, max_z, min_x, min_z, x, y, z = scripts.helpers.preprocess_dataset(ds, TALL_VEGETATION_LABEL)
+    level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
+    max_x, max_z, min_x, min_z, x, y, z = src.helpers.preprocess_dataset(ds, TALL_VEGETATION_LABEL)
 
     trunk_block_universal, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
         TRUNK_BLOCK)
@@ -85,12 +85,12 @@ def handle_chunk(chunk, x, y, z, trunk_block_id, leaves_block_id):
         for iz in range(16):
             indices = np.where((x >= cx * 16 + ix) & (x < cx * 16 + ix + 1) & (z >= cz * 16 + iz) & (
                     z < cz * 16 + iz + 1))
-            column = chunk.blocks[ix, scripts.helpers.MIN_HEIGHT:scripts.helpers.MAX_HEIGHT, iz]
+            column = chunk.blocks[ix, src.helpers.MIN_HEIGHT:src.helpers.MAX_HEIGHT, iz]
             column = np.array(column).flatten()
             non_air_indices = np.where(column != 0)
             if len(non_air_indices[0]) == 0:
                 return chunk
-            dem_height = np.max(non_air_indices) + scripts.helpers.MIN_HEIGHT
+            dem_height = np.max(non_air_indices) + src.helpers.MIN_HEIGHT
             y[indices] -= dem_height
             ground_heights[ix, iz] = dem_height
     # We should remove outliers now. Any point with a height of less than or equal to 2 is too close to the ground to be
@@ -153,11 +153,11 @@ def handle_chunk(chunk, x, y, z, trunk_block_id, leaves_block_id):
         for cluster_center, cluster_height in zip(cluster_centers, cluster_heights):
             ix, iz = int(cluster_center[0] - cx * 16), int(cluster_center[1] - cz * 16)
             dem_height = ground_heights[ix, iz].astype(int)
-            column = chunk.blocks[ix, scripts.helpers.MIN_HEIGHT:scripts.helpers.MAX_HEIGHT, iz]
+            column = chunk.blocks[ix, src.helpers.MIN_HEIGHT:src.helpers.MAX_HEIGHT, iz]
             column = np.array(column).flatten()
             leaf_block_indices = np.where(column == leaves_block_id)
             if len(leaf_block_indices[0]) > 0:
-                max_leaf_height = np.max(leaf_block_indices) + scripts.helpers.MIN_HEIGHT
+                max_leaf_height = np.max(leaf_block_indices) + src.helpers.MIN_HEIGHT
                 chunk.blocks[ix, int(dem_height):max_leaf_height, iz] = trunk_block_id
         # Now it's time to create tree branches. The best way to do this is via DBSCAN. This will be done per tree,
         # so we'll need to iterate over each tree cluster and call a helper function to do the DBSCAN on it and
@@ -239,15 +239,15 @@ def create_branches(x, y, z, ms_labels, cluster_centers, cluster_heights, chunk,
                 cluster_center_z = max(0, min(int(cluster_center[1] + offset_z), 15))
                 centroid_x = max(0, min(int(centroid[0] + offset_x), 15))
                 centroid_z = max(0, min(int(centroid[2] + offset_z), 15))
-                branch_blocks = scripts.helpers.bresenham_3d(cluster_center_x, int(best_height + tree_height),
-                                                             cluster_center_z, centroid_x,
-                                                             int(centroid[1] + tree_height), centroid_z)
+                branch_blocks = src.helpers.bresenham_3d(cluster_center_x, int(best_height + tree_height),
+                                                         cluster_center_z, centroid_x,
+                                                         int(centroid[1] + tree_height), centroid_z)
                 if len(branch_blocks) > 7:  # Removing long branches due to the inherent errors in selecting a maximum
                     # window size for the horizontal mean shift clustering: crown clusters are assigned to the closest
                     # tree *in the same chunk* which may not be the actual closest tree.
                     continue
                 for block in branch_blocks:
-                    column = chunk.blocks[block[0], scripts.helpers.MIN_HEIGHT:scripts.helpers.MAX_HEIGHT, block[2]]
+                    column = chunk.blocks[block[0], src.helpers.MIN_HEIGHT:src.helpers.MAX_HEIGHT, block[2]]
                     column = np.array(column).flatten()
                     leaf_block_indices = np.where(column == leaves_block_id)
                     if len(leaf_block_indices[0]) > 0:  # if there exists a leaf block in the column, we're under a tree
@@ -310,4 +310,4 @@ if __name__ == "__main__":
                          "481000_5458000.las", "482000_5454000.las", "482000_5455000.las", "482000_5456000.las",
                          "482000_5457000.las", "482000_5458000.las", "483000_5454000.las", "483000_5455000.las",
                          "483000_5456000.las", "483000_5457000.las"]
-    scripts.helpers.dataset_iterator(transform_dataset, finished_datasets)
+    src.helpers.dataset_iterator(transform_dataset, finished_datasets)

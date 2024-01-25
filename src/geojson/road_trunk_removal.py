@@ -12,11 +12,11 @@ from amulet.api.errors import ChunkDoesNotExist
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 
-import scripts.helpers
-from scripts.geojson.polygon_divider import polygon_divider
-from scripts.lidar.tree_trunk_placer import TRUNK_BLOCK
+import src.helpers
+from src.geojson.polygon_divider import polygon_divider
+from src.lidar.tree_trunk_placer import TRUNK_BLOCK
 
-LANDSCAPE_HARD_FILE = os.path.join(scripts.helpers.PROJECT_DIRECTORY,
+LANDSCAPE_HARD_FILE = os.path.join(src.helpers.PROJECT_DIRECTORY,
                                    r"resources\geojson_ubcv\landscape\geojson\ubcv_landscape_hard.geojson")
 
 
@@ -76,11 +76,11 @@ def geometry_handler(coordinates, level, trunk_block_id):
                             try:
                                 # see if there are any trunk blocks in this column
                                 # If there are, replace them with air
-                                column = chunk.blocks[x, scripts.helpers.MIN_HEIGHT:scripts.helpers.MAX_HEIGHT, z]
+                                column = chunk.blocks[x, src.helpers.MIN_HEIGHT:src.helpers.MAX_HEIGHT, z]
                                 np.array(column).flatten()
                                 trunk_block_indices = np.where(column == trunk_block_id)
                                 if len(trunk_block_indices[1]) > 0:
-                                    indices_to_replace = trunk_block_indices[1] + scripts.helpers.MIN_HEIGHT
+                                    indices_to_replace = trunk_block_indices[1] + src.helpers.MIN_HEIGHT
                                     for index in indices_to_replace:
                                         chunk.blocks[x, index, z] = 0
                             except ValueError:
@@ -126,7 +126,7 @@ def main():
     Main function. Loads the level, converts the features, and saves the level.
     :return: None
     """
-    level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
+    level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
     convert_features_from_file(LANDSCAPE_HARD_FILE, level)
     print(f"Finished removing trees in hard landscaping")
     level.save()

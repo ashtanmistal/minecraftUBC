@@ -16,9 +16,9 @@ from amulet.utils import block_coords_to_chunk_coords
 from amulet_nbt import StringTag
 from tqdm import tqdm
 
-import scripts.helpers
+import src.helpers
 
-STREETLIGHT_JSON_PATH = os.path.join(scripts.helpers.PROJECT_DIRECTORY, "resources", "streetlights_json.geojson")
+STREETLIGHT_JSON_PATH = os.path.join(src.helpers.PROJECT_DIRECTORY, "resources", "streetlights_json.geojson")
 
 MIN_HEIGHT = -20
 MAX_HEIGHT = 45
@@ -76,15 +76,15 @@ def streetlight_handler():
     with open(STREETLIGHT_JSON_PATH) as f:
         data = json.load(f)
 
-    level = amulet.load_level(scripts.helpers.WORLD_DIRECTORY)
+    level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
     # iterate through the features
     for feature in tqdm(data["features"]):
         layer = feature["properties"]["LAYER"]
         coords = feature["geometry"]["coordinates"]
         coords_x, coords_z = coords
-        x, z, _ = np.matmul(scripts.helpers.INVERSE_ROTATION_MATRIX,
+        x, z, _ = np.matmul(src.helpers.INVERSE_ROTATION_MATRIX,
                             np.array(
-                                [coords_x - scripts.helpers.BLOCK_OFFSET_X, coords_z - scripts.helpers.BLOCK_OFFSET_Z,
+                                [coords_x - src.helpers.BLOCK_OFFSET_X, coords_z - src.helpers.BLOCK_OFFSET_Z,
                                  0]))
         z = -z
         y = get_height(x, z, level)
@@ -135,7 +135,7 @@ def place_streetlight(level, x, y, z, layer):
     # get the streetlight configuration
     streetlight = LAYER_CONVERSION[layer]
     for i, block in enumerate(streetlight):
-        level.set_version_block(int(x), int(y) + i + 1, int(z), "minecraft:overworld", scripts.helpers.GAME_VERSION,
+        level.set_version_block(int(x), int(y) + i + 1, int(z), "minecraft:overworld", src.helpers.GAME_VERSION,
                                 block)
 
 

@@ -5,7 +5,7 @@ from amulet.utils import block_coords_to_chunk_coords
 from amulet_nbt import StringTag
 from tqdm import tqdm
 
-from scripts.helpers import convert_lat_long_to_x_z, WORLD_DIRECTORY
+from src.helpers import convert_lat_long_to_x_z, WORLD_DIRECTORY
 
 """
 This is a CLI for recoloring buildings. It works very similarly to the flood_block_replace.py script, except that

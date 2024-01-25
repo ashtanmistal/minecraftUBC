@@ -6,7 +6,7 @@ operations.
 
 import numpy as np
 
-import scripts.helpers
+import src.helpers
 
 CUTOFF_MAX_X = 5200
 CUTOFF_MAX_Z = 2800
@@ -34,7 +34,7 @@ def point_inside_polygon(x_value: int, z_value: int, matrix) -> bool:
         raise ValueError("No outside point found for polygon.")
 
     intersections = 0
-    for x1, z1 in scripts.helpers.bresenham_2d(x_value, z_value, outside_point[0], outside_point[1]):
+    for x1, z1 in src.helpers.bresenham_2d(x_value, z_value, outside_point[0], outside_point[1]):
         if matrix[x1, z1]:
             intersections += 1
 
@@ -75,7 +75,7 @@ def primary_vertices_divider(vertices: list):
     """
     # First we need to convert the vertices into minecraft coordinates.
     translated_vertices = np.array(
-        [scripts.helpers.convert_lat_long_to_x_z(vertex[1], vertex[0]) for vertex in vertices]).T
+        [src.helpers.convert_lat_long_to_x_z(vertex[1], vertex[0]) for vertex in vertices]).T
     min_x, min_z = np.min(translated_vertices, axis=1)
     translated_vertices -= np.array([min_x, min_z]).reshape(2, 1)
     max_x, max_z = np.max(translated_vertices, axis=1)
@@ -84,12 +84,12 @@ def primary_vertices_divider(vertices: list):
     for i in range(len(translated_vertices[0]) - 1):
         x0, z0 = translated_vertices[:, i]
         x1, z1 = translated_vertices[:, i + 1]
-        for x, z in scripts.helpers.bresenham_2d(x0, z0, x1, z1):
+        for x, z in src.helpers.bresenham_2d(x0, z0, x1, z1):
             large_matrix[x, z] = True
     # we should also connect the end to the beginning
     x0, z0 = translated_vertices[:, -1]
     x1, z1 = translated_vertices[:, 0]
-    for x, z in scripts.helpers.bresenham_2d(x0, z0, x1, z1):
+    for x, z in src.helpers.bresenham_2d(x0, z0, x1, z1):
         large_matrix[x, z] = True
     # Now we need to find a starting point for the flood fill algorithm.
     # if there's not enough points to start the flood fill, or if it's all true, then we can just return the matrix
@@ -144,7 +144,7 @@ def secondary_vertices_divider(vertices: list, large_matrix, min_x, min_z):
     :return: secondary large matrix
     """
     translated_vertices = np.array(
-        [scripts.helpers.convert_lat_long_to_x_z(vertex[1], vertex[0]) for vertex in vertices]).T
+        [src.helpers.convert_lat_long_to_x_z(vertex[1], vertex[0]) for vertex in vertices]).T
     translated_vertices -= np.array([min_x, min_z]).reshape(2, 1)
 
     # we need to create another large_matrix object with which to flood fill these vertices. That new object we will
@@ -154,12 +154,12 @@ def secondary_vertices_divider(vertices: list, large_matrix, min_x, min_z):
     for i in range(len(translated_vertices[0]) - 1):
         x0, z0 = translated_vertices[:, i]
         x1, z1 = translated_vertices[:, i + 1]
-        for x, z in scripts.helpers.bresenham_2d(x0, z0, x1, z1):
+        for x, z in src.helpers.bresenham_2d(x0, z0, x1, z1):
             secondary_large_matrix[x, z] = True
     # we should also connect the end to the beginning
     x0, z0 = translated_vertices[:, -1]
     x1, z1 = translated_vertices[:, 0]
-    for x, z in scripts.helpers.bresenham_2d(x0, z0, x1, z1):
+    for x, z in src.helpers.bresenham_2d(x0, z0, x1, z1):
         secondary_large_matrix[x, z] = True
     # Now we need to find a starting point for the flood fill algorithm. We will use the find_starting_point function
     # for this.

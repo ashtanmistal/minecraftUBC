@@ -1,3 +1,6 @@
 [submodule "src/buildings/LiDAR-DenseSeg"]
 	path = src/buildings/LiDAR-DenseSeg
 	url = https://github.com/ashtanmistal/LiDAR-DenseSeg
+[submodule "src/trees/Forest-Friends"]
+	path = src/trees/Forest-Friends
+	url = https://github.com/ashtanmistal/Forest-Friends

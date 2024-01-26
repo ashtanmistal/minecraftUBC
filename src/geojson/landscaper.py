@@ -23,22 +23,27 @@ DEFAULT_BLOCK = Block("minecraft", "stone")
 LSHARD_TYPE_CONVERSION = {
     "Concrete": {
         "block": Block("minecraft", "gray_concrete_powder"),
+        "color": "#808080",  # This is the color used in the rasterization (and thus as a mapping from color -> block)
         "depth": 2,
     },
     "Road": {
         "block": Block("minecraft", "gray_concrete_powder"),
+        "color": "#808080",
         "depth": 2,
     },
     "Pedestrian": {
         "block": Block("minecraft", "andesite"),
+        "color": "#aaaaaa",
         "depth": 2,
     },
     "Parking": {
         "block": Block("minecraft", "gray_concrete"),
+        "color": "#6a6a6a",
         "depth": 1,
     },
     "Driveway": {
         "block": Block("minecraft", "gray_concrete"),
+        "color": "#6a6a6a",
         "depth": 1,
     },
 }
@@ -50,18 +55,22 @@ LSSOFT_TYPE_CONVERSION = {
             weights=[0.7, 0.2, 0.1],
             k=1
         )[0],
+        "color": "#007600",
         "depth": 3,
     },
     "PlantingBed": {
         "block": Block("minecraft", "moss_block"),
+        "color": "#00c900",
         "depth": 1,
     },
     "OSPlantingBed": {
         "block": Block("minecraft", "moss_block"),
+        "color": "#00c900",
         "depth": 1,
     },
     "Lawn": {
         "block": Block("minecraft", "grass_block"),
+        "color": "#00a500",
         "depth": 2,
     },
     "Garden": {
@@ -70,18 +79,22 @@ LSSOFT_TYPE_CONVERSION = {
             weights=[0.7, 0.3],
             k=1
         )[0],
+        "color": "#9b6127",
         "depth": 1,
     },
     "Field": {
         "block": Block("minecraft", "grass_block"),
+        "color": "#00a500",
         "depth": 2,
     },
     "Farm": {
         "block": Block("minecraft", "farmland"),
+        "color": "#a4591d",
         "depth": 1,
     },
     "Crop": {
         "block": Block("minecraft", "farmland"),
+        "color": "#a4591d",
         "depth": 1,
     }
 }
@@ -89,17 +102,54 @@ LSSOFT_TYPE_CONVERSION = {
 FID_LANDUS_CONVERSION = {
     "ROAD": {
         "block": Block("minecraft", "gray_concrete_powder"),
+        "color": "#808080",
         "depth": 2,
     },
     "BLDG": {  # This is the space that the buildings are but not actually the buildings themselves
         "block": Block("minecraft", "grass_block"),  # most of the space are lawns
+        "color": "#00a500",
         "depth": 2,
     },
     "GRASS": {  # This is where the golf course is
         "block": Block("minecraft", "grass_block"),
+        "color": "#00a500",
         "depth": 2,
     },
 }
+
+BUILDING_CONVERSION = {
+    # This needs to be visually distinct from the rest of the landscape bus still make sense as a building floor
+    "block": Block("minecraft", "oak_planks"),
+    "color": "#fcd46e",
+    "depth": 1,
+}
+
+WATER_CONVERSION = {
+    "block": Block("minecraft", "water"),
+    "color": "#0000ff",
+    "depth": 1,
+}
+
+BEACH_CONVERSION = {
+    "block": Block("minecraft", "sand"),
+    "color": "#ffff00",
+    "depth": 2,
+}
+
+PSRP_CONVERSION = {
+    "block": random.choices(
+        [Block("minecraft", "moss_block"),
+         Block("minecraft", "dirt"),
+         Block("minecraft", "grass_block"),
+         Block("minecraft", "coarse_dirt")],
+        weights=[0.6, 0.2, 0.15, 0.05],
+        k=1
+    )[0],
+    "color": "#28872f",
+    "depth": 2,
+}
+
+
 
 
 def convert_feature(feature, level, landscape_type, block_override=None, depth_override=None):

@@ -275,10 +275,11 @@ def get_height(block_x, block_z, level, blocks_to_ignore=None):
     return None
 
 
-def preprocess_dataset(lidar_ds, label_to_keep):
+def preprocess_dataset(lidar_ds, label_to_keep, remove_duplicates=True):
     """
     Preprocesses the given dataset by removing all points that are not of the given label, and then rotating the
     dataset to match Minecraft's orientation.
+    :param remove_duplicates: whether to remove duplicate points or not
     :param lidar_ds: the dataset to preprocess
     :param label_to_keep: the label (e.g. 2 for ground terrain) to keep
     :return: the maximum and minimum x and z coordinates of the dataset, and the x, y, and z coordinates of the dataset
@@ -292,12 +293,18 @@ def preprocess_dataset(lidar_ds, label_to_keep):
                                                            filtered_y - HEIGHT_OFFSET]))
     rotated_x, rotated_z, rotated_y = np.floor(dataset[0]), -np.floor(dataset[1]), np.floor(dataset[2])
     # remove duplicate points (considering x, y, z pairs)
-    unique_indices = np.unique(np.array([rotated_x, rotated_y, rotated_z]), axis=1, return_index=True)[1]
-    unique_x, unique_y, unique_z = rotated_x[unique_indices], rotated_y[unique_indices], rotated_z[unique_indices]
-    min_x, min_z, max_x, max_z = np.floor(np.min(unique_x) / 16) * 16, np.floor(np.min(unique_z) / 16) * 16, np.ceil(
-        np.max(unique_x) / 16) * 16, np.ceil(np.max(unique_z) / 16) * 16
+    if remove_duplicates:
+        unique_indices = np.unique(np.array([rotated_x, rotated_y, rotated_z]), axis=1, return_index=True)[1]
+        unique_x, unique_y, unique_z = rotated_x[unique_indices], rotated_y[unique_indices], rotated_z[unique_indices]
+        min_x, min_z, max_x, max_z = np.floor(np.min(unique_x) / 16) * 16, np.floor(np.min(unique_z) / 16) * 16, np.ceil(
+            np.max(unique_x) / 16) * 16, np.ceil(np.max(unique_z) / 16) * 16
 
-    return max_x, max_z, min_x, min_z, unique_x, unique_y, unique_z
+        return max_x, max_z, min_x, min_z, unique_x, unique_y, unique_z
+    else:
+        min_x, min_z, max_x, max_z = np.floor(np.min(rotated_x) / 16) * 16, np.floor(np.min(rotated_z) / 16) * 16, np.ceil(
+            np.max(rotated_x) / 16) * 16, np.ceil(np.max(rotated_z) / 16) * 16
+
+        return max_x, max_z, min_x, min_z, rotated_x, rotated_y, rotated_z
 
 
 def get_average_rgb(block_object):

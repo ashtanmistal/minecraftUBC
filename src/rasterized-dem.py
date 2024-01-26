@@ -1,7 +1,6 @@
 import json
 import os
 import sys
-import geopandas as gpd
 import numpy as np
 import pylas
 import rasterio
@@ -81,48 +80,31 @@ def read_las_file(file_path):
 
 
 def translate_geojson():
-    """
-    Translates the lat/long coordinates in the geojson files to x/z coordinates.
-    :return: None
-    """
     print("Translating lat/long coordinates to x/z coordinates...")
     geojson_files = [json.load(open(os.path.join(GEOJSON_DIR, file), "r")) for file in GEOJSON_FILE_LIST]
-    for filename, file in tqdm(zip(GEOJSON_FILE_LIST, geojson_files)):
-        # call convert_lat_long_to_x_z on each vertex in each polygon in the geojson file
-        # this will translate the lat/long coordinates to x/z coordinates
-        features = file["features"]
-        for i in range(0, len(features)):
-            feature = features[i]
-            try:
-                if feature["geometry"]["type"] == "Polygon":
-                    coordinates, properties = feature["geometry"]["coordinates"], feature["properties"]
-                    coordinates_translated = []
-                    for polygon in coordinates:
-                        for vertex in polygon:
-                            coordinates_translated.append(convert_lat_long_to_x_z(vertex[1], vertex[0], False))
-                    feature["geometry"]["coordinates"] = coordinates_translated
-                elif feature["geometry"]["type"] == "MultiPolygon":
-                    coordinates, properties = feature["geometry"]["coordinates"], feature["properties"]
-                    for j in range(0, len(coordinates)):
-                        polygon = coordinates[j][0]
-                        coordinates_translated = []
-                        for vertex in polygon:
-                            coordinates_translated.append(convert_lat_long_to_x_z(vertex[1], vertex[0], False))
-                        coordinates[j] = coordinates_translated
-                    feature["geometry"]["coordinates"] = coordinates
-                else:
-                    raise TypeError("Invalid geometry type")
-            except TypeError:
-                print("Invalid geometry type in file: " + filename)
-                print("Skipping...")
+
+    for filename, file in tqdm(zip(GEOJSON_FILE_LIST, geojson_files), total=len(GEOJSON_FILE_LIST)):
+        for feature in file["features"]:
+            geometry_type = feature["geometry"]["type"]
+            coordinates = feature["geometry"]["coordinates"]
+
+            if geometry_type == "Polygon":
+                feature["geometry"]["coordinates"] = [
+                    [convert_lat_long_to_x_z(lat, lon) for lon, lat in ring]
+                    for ring in coordinates
+                ]
+            elif geometry_type == "MultiPolygon":
+                feature["geometry"]["coordinates"] = [
+                    [[convert_lat_long_to_x_z(lat, lon) for lon, lat in ring] for ring in polygon]
+                    for polygon in coordinates
+                ]
+            else:
+                print(f"Invalid geometry type in file: {filename}, skipping...")
                 continue
 
-            # save the file, with "translated" appended to the end filename
-            file["features"][i] = feature
         with open(os.path.join(GEOJSON_DIR, filename.replace(".geojson", "_translated.geojson")), "w") as f:
             json.dump(file, f)
 
-    print("Finished translating coordinate space.\n")
 
 
 def create_heightmap(dem_save_path, lidar_directory):
@@ -137,15 +119,16 @@ def create_heightmap(dem_save_path, lidar_directory):
     for filename in tqdm(os.listdir(lidar_directory)):
         if filename.endswith(".las"):
             _, _, _, _, x, y, z = preprocess_dataset(
-                read_las_file(os.path.join(BASE_DIR, "resources", "las", filename)),
+                pylas.read(os.path.join(BASE_DIR, "resources", "las", filename)),
                 2,
                 remove_duplicates=False
             )
-            xyz = np.vstack((x, y, z)).transpose()
+            xyz = np.vstack((x, z, y)).transpose()
             ground_points.append(xyz)
 
     ground_points = np.concatenate(ground_points, axis=0)
 
+# TODO fix the below code now that we have adjusted the coordinate system to Minecraft's
     x, y, z = ground_points[:, 0], ground_points[:, 1], ground_points[:, 2]
 
     print("Finished loading ground points.\n")
@@ -158,6 +141,8 @@ def create_heightmap(dem_save_path, lidar_directory):
 
     # create a KDTree for the ground points
     kdtree = cKDTree(ground_points[:, :2])
+    # save the kdtree
+    np.save(os.path.join(dem_save_path, "ground_points_kdtree.npy"), kdtree)
 
     # use linear interpolation from the 3 nearest neighbors to interpolate the height values for each point in the grid
     def interpolate_heights(x, y):
@@ -198,39 +183,37 @@ def create_color_raster(dem_directory):
     # geojson files, in order of priority, is the reverse of GEOJSON_FILE_LIST
 
     for file in GEOJSON_FILE_LIST[::-1]:
-        # read the translated geojson file
         print("Rasterizing " + file + "...")
-        gdf = gpd.read_file(os.path.join(GEOJSON_DIR, file.replace(".geojson", "_translated.geojson")))
+        with open(os.path.join(GEOJSON_DIR, file.replace(".geojson", "_translated.geojson")), "r") as f:
+            geojson_data = json.load(f)
+
         column_name = COLUMN_MAPPING[GEOJSON_FILE_LIST.index(file)]
 
-        for _, row in tqdm(gdf.iterrows(), total=gdf.shape[0]):
+        for feature in tqdm(geojson_data['features']):
             # get the associated color for the feature
+            properties = feature['properties']
             if column_name == "None":
                 color = CONVERSION_MAPPING[GEOJSON_FILE_LIST.index(file)]["color"]
-            elif row[column_name] == "IGNORE":
+            elif properties.get(column_name) == "IGNORE":
                 continue
             else:
-                color = CONVERSION_MAPPING[GEOJSON_FILE_LIST.index(file)][row[
-                    column_name]]["color"]
-            # another mapping
+                color = CONVERSION_MAPPING[GEOJSON_FILE_LIST.index(file)].get(properties[column_name], {}).get("color")
+
             if color is None:
                 color = "#000000"  # default to black if no color is found
             color = to_rgba(color)
 
             # rasterize the feature
-            try:
-                mask = rasterize([(row["geometry"], 1)], out_shape=grid_z.shape, transform=transform)
-                # Update the raster - only update where mask is True
-                for i in range(3):  # RGB channels
-                    color_raster[:, :, i] = np.where(mask, color[i], color_raster[:, :, i])
-            except ValueError:
-                print("Invalid geometry in file: " + file)
-                print("Skipping...")
-                continue
+            geometry = feature['geometry']
+            mask = rasterize([(geometry, 1)], out_shape=grid_z.shape, transform=transform)
+
+            # Update the raster - only update where mask is True
+            for i in range(3):  # RGB channels
+                color_raster[:, :, i] = np.where(mask, color[i], color_raster[:, :, i])
 
     # Save the color raster
     with rasterio.open(
-            'landuse_raster.tif', 'w', driver='GTiff',
+            os.path.join(dem_directory, "landuse_raster.tif"), 'w', driver='GTiff',
             height=color_raster.shape[0], width=color_raster.shape[1],
             count=3, dtype=str(color_raster.dtype),
             crs='+proj=latlong',
@@ -243,8 +226,8 @@ def create_color_raster(dem_directory):
 
 
 if __name__ == "__main__":
-    translate_geojson()
+    # translate_geojson()
     lidar_directory = os.path.join(BASE_DIR, "resources", "las")
     dem_save_path = os.path.join(BASE_DIR, "src")
     create_heightmap(dem_save_path, lidar_directory)
-    create_color_raster(dem_save_path)
+    # create_color_raster(dem_save_path)

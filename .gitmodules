@@ -1,0 +1,3 @@
+[submodule "src/buildings/LiDAR-DenseSeg"]
+	path = src/buildings/LiDAR-DenseSeg
+	url = https://github.com/ashtanmistal/LiDAR-DenseSeg

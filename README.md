@@ -10,6 +10,7 @@
 
 The UBC Minecraft Project is a project that aims to recreate the UBC Vancouver Campus inside a Minecraft world, in a 1:1 scale. It's built by transforming LiDAR data, operational geospatial data, and various reference imagery through surface reconstruction, data processing, and machine learning algorithms. **Read more about the development and world-building pipeline in the [transformation pipeline document](docs/transformation_pipeline.md)**. This sculpted world is then manually touched up by a team of builders to add details such as accurate wall coloring, windows, and other details. It's therefore a full 1:1 scale recreation of campus to the extent that Minecraft allows.
 
+**Note: This project uses submodules. Please clone with `git clone --recurse-submodules https://github.com/ashtanmistal/minecraftUBC.git` if you want to clone the deep learning submodules as well.** If you just want to download the world, there's no need to clone the submodules.
 
 ## Server and World Download
 

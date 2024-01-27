@@ -1,1 +1,3 @@
 /resources/
+/src/ground_points_kdtree.npy
+/src/dem_raster.tif

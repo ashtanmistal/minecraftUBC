@@ -9,14 +9,21 @@ from rasterio.features import rasterize
 from rasterio.transform import from_origin
 from scipy.spatial import cKDTree
 from tqdm import tqdm
+import amulet
+from amulet.api.block import Block
+from amulet.api.chunk import Chunk
+from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
+from amulet.utils import block_coords_to_chunk_coords
+
 
 from geojson.landscaper import (LSHARD_TYPE_CONVERSION, LSSOFT_TYPE_CONVERSION, FID_LANDUS_CONVERSION,
                                 BUILDING_CONVERSION, WATER_CONVERSION, BEACH_CONVERSION, PSRP_CONVERSION)
-from src.helpers import convert_lat_long_to_x_z, preprocess_dataset
+from src.helpers import convert_lat_long_to_x_z, preprocess_dataset, WORLD_DIRECTORY, MIN_HEIGHT
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 GEOJSON_DIR = os.path.join(BASE_DIR, "resources", "geojson_ubcv")
+DEFAULT_BLOCK = Block("minecraft", "stone")
 
 GEOJSON_FILE_LIST = [
     "landscape/geojson/ubcv_municipal_waterfeatures.geojson",
@@ -80,6 +87,7 @@ def read_las_file(file_path):
 
 
 def translate_geojson():
+    # TODO this needs to be fixed, but for now, landscaper.py will do the job
     print("Translating lat/long coordinates to x/z coordinates...")
     geojson_files = [json.load(open(os.path.join(GEOJSON_DIR, file), "r")) for file in GEOJSON_FILE_LIST]
 
@@ -141,7 +149,7 @@ def create_heightmap(dem_save_path, lidar_directory):
 
     # create a KDTree for the ground points
     kdtree = cKDTree(ground_points[:, :2])
-    # save the kdtree
+    # save the kdtree in case it's useful later
     np.save(os.path.join(dem_save_path, "ground_points_kdtree.npy"), kdtree)
 
     # use linear interpolation from the 3 nearest neighbors to interpolate the height values for each point in the grid
@@ -225,9 +233,56 @@ def create_color_raster(dem_directory):
     print("Land use raster created: landuse_raster.tif")
 
 
+def raster_dem_to_minecraft(dem_save_path):
+    """
+    Rasterizes the DEM into a Minecraft world.
+    This is a more robust method than lidar_surface_reconstruction.py, and removes the need for the flood fill step.
+    :param dem_save_path: Path to the directory containing the DEM raster.
+    :return: None
+    """
+    level = amulet.load_level(WORLD_DIRECTORY)
+    universal_block, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
+        DEFAULT_BLOCK)
+    block_id = level.block_palette.get_add_block(universal_block)
+    # load the DEM and get the min/max x/z values
+    with rasterio.open(os.path.join(dem_save_path, "dem_raster.tif")) as src:
+        grid_z = src.read(1)
+        # flip the y axis
+        grid_z = np.flip(grid_z, axis=1)
+        transform = src.transform
+    x_min, x_max = int(np.floor(transform[2] / 16) * 16), int(np.ceil((transform[2] + transform[0] * grid_z.shape[0]) / 16) * 16)
+    z_min, z_max = int(np.floor(transform[5] / 16) * 16), int(np.ceil((transform[5] + transform[4] * grid_z.shape[1]) / 16) * 16)
+    # reverse z_min and z_max
+    z_min, z_max = z_max, z_min
+    # iterate over each chunk; read the DEM and place DEFAULT_BLOCK from y=MIN_HEIGHT to y=height (the height of the DEM)
+    for ix in tqdm(range(x_min, x_max, 16)):
+        for iz in range(z_min, z_max, 16):
+            cx, cz = block_coords_to_chunk_coords(ix, iz)
+            try:
+                chunk = level.get_chunk(cx, cz, "minecraft:overworld")
+            except ChunkDoesNotExist:
+                chunk = Chunk(cx, cz)
+            # find the unique block_id of default_block in the chunk
+
+            # place the blocks
+            dem_in_chunk = grid_z[ix-x_min:ix-x_min+16, iz-z_min:iz-z_min+16].astype(int)
+            if dem_in_chunk.shape != (16, 16):
+                continue
+            for x in range(16):
+                for z in range(16):
+                    chunk.blocks[x, MIN_HEIGHT:dem_in_chunk[x, z], z] = block_id
+            level.put_chunk(chunk, "minecraft:overworld")
+    print("Finished rasterizing DEM to Minecraft world.")
+    # TODO colorize the DEM
+    level.save()
+    level.close()
+    print("Saved Minecraft world.")
+
+
 if __name__ == "__main__":
     # translate_geojson()
     lidar_directory = os.path.join(BASE_DIR, "resources", "las")
     dem_save_path = os.path.join(BASE_DIR, "src")
-    create_heightmap(dem_save_path, lidar_directory)
+    # create_heightmap(dem_save_path, lidar_directory)
     # create_color_raster(dem_save_path)
+    raster_dem_to_minecraft(dem_save_path)

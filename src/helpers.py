@@ -21,7 +21,7 @@ INVERSE_ROTATION_MATRIX = np.array([[math.cos(ROTATION_RADIANS), math.sin(ROTATI
 BLOCK_OFFSET_X = 480000
 BLOCK_OFFSET_Z = 5455000
 HEIGHT_OFFSET = 59
-GAME_VERSION = ("java", (1, 19, 4))
+GAME_VERSION = ("java", (1, 20, 4))
 # PROJECT_DIRECTORY = r"C:\Users\Ashtan\OneDrive - UBC\School\2023S\minecraftUBC"
 PROJECT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORLD_DIRECTORY = os.path.join(PROJECT_DIRECTORY, "world/UBC")
@@ -291,9 +291,13 @@ def preprocess_dataset(lidar_ds, label_to_keep, remove_duplicates=True):
     dataset = np.matmul(INVERSE_ROTATION_MATRIX, np.array([filtered_x - BLOCK_OFFSET_X,
                                                            filtered_z - BLOCK_OFFSET_Z,
                                                            filtered_y - HEIGHT_OFFSET]))
-    rotated_x, rotated_z, rotated_y = np.floor(dataset[0]), -np.floor(dataset[1]), np.floor(dataset[2])
+
+    if dataset.shape[1] == 0:
+        return None, None, None, None, [], [], []
+
     # remove duplicate points (considering x, y, z pairs)
     if remove_duplicates:
+        rotated_x, rotated_z, rotated_y = np.floor(dataset[0]), -np.floor(dataset[1]), np.floor(dataset[2])
         unique_indices = np.unique(np.array([rotated_x, rotated_y, rotated_z]), axis=1, return_index=True)[1]
         unique_x, unique_y, unique_z = rotated_x[unique_indices], rotated_y[unique_indices], rotated_z[unique_indices]
         min_x, min_z, max_x, max_z = np.floor(np.min(unique_x) / 16) * 16, np.floor(np.min(unique_z) / 16) * 16, np.ceil(
@@ -301,6 +305,7 @@ def preprocess_dataset(lidar_ds, label_to_keep, remove_duplicates=True):
 
         return max_x, max_z, min_x, min_z, unique_x, unique_y, unique_z
     else:
+        rotated_x, rotated_z, rotated_y = dataset[0], -dataset[1], dataset[2]
         min_x, min_z, max_x, max_z = np.floor(np.min(rotated_x) / 16) * 16, np.floor(np.min(rotated_z) / 16) * 16, np.ceil(
             np.max(rotated_x) / 16) * 16, np.ceil(np.max(rotated_z) / 16) * 16
 

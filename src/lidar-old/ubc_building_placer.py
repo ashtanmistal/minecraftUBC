@@ -55,7 +55,7 @@ def transform_chunk(data, level):
         mapped_block = BUILDING_BLOCKS[mapped_color]
 
         universal_block, universal_block_entity, universal_extra = level.translation_manager.get_version("java", (
-            1, 19, 4)).block.to_universal(mapped_block)
+            1, 20, 4)).block.to_universal(mapped_block)
         block_id = level.block_palette.get_add_block(universal_block)
         chunk.blocks[int(offset_x), int(unique_y[j]), int(offset_z)] = block_id
     chunk.changed = True

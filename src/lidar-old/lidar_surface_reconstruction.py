@@ -156,7 +156,7 @@ def transform_dataset(ds, start_time):
                     level.put_chunk(chunk, "minecraft:overworld")  # save the chunk if it is empty to avoid terrain gen
                     continue
                 # find the unique block_id of default_block in the chunk
-                universal_block, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
+                universal_block, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(
                     DEFAULT_BLOCK)
                 block_id = level.block_palette.get_add_block(universal_block)
 

@@ -112,7 +112,7 @@ def convert_features_from_file(file, level):
     :param level: Amulet level object
     :return: None
     """
-    trunk_block_universal, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
+    trunk_block_universal, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(
         TRUNK_BLOCK)
     trunk_block_id = level.block_palette.get_add_block(trunk_block_universal)
     with open(file, "r") as f:

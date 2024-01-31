@@ -34,10 +34,10 @@ def transform_dataset(ds, start_time):
     level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
     max_x, max_z, min_x, min_z, x, y, z = src.helpers.preprocess_dataset(ds, TALL_VEGETATION_LABEL)
 
-    trunk_block_universal, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
+    trunk_block_universal, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(
         TRUNK_BLOCK)
     trunk_block_id = level.block_palette.get_add_block(trunk_block_universal)
-    leaves_block_universal, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
+    leaves_block_universal, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(
         LEAVES_BLOCK)
     leaves_block_id = level.block_palette.get_add_block(leaves_block_universal)
 

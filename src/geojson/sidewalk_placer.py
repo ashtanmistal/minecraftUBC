@@ -14,7 +14,7 @@ and then place a line of blocks between them. This line will depend on the road 
 width, pattern, and/or block type dependent on this information. We will additionally use the surface type if 
 available to determine the block type of the sidewalk."""
 
-game_version = ("java", (1, 19, 4))
+game_version = ("java", (1, 20, 4))
 
 min_y = -58
 max_y = 45

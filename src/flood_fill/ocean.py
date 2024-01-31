@@ -27,9 +27,9 @@ def main():
                 chunk = level.get_chunk(chunk_x, chunk_z, "minecraft:overworld")
             except ChunkDoesNotExist:
                 chunk = Chunk(chunk_x, chunk_z)
-            universal_bedrock, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
+            universal_bedrock, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(
                 bedrock_block)
-            universal_water, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
+            universal_water, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(
                 water_block)
             bedrock_id = level.block_palette.get_add_block(universal_bedrock)
             water_id = level.block_palette.get_add_block(universal_water)

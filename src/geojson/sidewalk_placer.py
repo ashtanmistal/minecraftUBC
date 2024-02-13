@@ -1,3 +1,5 @@
+import os
+
 import amulet
 import json
 import math
@@ -5,6 +7,7 @@ from amulet.api.block import Block
 from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from tqdm import tqdm
+from src.helpers import WORLD_DIRECTORY, PROJECT_DIRECTORY
 
 from src.helpers import bresenham_3d, convert_lat_long_to_x_z
 
@@ -253,8 +256,9 @@ def convert_feature(feature, level):
 
 
 def main():
-    level = amulet.load_level("/world/UBC")
-    sidewalk_data_path = "/resources/ubc_roads/Data/ubcv_paths_sidewalks.geojson"
+    level = amulet.load_level(WORLD_DIRECTORY)
+    sidewalk_data_path = os.path.join(PROJECT_DIRECTORY, "resources", "ubc_roads", "Data",
+                                      "ubcv_paths_sidewalks.geojson")
     with open(sidewalk_data_path) as sidewalk_data_file:
         sidewalk_data = json.load(sidewalk_data_file)
 

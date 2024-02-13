@@ -15,6 +15,7 @@ from amulet import Block
 from amulet.utils import block_coords_to_chunk_coords
 from amulet_nbt import StringTag
 from tqdm import tqdm
+from src.helpers import WORLD_DIRECTORY, PROJECT_DIRECTORY
 
 import src.helpers
 
@@ -76,7 +77,7 @@ def streetlight_handler():
     with open(STREETLIGHT_JSON_PATH) as f:
         data = json.load(f)
 
-    level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
+    level = amulet.load_level(WORLD_DIRECTORY)
     # iterate through the features
     for feature in tqdm(data["features"]):
         layer = feature["properties"]["LAYER"]

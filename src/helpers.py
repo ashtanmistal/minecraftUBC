@@ -12,7 +12,7 @@ import sys
 import os
 
 MIN_HEIGHT = -64
-MAX_HEIGHT = 100
+MAX_HEIGHT = 45
 ROTATION_DEGREES = 28.000  # This is the rotation of UBC's roads relative to true north.
 ROTATION_RADIANS = math.radians(ROTATION_DEGREES)
 INVERSE_ROTATION_MATRIX = np.array([[math.cos(ROTATION_RADIANS), math.sin(ROTATION_RADIANS), 0],

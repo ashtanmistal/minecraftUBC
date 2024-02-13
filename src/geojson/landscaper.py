@@ -11,15 +11,18 @@ from amulet import Block
 from amulet.api.errors import ChunkDoesNotExist
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
+from rasterio.features import rasterize
+import shapely.geometry
 
 import src.helpers
 from src.geojson import streetlight_handler, sidewalk_placer
 from src.geojson.polygon_divider import polygon_divider
 
 MIN_HEIGHT = -63
-MAX_HEIGHT = 45
+MAX_HEIGHT = 50
 DEFAULT_BLOCK = Block("minecraft", "stone")
 
+# TODO remove Block from the type conversions and just use the color and the color-to-block dictionary for consistency
 LSHARD_TYPE_CONVERSION = {
     "Concrete": {
         "block": Block("minecraft", "gray_concrete_powder"),
@@ -149,7 +152,35 @@ PSRP_CONVERSION = {
     "depth": 2,
 }
 
+COLOR_TO_BLOCK = {
+    "#808080": Block("minecraft", "gray_concrete_powder"),
+    "#aaaaaa": Block("minecraft", "andesite"),
+    "#6a6a6a": Block("minecraft", "gray_concrete"),
+    "#007600": Block("minecraft", "moss_block"),
+    "#00c900": Block("minecraft", "moss_block"),
+    "#00a500": Block("minecraft", "grass_block"),
+    "#9b6127": Block("minecraft", "dirt"),
+    "#a4591d": Block("minecraft", "farmland"),
+    "#fcd46e": Block("minecraft", "oak_planks"),
+    "#0000ff": Block("minecraft", "water"),
+    "#ffff00": Block("minecraft", "sand"),
+    "#28872f": Block("minecraft", "moss_block"),
+}
 
+COLOR_TO_DEPTH = {
+    "#808080": 2,
+    "#aaaaaa": 2,
+    "#6a6a6a": 1,
+    "#007600": 3,
+    "#00c900": 1,
+    "#00a500": 2,
+    "#9b6127": 1,
+    "#a4591d": 1,
+    "#fcd46e": 1,
+    "#0000ff": 1,
+    "#ffff00": 2,
+    "#28872f": 2,
+}
 
 
 def convert_feature(feature, level, landscape_type, block_override=None, depth_override=None):
@@ -162,6 +193,8 @@ def convert_feature(feature, level, landscape_type, block_override=None, depth_o
     :param depth_override: Manual override of the depth to place instead of the feature default conversion
     :return: None
     """
+    if feature["geometry"] is None:
+        return
     if feature["geometry"]["type"] == "Polygon":
         coordinates, properties = feature["geometry"]["coordinates"], feature["properties"]
         geometry_handler(block_override, coordinates, depth_override, landscape_type, level, properties)
@@ -190,12 +223,12 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
             return
 
     universal_default_block, _, _ = level.translation_manager.get_version("java",
-                                                                          (1, 19, 4)).block.to_universal(
+                                                                          (1, 20, 4)).block.to_universal(
         DEFAULT_BLOCK)
     default_block_id = level.block_palette.get_add_block(universal_default_block)
 
     # get the flooded matrix
-    matrix, min_x, min_z = polygon_divider(coordinates)
+    matrix, min_x, min_z = polygon_divider(coordinates)  # TODO see if this can be replaced with a rasterization library
     for cx in range(0, matrix.shape[0], 16):
         for cz in range(0, matrix.shape[1], 16):
             matrix_slice = matrix[cx:cx + 16, cz:cz + 16]
@@ -216,7 +249,7 @@ def geometry_handler(block_override, coordinates, depth_override, landscape_type
                                 block, depth = get_block_type(block_override, depth_override, landscape_type,
                                                               properties)
                                 universal_block, _, _ = level.translation_manager.get_version("java", (
-                                    1, 19, 4)).block.to_universal(block)
+                                    1, 20, 4)).block.to_universal(block)
                                 block_id = level.block_palette.get_add_block(universal_block)
                                 height = MIN_HEIGHT + np.max(np.where(blocks[x, MIN_HEIGHT:, z] == default_block_id))
                                 chunk.blocks[x, int(height - depth):int(height) + depth, z] = block_id
@@ -343,9 +376,3 @@ def main():
         level.save()
         level.close()
         print("Saved")
-
-
-if __name__ == "__main__":
-    main()
-    sidewalk_placer.main()
-    streetlight_handler.streetlight_handler()

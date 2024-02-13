@@ -5,19 +5,19 @@ import numpy as np
 import pylas
 import rasterio
 from matplotlib.colors import to_rgba
-from rasterio.features import rasterize
 from rasterio.transform import from_origin
 from scipy.spatial import cKDTree
 from tqdm import tqdm
+from shapely.geometry import Polygon, MultiPolygon
 import amulet
 from amulet.api.block import Block
 from amulet.api.chunk import Chunk
 from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils import block_coords_to_chunk_coords
+from PIL import Image, ImageDraw
 
-
-from geojson.landscaper import (LSHARD_TYPE_CONVERSION, LSSOFT_TYPE_CONVERSION, FID_LANDUS_CONVERSION,
-                                BUILDING_CONVERSION, WATER_CONVERSION, BEACH_CONVERSION, PSRP_CONVERSION)
+import src.geojson.landscaper as geojson
+from src.geojson import sidewalk_placer, streetlight_handler
 from src.helpers import convert_lat_long_to_x_z, preprocess_dataset, WORLD_DIRECTORY, MIN_HEIGHT
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,29 +27,29 @@ DEFAULT_BLOCK = Block("minecraft", "stone")
 
 GEOJSON_FILE_LIST = [
     "landscape/geojson/ubcv_municipal_waterfeatures.geojson",
-    "landscape/geojson/ubcv_landscape_hard.geojson",
-    "landscape/geojson/ubcv_landscape_soft.geojson",
     "locations/geojson/ubcv_buildings.geojson",
+    "landscape/geojson/ubcv_landscape_soft.geojson",
+    "landscape/geojson/ubcv_landscape_hard.geojson",
     "context/geojson/ubcv_uel.geojson",
     "context/geojson/ubcv_beach.geojson",
     "context/geojson/ubcv_psrp.geojson"
 ]
 
 CONVERSION_MAPPING = [
-    WATER_CONVERSION,
-    LSHARD_TYPE_CONVERSION,
-    LSSOFT_TYPE_CONVERSION,
-    BUILDING_CONVERSION,
-    FID_LANDUS_CONVERSION,
-    BEACH_CONVERSION,
-    PSRP_CONVERSION
+    geojson.WATER_CONVERSION,
+    geojson.BUILDING_CONVERSION,
+    geojson.LSSOFT_TYPE_CONVERSION,
+    geojson.LSHARD_TYPE_CONVERSION,
+    geojson.FID_LANDUS_CONVERSION,
+    geojson.BEACH_CONVERSION,
+    geojson.PSRP_CONVERSION
 ]
 
 COLUMN_MAPPING = [
     "None",
-    "LSHARD_TYPE",
-    "LSSOFT_TYPE",
     "None",
+    "LSSOFT_TYPE",
+    "LSHARD_TYPE",
     "FID_LANDUS",
     "None",
     "None"
@@ -86,35 +86,6 @@ def read_las_file(file_path):
     return points, colors, labels
 
 
-def translate_geojson():
-    # TODO this needs to be fixed, but for now, landscaper.py will do the job
-    print("Translating lat/long coordinates to x/z coordinates...")
-    geojson_files = [json.load(open(os.path.join(GEOJSON_DIR, file), "r")) for file in GEOJSON_FILE_LIST]
-
-    for filename, file in tqdm(zip(GEOJSON_FILE_LIST, geojson_files), total=len(GEOJSON_FILE_LIST)):
-        for feature in file["features"]:
-            geometry_type = feature["geometry"]["type"]
-            coordinates = feature["geometry"]["coordinates"]
-
-            if geometry_type == "Polygon":
-                feature["geometry"]["coordinates"] = [
-                    [convert_lat_long_to_x_z(lat, lon) for lon, lat in ring]
-                    for ring in coordinates
-                ]
-            elif geometry_type == "MultiPolygon":
-                feature["geometry"]["coordinates"] = [
-                    [[convert_lat_long_to_x_z(lat, lon) for lon, lat in ring] for ring in polygon]
-                    for polygon in coordinates
-                ]
-            else:
-                print(f"Invalid geometry type in file: {filename}, skipping...")
-                continue
-
-        with open(os.path.join(GEOJSON_DIR, filename.replace(".geojson", "_translated.geojson")), "w") as f:
-            json.dump(file, f)
-
-
-
 def create_heightmap(dem_save_path, lidar_directory):
     """
     Creates a heightmap of the ground points in the dataset.
@@ -136,7 +107,7 @@ def create_heightmap(dem_save_path, lidar_directory):
 
     ground_points = np.concatenate(ground_points, axis=0)
 
-# TODO fix the below code now that we have adjusted the coordinate system to Minecraft's
+    # TODO fix the below code now that we have adjusted the coordinate system to Minecraft's
     x, y, z = ground_points[:, 0], ground_points[:, 1], ground_points[:, 2]
 
     print("Finished loading ground points.\n")
@@ -178,59 +149,118 @@ def create_heightmap(dem_save_path, lidar_directory):
     print("Finished creating DEM.\n")
 
 
-def create_color_raster(dem_directory):
-    # Now it's time to colorize the DEM, using the geojson files and creating another raster
+def colorize_world():
+    # Now it's time to colorize the DEM, using the geojson files
+    # find the maximum bounds of the geojson files
 
-    # read the DEM
-    with rasterio.open(os.path.join(dem_directory, "dem_raster.tif")) as src:
-        grid_z = src.read(1)
-        transform = src.transform
-
-    color_raster = np.zeros((grid_z.shape[0], grid_z.shape[1], 3), dtype=np.uint8)
-
-    # geojson files, in order of priority, is the reverse of GEOJSON_FILE_LIST
-
-    for file in GEOJSON_FILE_LIST[::-1]:
-        print("Rasterizing " + file + "...")
-        with open(os.path.join(GEOJSON_DIR, file.replace(".geojson", "_translated.geojson")), "r") as f:
+    resolution = 1  # 1m resolution, height for each block in Minecraft
+    for file in GEOJSON_FILE_LIST:  # TODO flip the order of the files [::-1]
+        level = amulet.load_level(WORLD_DIRECTORY)
+        with open(os.path.join(GEOJSON_DIR, file), "r") as f:
             geojson_data = json.load(f)
-
         column_name = COLUMN_MAPPING[GEOJSON_FILE_LIST.index(file)]
+
+        default_universal_block, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(
+            DEFAULT_BLOCK)
+        default_block_id = level.block_palette.get_add_block(default_universal_block)
 
         for feature in tqdm(geojson_data['features']):
             # get the associated color for the feature
             properties = feature['properties']
             if column_name == "None":
-                color = CONVERSION_MAPPING[GEOJSON_FILE_LIST.index(file)]["color"]
+                color_hex = CONVERSION_MAPPING[GEOJSON_FILE_LIST.index(file)]["color"]
             elif properties.get(column_name) == "IGNORE":
                 continue
             else:
-                color = CONVERSION_MAPPING[GEOJSON_FILE_LIST.index(file)].get(properties[column_name], {}).get("color")
-
-            if color is None:
-                color = "#000000"  # default to black if no color is found
-            color = to_rgba(color)
-
+                color_hex = CONVERSION_MAPPING[GEOJSON_FILE_LIST.index(file)].get(properties[column_name], {}).get("color")
+            if color_hex is None:
+                continue
+            depth = geojson.COLOR_TO_DEPTH[color_hex]
             # rasterize the feature
             geometry = feature['geometry']
-            mask = rasterize([(geometry, 1)], out_shape=grid_z.shape, transform=transform)
+            if geometry is None:
+                continue
+            # Convert the coordinates to Minecraft's coordinate system (that's what the transform requires)
+            if geometry['type'] == "Polygon":
+                geometry['coordinates'] = [
+                    [convert_lat_long_to_x_z(coord[1], coord[0], False) for coord in geometry['coordinates'][0]]]
+                bounds = Polygon(geometry['coordinates'][0]).bounds
+                # subtract the minimum x and y values from the coordinates
+                geometry['coordinates'] = [[(coord[0] - bounds[0], coord[1] - bounds[1]) for coord in poly] for poly in
+                                              geometry['coordinates']]
+            elif geometry['type'] == "MultiPolygon":
+                geometry['coordinates'] = [
+                    [[convert_lat_long_to_x_z(coord[1], coord[0], False) for coord in poly[0]] for poly in
+                     geometry['coordinates']]]
+                bounds = MultiPolygon([Polygon(poly) for poly in geometry['coordinates'][0]]).bounds
+                # subtract the minimum x and y values from the coordinates
+                geometry['coordinates'] = [
+                    [[(coord[0] - bounds[0], coord[1] - bounds[1]) for coord in poly] for poly in poly_list] for
+                    poly_list in geometry['coordinates']]
+            else:
+                continue
+            x_min, y_min, x_max, y_max = bounds
+            # as int
+            x_min, y_min, x_max, y_max = int(round(x_min)), int(round(y_min)), int(round(x_max)), int(round(y_max))
+            # if the polygon is too small, skip it
+            if x_max - x_min < 1 or y_max - y_min < 1:
+                continue
 
-            # Update the raster - only update where mask is True
-            for i in range(3):  # RGB channels
-                color_raster[:, :, i] = np.where(mask, color[i], color_raster[:, :, i])
+            # create a mask of the feature
+            if geometry['type'] == "Polygon":
+                mask = Image.new('L', (x_max - x_min, y_max - y_min), 0)
+                ImageDraw.Draw(mask).polygon(geometry['coordinates'][0], outline=1, fill=1)
+                mask = np.array(mask)
+            elif geometry['type'] == "MultiPolygon":
+                mask = Image.new('L', (x_max - x_min, y_max - y_min), 0)
+                for poly in geometry['coordinates'][0]:
+                    ImageDraw.Draw(mask).polygon(poly, outline=1, fill=1)
+                mask = np.array(mask)
+            else:
+                continue
 
-    # Save the color raster
-    with rasterio.open(
-            os.path.join(dem_directory, "landuse_raster.tif"), 'w', driver='GTiff',
-            height=color_raster.shape[0], width=color_raster.shape[1],
-            count=3, dtype=str(color_raster.dtype),
-            crs='+proj=latlong',
-            transform=transform
-    ) as dst:
-        for i in range(color_raster.shape[2]):
-            dst.write(color_raster[:, :, i], i + 1)
+            block = geojson.COLOR_TO_BLOCK[color_hex]
+            universal_block, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(block)
+            block_id = level.block_palette.get_add_block(universal_block)
+            # for ix in range(x_min, x_max, 16):
+            #     for iz in range(y_min, y_max, 16):
+            #         mask_in_chunk = mask[ix - x_min:ix - x_min + 16, iz - y_min:iz - y_min + 16]
+            #         # if mask_in_chunk.shape != (16, 16):
+            #         #     continue
+            #         if np.all(mask_in_chunk == 0):
+            #             continue
+            #         cx, cz = block_coords_to_chunk_coords(ix, iz)
+            #         try:
+            #             chunk = level.get_chunk(cx, cz, "minecraft:overworld")
+            #         except ChunkDoesNotExist:
+            #             continue
+            #         for x in range(16):  # This could be MUCH faster but I'm having issues with matching up to the DEM.
+            #             for z in range(16):
+            #                 if mask_in_chunk[x, z] == 1:
+            #                     height = MIN_HEIGHT
+            #                     while chunk.blocks[x, height, z] == default_block_id:
+            #                         height += 1
+            #                     chunk.blocks[x, height - depth:height, z] = block_id
+            #         level.put_chunk(chunk, "minecraft:overworld")
+            for ix in range(x_min, x_max):
+                for iz in range(y_min, y_max):
+                    cx, cz = block_coords_to_chunk_coords(ix, iz)
+                    try:
+                        chunk = level.get_chunk(cx, cz, "minecraft:overworld")  # TODO removed + 1
+                    except ChunkDoesNotExist:
+                        continue
+                    if mask[iz - y_min, ix - x_min] == 1:
+                        height = MIN_HEIGHT
+                        while chunk.blocks[ix % 16, height, iz % 16] == default_block_id:
+                            height += 1
+                        chunk.blocks[ix % 16, height - depth:height, iz % 16] = block_id
+                    level.put_chunk(chunk, "minecraft:overworld")
 
-    print("Land use raster created: landuse_raster.tif")
+        level.save()
+        level.close()
+    print("Finished colorizing the world.")
+
+
 
 
 def raster_dem_to_minecraft(dem_save_path):
@@ -241,23 +271,26 @@ def raster_dem_to_minecraft(dem_save_path):
     :return: None
     """
     level = amulet.load_level(WORLD_DIRECTORY)
-    universal_block, _, _ = level.translation_manager.get_version("java", (1, 19, 4)).block.to_universal(
+    universal_block, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(
         DEFAULT_BLOCK)
     block_id = level.block_palette.get_add_block(universal_block)
     # load the DEM and get the min/max x/z values
     with rasterio.open(os.path.join(dem_save_path, "dem_raster.tif")) as src:
         grid_z = src.read(1)
-        # flip the y axis
-        grid_z = np.flip(grid_z, axis=1)
         transform = src.transform
-    x_min, x_max = int(np.floor(transform[2] / 16) * 16), int(np.ceil((transform[2] + transform[0] * grid_z.shape[0]) / 16) * 16)
-    z_min, z_max = int(np.floor(transform[5] / 16) * 16), int(np.ceil((transform[5] + transform[4] * grid_z.shape[1]) / 16) * 16)
+    x_min, x_max = int(np.floor(transform[2] / 16) * 16), int(
+        np.ceil((transform[2] + transform[0] * grid_z.shape[0]) / 16) * 16)
+    z_min, z_max = int(np.floor(transform[5] / 16) * 16), int(
+        np.ceil((transform[5] + transform[4] * grid_z.shape[1]) / 16) * 16)
     # reverse z_min and z_max
     z_min, z_max = z_max, z_min
     # iterate over each chunk; read the DEM and place DEFAULT_BLOCK from y=MIN_HEIGHT to y=height (the height of the DEM)
     for ix in tqdm(range(x_min, x_max, 16)):
         for iz in range(z_min, z_max, 16):
             cx, cz = block_coords_to_chunk_coords(ix, iz)
+            cz = cz - 1  # TODO there's an offset between this version and the previous version, for some reason.
+            # This is fixing another "off by one" chunk error earlier in the code -- don't have time to fix it
+            # *properly* for now, but this works.
             try:
                 chunk = level.get_chunk(cx, cz, "minecraft:overworld")
             except ChunkDoesNotExist:
@@ -265,7 +298,7 @@ def raster_dem_to_minecraft(dem_save_path):
             # find the unique block_id of default_block in the chunk
 
             # place the blocks
-            dem_in_chunk = grid_z[ix-x_min:ix-x_min+16, iz-z_min:iz-z_min+16].astype(int)
+            dem_in_chunk = grid_z[ix - x_min:ix - x_min + 16, iz - z_min:iz - z_min + 16].astype(int)
             if dem_in_chunk.shape != (16, 16):
                 continue
             for x in range(16):
@@ -280,9 +313,10 @@ def raster_dem_to_minecraft(dem_save_path):
 
 
 if __name__ == "__main__":
-    # translate_geojson()
     lidar_directory = os.path.join(BASE_DIR, "resources", "las")
     dem_save_path = os.path.join(BASE_DIR, "src")
     # create_heightmap(dem_save_path, lidar_directory)
-    # create_color_raster(dem_save_path)
-    raster_dem_to_minecraft(dem_save_path)
+    # raster_dem_to_minecraft(dem_save_path)
+    # colorize_world()
+    sidewalk_placer.main()
+    streetlight_handler.streetlight_handler()

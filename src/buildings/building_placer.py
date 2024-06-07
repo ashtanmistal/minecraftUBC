@@ -1,16 +1,16 @@
 import os
 import shutil
+
 import amulet
+import numpy as np
+import pylas
 from amulet.api.block import Block
-from amulet.api.chunk import Chunk
-from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils import block_coords_to_chunk_coords
 from scipy.spatial import cKDTree
 from tqdm import tqdm
-import matplotlib.pyplot as plt
-import numpy as np
 
 import src.helpers
+from src.helpers import INVERSE_ROTATION_MATRIX, BLOCK_OFFSET_X, BLOCK_OFFSET_Z, HEIGHT_OFFSET
 
 BUILDING_BLOCKS = {
     "stone bricks": Block("minecraft", "stone_bricks"),
@@ -23,12 +23,12 @@ BUILDING_BLOCKS_TEXTURES = {
 OBJ_DIRECTORY = (r"C:\Users\Ashtan Mistal\OneDrive - "
                  r"UBC\School\2023W1\CPSC533Y\Project\LiDAR-DenseSeg\src\classification\pointnet2-ubc-semseg\log"
                  r"\sem_seg\merged\visual\data\buildings_split")  # damn that's a long path
+LAS_DIRECTORY = r"C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\resources\las"  # TODO make relative
 
 OUTLIER_THRESHOLD = 100
 OUTLIER_RADIUS = 1.4
 TRUNCATION_RADIUS = 0.2
 TRUNCATION_THRESHOLD = 0.6
-HEIGHT_OFFSET = 59
 
 
 def process_obj(obj_file, level):
@@ -61,11 +61,16 @@ def process_obj(obj_file, level):
 def process_las(las_file, level):
     """
     Reads an LAS file and performs the same processing as process_obj
-    :param las_file:
-    :param level:
-    :return:
+    :param las_file: basename of the LAS file to process
+    :param level: Amulet level object
+    :return: None
     """
-    pass  # TODO implement this
+    dataset = pylas.read(las_file)
+    xyz = np.matmul(INVERSE_ROTATION_MATRIX, np.array([dataset.x - BLOCK_OFFSET_X,
+                                                       dataset.z - BLOCK_OFFSET_Z,
+                                                       dataset.y - HEIGHT_OFFSET]))
+    points = np.vstack([xyz, dataset.red, dataset.green, dataset.blue]).T
+    process_points(points, level, os.path.basename(las_file))
 
 
 def process_points(points, level, basename):
@@ -194,20 +199,14 @@ def process_points(points, level, basename):
 
 
 def main():
-    # Minecraft world copying: copy the entire world/STREETLIGHTS directory to world/BUILDINGS
-    # This is done to ensure that the STREETLIGHTS directory is not modified
-    # The BUILDINGS directory will be modified to contain the buildings
-    # if building directory exists, delete it
-    if os.path.exists("../world/BUILDINGS"):
-        shutil.rmtree("../world/BUILDINGS")
-    # copy the streetlights directory to buildings
-    shutil.copytree("../world/STREETLIGHTS", "../world/BUILDINGS")
-
-    # level = amulet.load_level("../world/BUILDINGS")
+    start_from_scratch = True  # variable to assist with debugging. Set to True by default
+    if start_from_scratch:
+        if os.path.exists("../world/BUILDINGS"):
+            shutil.rmtree("../world/BUILDINGS")
+        shutil.copytree("../world/STREETLIGHTS", "../world/BUILDINGS")
 
     files_to_process = []
 
-    # for filename in os.listdir(OBJ_DIRECTORY):
     for filename in os.listdir(OBJ_DIRECTORY):
         if filename.endswith("_pred.obj"):
             obj_file = os.path.join(OBJ_DIRECTORY, filename)
@@ -221,10 +220,13 @@ def main():
         level.close()
 
     print("Buffer Buildings placed in world/BUILDINGS. Processing remaining buildings...")
-    # level.close()
 
-    # TODO get buildings that do are not derived from LiDAR-DenseSeg buffer and place them in the world naively
-    # This includes all building points in the set {ubcv_legal_boundary - buffer} U {ubcv_uel}
+    las_files = ["merged_pip.las", "merged_raw.las"]
+    for filename in tqdm(las_files):
+        level = amulet.load_level("../world/BUILDINGS")
+        process_las(os.path.join(LAS_DIRECTORY, filename), level)
+        level.save()
+        level.close()
 
 
 if __name__ == "__main__":

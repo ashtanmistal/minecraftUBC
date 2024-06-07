@@ -1,3 +1,6 @@
 /resources/
 /src/ground_points_kdtree.npy
 /src/dem_raster.tif
+src/landuse_raster.tif
+/src/dem_raster.tif.aux.xml
+/src/landuse_raster.tif.aux.xml

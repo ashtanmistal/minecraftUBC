@@ -4,7 +4,6 @@ import sys
 import numpy as np
 import pylas
 import rasterio
-from matplotlib.colors import to_rgba
 from rasterio.transform import from_origin
 from scipy.spatial import cKDTree
 from tqdm import tqdm
@@ -12,12 +11,11 @@ from shapely.geometry import Polygon, MultiPolygon
 import amulet
 from amulet.api.block import Block
 from amulet.api.chunk import Chunk
-from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
+from amulet.api.errors import ChunkDoesNotExist
 from amulet.utils import block_coords_to_chunk_coords
 from PIL import Image, ImageDraw
 
 import src.geojson.landscaper as geojson
-from src.geojson import sidewalk_placer, streetlight_handler
 from src.helpers import convert_lat_long_to_x_z, preprocess_dataset, WORLD_DIRECTORY, MIN_HEIGHT
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -152,9 +150,7 @@ def create_heightmap(dem_save_path, lidar_directory):
 def colorize_world():
     # Now it's time to colorize the DEM, using the geojson files
     # find the maximum bounds of the geojson files
-
-    resolution = 1  # 1m resolution, height for each block in Minecraft
-    for file in GEOJSON_FILE_LIST:  # TODO flip the order of the files [::-1]
+    for file in GEOJSON_FILE_LIST:
         level = amulet.load_level(WORLD_DIRECTORY)
         with open(os.path.join(GEOJSON_DIR, file), "r") as f:
             geojson_data = json.load(f)
@@ -223,31 +219,11 @@ def colorize_world():
             block = geojson.COLOR_TO_BLOCK[color_hex]
             universal_block, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(block)
             block_id = level.block_palette.get_add_block(universal_block)
-            # for ix in range(x_min, x_max, 16):
-            #     for iz in range(y_min, y_max, 16):
-            #         mask_in_chunk = mask[ix - x_min:ix - x_min + 16, iz - y_min:iz - y_min + 16]
-            #         # if mask_in_chunk.shape != (16, 16):
-            #         #     continue
-            #         if np.all(mask_in_chunk == 0):
-            #             continue
-            #         cx, cz = block_coords_to_chunk_coords(ix, iz)
-            #         try:
-            #             chunk = level.get_chunk(cx, cz, "minecraft:overworld")
-            #         except ChunkDoesNotExist:
-            #             continue
-            #         for x in range(16):  # This could be MUCH faster but I'm having issues with matching up to the DEM.
-            #             for z in range(16):
-            #                 if mask_in_chunk[x, z] == 1:
-            #                     height = MIN_HEIGHT
-            #                     while chunk.blocks[x, height, z] == default_block_id:
-            #                         height += 1
-            #                     chunk.blocks[x, height - depth:height, z] = block_id
-            #         level.put_chunk(chunk, "minecraft:overworld")
             for ix in range(x_min, x_max):
                 for iz in range(y_min, y_max):
                     cx, cz = block_coords_to_chunk_coords(ix, iz)
                     try:
-                        chunk = level.get_chunk(cx, cz, "minecraft:overworld")  # TODO removed + 1
+                        chunk = level.get_chunk(cx, cz, "minecraft:overworld")
                     except ChunkDoesNotExist:
                         continue
                     if mask[iz - y_min, ix - x_min] == 1:
@@ -287,7 +263,7 @@ def raster_dem_to_minecraft(dem_save_path):
     for ix in tqdm(range(x_min, x_max, 16)):
         for iz in range(z_min, z_max, 16):
             cx, cz = block_coords_to_chunk_coords(ix, iz)
-            cz = cz - 1  # TODO there's an offset between this version and the previous version, for some reason.
+            cz = cz - 1
             # This is fixing another "off by one" chunk error earlier in the code -- don't have time to fix it
             # *properly* for now, but this works.
             try:
@@ -305,17 +281,6 @@ def raster_dem_to_minecraft(dem_save_path):
                     chunk.blocks[x, MIN_HEIGHT:dem_in_chunk[x, z], z] = block_id
             level.put_chunk(chunk, "minecraft:overworld")
     print("Finished rasterizing DEM to Minecraft world.")
-    # TODO colorize the DEM
     level.save()
     level.close()
     print("Saved Minecraft world.")
-
-
-if __name__ == "__main__":
-    lidar_directory = os.path.join(BASE_DIR, "resources", "las")
-    dem_save_path = os.path.join(BASE_DIR, "src")
-    # create_heightmap(dem_save_path, lidar_directory)
-    # raster_dem_to_minecraft(dem_save_path)
-    # colorize_world()
-    sidewalk_placer.main()
-    streetlight_handler.streetlight_handler()

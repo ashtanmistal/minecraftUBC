@@ -5,6 +5,7 @@ import amulet
 import numpy as np
 import pylas
 from amulet.api.block import Block
+from amulet.api.errors import ChunkDoesNotExist
 from amulet.utils import block_coords_to_chunk_coords
 from scipy.spatial import cKDTree
 from tqdm import tqdm
@@ -23,7 +24,6 @@ BUILDING_BLOCKS_TEXTURES = {
 OBJ_DIRECTORY = (r"C:\Users\Ashtan Mistal\OneDrive - "
                  r"UBC\School\2023W1\CPSC533Y\Project\LiDAR-DenseSeg\src\classification\pointnet2-ubc-semseg\log"
                  r"\sem_seg\merged\visual\data\buildings_split")  # damn that's a long path
-LAS_DIRECTORY = r"C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\resources\las"  # TODO make relative
 
 OUTLIER_THRESHOLD = 100
 OUTLIER_RADIUS = 1.4
@@ -67,22 +67,26 @@ def process_las(las_file, level):
     """
     dataset = pylas.read(las_file)
     xyz = np.matmul(INVERSE_ROTATION_MATRIX, np.array([dataset.x - BLOCK_OFFSET_X,
-                                                       dataset.z - BLOCK_OFFSET_Z,
-                                                       dataset.y - HEIGHT_OFFSET]))
+                                                       dataset.y - BLOCK_OFFSET_Z,
+                                                       dataset.z]))
+    xyz[1] = -xyz[1]  # match the Minecraft coordinate system
     points = np.vstack([xyz, dataset.red, dataset.green, dataset.blue]).T
-    process_points(points, level, os.path.basename(las_file))
+    process_points(points, level, os.path.basename(las_file), extra_tooltips=True)
 
 
-def process_points(points, level, basename):
+def process_points(points, level, basename, extra_tooltips=False):
     """
     This function processes the points in the point cloud to place the buildings in the level.
+    :param extra_tooltips: Whether to print extra information for debugging
     :param points: Nx6 array of points
     :param level: Amulet level object
     :param basename: The name of the file being processed (for logging purposes)
     :return: None
     """
     size = len(points)
-    tree = cKDTree(points[:, :2])
+    tree = cKDTree(points[:, :2], copy_data=False)
+    if extra_tooltips:
+        print(f"KDTree built for {basename}. Performing ball query for outlier detection")
 
     # rejecting outlier points: for each point, find the nearest neighbours within a radius of 1.5 meters
     # if the number of neighbours is less than OUTLIER_THRESHOLD, reject the point
@@ -90,11 +94,12 @@ def process_points(points, level, basename):
     rejects = np.zeros(size, dtype=bool)
     for i in range(size):
         point = points[i]
-        neighbours = tree.query_ball_point(point[:2], OUTLIER_RADIUS, workers=-1, p=2)
+        neighbours = tree.query_ball_point(point[:2], OUTLIER_RADIUS, workers=-1, p=2, eps=1e-5)
         if len(neighbours) < OUTLIER_THRESHOLD:
             rejects[i] = True
 
-    # print(f"Rejecting {np.sum(rejects)} points as outliers out of {size} points")
+    if extra_tooltips:
+        print(f"Rejecting {np.sum(rejects)} points as outliers out of {size} points")
     if np.sum(rejects) == size:
         print(f"Warning: All points in {basename} were rejected during outlier detection")
         return
@@ -102,21 +107,24 @@ def process_points(points, level, basename):
     points = points[~rejects]
     size = len(points)
 
-    tree = cKDTree(points[:, :3])
+    tree = cKDTree(points[:, :3], copy_data=False)
+    if extra_tooltips:
+        print(f"Second KDTree built for {basename}. Performing truncation error check")
 
     # let's try to reject points that cause truncation errors.
     # Check the neighbours within a 0.2m radius. If the majority get rounded to a different voxel, reject the point
     rejects = np.zeros(size, dtype=bool)
     for i in range(size):
         point = points[i]
-        neighbours = tree.query_ball_point(point[:3], TRUNCATION_RADIUS, workers=-1, p=2)
+        neighbours = tree.query_ball_point(point[:3], TRUNCATION_RADIUS, workers=-1, p=2, eps=1e-5)
         neighbour_points = points[neighbours]
         neighbour_points_rounded = np.round(neighbour_points[:, :3], 0)
         rounded_point = np.round(point[:3], 0)
         if np.sum(np.all(neighbour_points_rounded == rounded_point, axis=1)) < len(neighbours) * TRUNCATION_THRESHOLD:
             rejects[i] = True
 
-    print(f"Rejecting {np.sum(rejects)} points due to truncation errors out of {size} points")
+    if extra_tooltips:
+        print(f"Rejecting {np.sum(rejects)} points due to truncation errors out of {size} points")
     points = points[~rejects]
     size = len(points)
 
@@ -127,7 +135,7 @@ def process_points(points, level, basename):
     # placing the buildings in the level
     # switch the Y and Z coordinates to match the Minecraft coordinate system
     points_x, points_y, points_z = np.round(points[:, 0]).astype(int), np.round(points[:, 2]).astype(int), np.round(
-        points[:, 1]).astype(int)
+        points[:, 1]).astype(int)  # NOTE: coordinate switch happens HERE. y -> z, z -> y
     points_y -= HEIGHT_OFFSET
     points_red, points_green, points_blue = np.round(points[:, 3]).astype(int), np.round(points[:, 4]).astype(
         int), np.round(points[:, 5]).astype(int)
@@ -136,17 +144,20 @@ def process_points(points, level, basename):
 
     rejected = 0
 
-    for chunk_block_x in range(min_x.astype(int), max_x.astype(int), 16):
-        for chunk_block_z in range(min_z.astype(int), max_z.astype(int), 16):
+    for cx in range(min_x.astype(int), max_x.astype(int), 16):
+        for cz in range(min_z.astype(int), max_z.astype(int), 16):
             points_in_chunk = np.where(
-                (points_x >= chunk_block_x) & (points_x < chunk_block_x + 16) & (points_z >= chunk_block_z) & (
-                        points_z < chunk_block_z + 16))
+                (points_x >= cx) & (points_x < cx + 16) & (points_z >= cz) & (
+                        points_z < cz + 16))
             if len(points_in_chunk[0]) == 0:
                 continue
             chunk_data = np.array([points_x[points_in_chunk], points_y[points_in_chunk], points_z[points_in_chunk],
                                    points_red[points_in_chunk], points_green[points_in_chunk],
                                    points_blue[points_in_chunk]])
-            chunk = level.get_chunk(*block_coords_to_chunk_coords(chunk_block_x, chunk_block_z), "minecraft:overworld")
+            try:
+                chunk = level.get_chunk(*block_coords_to_chunk_coords(cx, cz), "minecraft:overworld")
+            except ChunkDoesNotExist:
+                continue
             min_y, max_y = np.min(chunk_data[1]), np.max(chunk_data[1])
             chunk_data[1] -= min_y
             height_offset = min_y
@@ -156,8 +167,8 @@ def process_points(points, level, basename):
             # convert x,y,z to int
             for i in range(len(chunk_data[0])):
                 x, y, z, r, g, b = chunk_data[:, i]
-                chunk_color_matrix[x - chunk_block_x, y, z - chunk_block_z] += [r, g, b]
-                chunk_color_count[x - chunk_block_x, y, z - chunk_block_z] += 1
+                chunk_color_matrix[x - cx, y, z - cz] += [r, g, b]
+                chunk_color_count[x - cx, y, z - cz] += 1
 
             for x, y, z in np.ndindex(16, max_y - min_y + 1, 16):
                 if chunk_color_count[x, y, z] == 0:
@@ -185,20 +196,23 @@ def process_points(points, level, basename):
                 mapped_color = min(BUILDING_BLOCKS,
                                    key=lambda b: np.linalg.norm(BUILDING_BLOCKS_TEXTURES[b] - average_color))
                 mapped_block = BUILDING_BLOCKS[mapped_color]
-                universal_block, universal_block_entity, universal_extra = level.translation_manager.get_version("java",
-                                                                                                                 (1, 20,
-                                                                                                                  4)).block.to_universal(
-                    mapped_block)
-                block_id = level.block_palette.get_add_block(universal_block)
+                ub, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(mapped_block)
+                block_id = level.block_palette.get_add_block(ub)
                 chunk.blocks[x, y + height_offset, z] = block_id
             chunk.changed = True
 
-    print(f"Rejected {rejected} blocks due to insufficient neighbours out of {size} blocks")
+    if extra_tooltips:
+        print(f"Rejected {rejected} blocks due to insufficient neighbours out of {size} points")
     if rejected / size > 0.01:
         print(f"Warning: Neighbour algorithm rejected more than 1% of the blocks in {basename}")
 
 
-def main():
+def main(lidar_directory):
+    """
+    Main function to place buildings in the Minecraft world
+    :param lidar_directory: The directory containing the LAS files
+    :return: None
+    """
     start_from_scratch = True  # variable to assist with debugging. Set to True by default
     if start_from_scratch:
         if os.path.exists("../world/BUILDINGS"):
@@ -215,7 +229,6 @@ def main():
     for filename in tqdm(files_to_process):
         level = amulet.load_level("../world/BUILDINGS")
         process_obj(filename, level)
-        # import pdb; pdb.set_trace()
         level.save()
         level.close()
 
@@ -224,10 +237,11 @@ def main():
     las_files = ["merged_pip.las", "merged_raw.las"]
     for filename in tqdm(las_files):
         level = amulet.load_level("../world/BUILDINGS")
-        process_las(os.path.join(LAS_DIRECTORY, filename), level)
+        process_las(os.path.join(lidar_directory, filename), level)
         level.save()
         level.close()
 
 
 if __name__ == "__main__":
-    main()
+    LAS_DIRECTORY = r"C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\resources\las"
+    main(LAS_DIRECTORY)

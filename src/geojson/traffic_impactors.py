@@ -40,9 +40,9 @@ STOP_SIGN_CONFIGURATION = [
     Block("minecraft", "red_concrete"),
 ]
 
-TRAFFIC_LIGHT_CONFIGURATION = [
-    Block("minecraft", "pink_wool")  # TODO we'll just do the traffic lights manually as it'll take less time
-]
+# TRAFFIC_LIGHT_CONFIGURATION = [
+#     Block("minecraft", "pink_wool")  # TODO we'll just do the traffic lights manually as it'll take less time
+# ]
 
 BOLLARDS_CONFIGURATION = [
     Block("minecraft", "polished_blackstone_wall"),
@@ -65,7 +65,7 @@ ROAD_MATERIALS = [
 
 TRAFFIC_IMPACTOR_TRANSLATION = {
     "C": None,  # cul-de-sac
-    "L": TRAFFIC_LIGHT_CONFIGURATION,
+    # "L": TRAFFIC_LIGHT_CONFIGURATION,  # TODO removed for CVPR presentation for fully automated pipeline
     # This is a traffic light and needs to be handled differently; this will get caught in the main function here
     "O": None,  # overpass
     "R": YIELD_SIGN_CONFIGURATION,  # vehicles must yield to traffic in the roundabout

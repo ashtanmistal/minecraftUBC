@@ -172,7 +172,8 @@ def colorize_world():
             elif properties.get(column_name) == "IGNORE":
                 continue
             else:
-                color_hex = CONVERSION_MAPPING[GEOJSON_FILE_LIST.index(file)].get(properties[column_name], {}).get("color")
+                color_hex = CONVERSION_MAPPING[GEOJSON_FILE_LIST.index(file)].get(properties[column_name], {}).get(
+                    "color")
             if color_hex is None:
                 continue
             depth = geojson.COLOR_TO_DEPTH[color_hex]
@@ -187,7 +188,7 @@ def colorize_world():
                 bounds = Polygon(geometry['coordinates'][0]).bounds
                 # subtract the minimum x and y values from the coordinates
                 geometry['coordinates'] = [[(coord[0] - bounds[0], coord[1] - bounds[1]) for coord in poly] for poly in
-                                              geometry['coordinates']]
+                                           geometry['coordinates']]
             elif geometry['type'] == "MultiPolygon":
                 geometry['coordinates'] = [
                     [[convert_lat_long_to_x_z(coord[1], coord[0], False) for coord in poly[0]] for poly in
@@ -259,8 +260,6 @@ def colorize_world():
         level.save()
         level.close()
     print("Finished colorizing the world.")
-
-
 
 
 def raster_dem_to_minecraft(dem_save_path):

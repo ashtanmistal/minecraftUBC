@@ -201,13 +201,13 @@ def convert_feature(feature, level):
         pass
 
 
-def main():
+def main(world_directory):
     """
     Main function that loads the Minecraft world and the geojson file, and calls the convert_feature function for each
     feature in the geojson file.
     :return: None
     """
-    level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
+    level = amulet.load_level(world_directory)
     with open(ROAD_DATA_JSON_PATH) as f:
         data = json.load(f)
 
@@ -219,5 +219,5 @@ def main():
     level.close()
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main(src.helpers.WORLD_DIRECTORY)

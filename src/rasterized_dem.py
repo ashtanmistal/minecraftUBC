@@ -238,14 +238,15 @@ def colorize_world():
     print("Finished colorizing the world.")
 
 
-def raster_dem_to_minecraft(dem_save_path):
+def raster_dem_to_minecraft(dem_save_path, world_directory):
     """
     Rasterizes the DEM into a Minecraft world.
     This is a more robust method than lidar_surface_reconstruction.py, and removes the need for the flood fill step.
     :param dem_save_path: Path to the directory containing the DEM raster.
+    :param world_directory: Path to the Minecraft world directory.
     :return: None
     """
-    level = amulet.load_level(WORLD_DIRECTORY)
+    level = amulet.load_level(world_directory)
     universal_block, _, _ = level.translation_manager.get_version("java", (1, 20, 4)).block.to_universal(
         DEFAULT_BLOCK)
     block_id = level.block_palette.get_add_block(universal_block)

@@ -1,14 +1,14 @@
+import json
+import math
 import os
 
 import amulet
-import json
-import math
 from amulet.api.block import Block
 from amulet.api.errors import ChunkDoesNotExist, ChunkLoadError
 from amulet.utils.world_utils import block_coords_to_chunk_coords
 from tqdm import tqdm
-from src.helpers import WORLD_DIRECTORY, PROJECT_DIRECTORY
 
+from src.helpers import PROJECT_DIRECTORY
 from src.helpers import bresenham_3d, convert_lat_long_to_x_z
 
 """This script transforms a geojson file of sidewalks, trails, and similar walkways, and places them in the UBC 
@@ -255,8 +255,8 @@ def convert_feature(feature, level):
             # place_road(*line_segment[0], *line_segment[1], level, road_type, surface_type, vehicle_access)
 
 
-def main():
-    level = amulet.load_level(WORLD_DIRECTORY)
+def main(world_directory):
+    level = amulet.load_level(world_directory)
     sidewalk_data_path = os.path.join(PROJECT_DIRECTORY, "resources", "ubc_roads", "Data",
                                       "ubcv_paths_sidewalks.geojson")
     with open(sidewalk_data_path) as sidewalk_data_file:

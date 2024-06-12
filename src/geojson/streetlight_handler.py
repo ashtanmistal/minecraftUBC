@@ -65,7 +65,7 @@ LAYER_CONVERSION = {
 }
 
 
-def streetlight_handler():
+def streetlight_handler(world_directory):
     """
     This function handles the streetlight geojson file, which contains the location of streetlights in the landscape.
     The data is given in EPSG:26910 (UTM zone 10N) coordinates, so it is converted to the Minecraft coordinate system
@@ -77,7 +77,7 @@ def streetlight_handler():
     with open(STREETLIGHT_JSON_PATH) as f:
         data = json.load(f)
 
-    level = amulet.load_level(WORLD_DIRECTORY)
+    level = amulet.load_level(world_directory)
     # iterate through the features
     for feature in tqdm(data["features"]):
         layer = feature["properties"]["LAYER"]

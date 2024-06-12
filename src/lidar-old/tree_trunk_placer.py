@@ -1,4 +1,7 @@
 """
+NOTE: This script is defunct as per Forest-Friends project which builds on top of this initial work.
+
+
 This script transforms the tree data within the LiDAR dataset. It divides the tree data into Minecraft chunks,
 and performs a horizontal mean shift clustering algorithm with vertical strata analysis to determine the tree
 trunk locations. The tree trunk locations are then saved both into the world and to an array, where we'll use the trunks

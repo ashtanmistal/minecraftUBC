@@ -4,263 +4,345 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e9e120a-6bbe-4dd5-8cdb-4a1e7df334c6" name="Changes" comment="Update code to 1.20.4">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="9e9e120a-6bbe-4dd5-8cdb-4a1e7df334c6" name="Changes" comment="Add Minecraft world with buildings">
+      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/ubcv_campus_trees.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dem_raster.tif.aux.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/dem_raster.tif.aux.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/geojson/landscaper.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/geojson/landscaper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/geojson/sidewalk_placer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/geojson/sidewalk_placer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/geojson/streetlight_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/geojson/streetlight_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/helpers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/landuse_raster.tif" beforeDir="false" afterPath="$PROJECT_DIR$/src/landuse_raster.tif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/rasterized-dem.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/rasterized-dem.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/advancements/ad561d57-565b-4335-8a72-0135ddb96ca1.json" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/advancements/ad561d57-565b-4335-8a72-0135ddb96ca1.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/data/raids.dat" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/data/raids.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.0.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.0.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.0.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.0.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.0.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.0.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.0.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.0.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.0.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.0.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.0.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.1.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.1.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.1.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.1.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.1.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.1.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.1.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.1.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.1.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.1.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.1.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.10.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.10.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.10.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.10.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.10.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.10.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.10.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.10.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.10.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.10.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.10.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.2.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.2.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.2.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.2.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.2.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.2.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.2.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.2.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.2.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.2.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.2.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.3.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.3.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.3.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.3.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.3.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.3.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.3.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.3.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.3.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.3.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.3.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.4.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.4.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.4.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.4.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.4.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.4.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.4.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.4.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.4.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.4.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.4.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.5.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.5.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.5.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.5.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.5.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.5.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.5.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.5.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.5.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.5.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.5.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.6.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.6.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.6.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.6.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.6.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.6.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.6.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.6.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.6.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.6.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.6.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.7.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.7.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.7.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.7.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.7.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.7.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.7.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.7.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.7.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.7.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.7.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.8.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.8.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.8.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.8.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.8.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.8.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.8.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.8.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.8.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.8.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.8.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.9.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.9.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.9.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.9.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.9.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.9.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.9.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.9.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.9.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/entities/r.9.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/entities/r.9.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/level.dat" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/level.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/level.dat_old" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/level.dat_old" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.0.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.0.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.0.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.0.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.0.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.0.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.0.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.0.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.0.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.0.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.0.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.1.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.1.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.1.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.1.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.1.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.1.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.1.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.1.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.1.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.1.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.1.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.10.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.10.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.10.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.10.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.10.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.10.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.10.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.10.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.10.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.10.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.10.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.2.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.2.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.2.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.2.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.2.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.2.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.2.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.2.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.2.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.2.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.2.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.3.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.3.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.3.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.3.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.3.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.3.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.3.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.3.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.3.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.3.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.3.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.4.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.4.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.4.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.4.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.4.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.4.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.4.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.4.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.4.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.4.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.4.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.5.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.5.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.5.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.5.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.5.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.5.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.5.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.5.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.5.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.5.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.5.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.6.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.6.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.6.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.6.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.6.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.6.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.6.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.6.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.6.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.6.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.6.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.7.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.7.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.7.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.7.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.7.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.7.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.7.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.7.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.7.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.7.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.7.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.8.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.8.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.8.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.8.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.8.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.8.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.8.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.8.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.8.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.8.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.8.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.-1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.9.-1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.-2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.9.-2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.-3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.9.-3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.-4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.9.-4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.-5.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.9.-5.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.-6.mca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.0.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.9.0.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.1.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.9.1.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.2.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.9.2.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.3.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.9.3.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/region/r.9.4.mca" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/region/r.9.4.mca" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/world/UBC/session.lock" beforeDir="false" afterPath="$PROJECT_DIR$/world/UBC/session.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/geojson/traffic_impactors.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/geojson/traffic_impactors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lidar-old/tree_trunk_placer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lidar-old/tree_trunk_placer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rasterized_dem.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/rasterized_dem.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/trees/Forest-Friends" beforeDir="false" afterPath="$PROJECT_DIR$/src/trees/Forest-Friends" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/trees/Forest-Friends/ForestFriends/preprocessing/classification/log/classification/pointnet2_msg_normals/checkpoints/best_model.pth" beforeDir="false" afterPath="$PROJECT_DIR$/src/trees/Forest-Friends/ForestFriends/preprocessing/classification/log/classification/pointnet2_msg_normals/checkpoints/best_model.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/DIM-1/data/raids.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/DIM1/data/raids_end.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/advancements/ad561d57-565b-4335-8a72-0135ddb96ca1.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/data/raids.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.-1.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.-1.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.0.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.1.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.10.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.11.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.2.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.3.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.4.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.5.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.6.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.7.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.8.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/entities/r.9.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/level.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/level.dat_old" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/playerdata/ad561d57-565b-4335-8a72-0135ddb96ca1.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/playerdata/ad561d57-565b-4335-8a72-0135ddb96ca1.dat_old" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.-1.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.-1.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.0.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.1.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.10.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.11.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.2.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.3.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.4.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.5.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.6.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.7.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.8.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.-1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.-2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.-3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.-4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.-5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.0.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.1.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.2.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.3.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.4.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.5.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.6.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/region/r.9.7.mca" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/session.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/world/BUILDINGS/stats/ad561d57-565b-4335-8a72-0135ddb96ca1.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -303,11 +385,13 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Python.building_placer.executor&quot;: &quot;Run&quot;,
     &quot;Python.landscaper.executor&quot;: &quot;Run&quot;,
     &quot;Python.rasterized-dem (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.triangulated-dem.executor&quot;: &quot;Debug&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Ashtan Mistal/OneDrive - UBC/School/2023S/minecraftUBC/resources&quot;,
@@ -324,10 +408,34 @@
       <recent name="C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\resources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\docs" />
       <recent name="D:\UBC OneDrive\School\2023S\minecraftUBC\scripts" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.rasterized-dem (1)">
+  <component name="RunManager" selected="Python.building_placer">
+    <configuration name="building_placer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="minecraftUBC" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/buildings/building_placer.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="landscaper" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="minecraftUBC" />
       <option name="ENV_FILES" value="" />
@@ -351,7 +459,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="rasterized-dem (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="rasterized_dem" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="minecraftUBC" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -365,7 +473,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/rasterized-dem.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\src\rasterized_dem.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -374,7 +482,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="rasterized-dem" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="rasterized_dem" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="minecraftUBC" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -388,7 +496,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\src\rasterized-dem.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\src\rasterized_dem.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -397,18 +505,25 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.building_placer" />
+      <item itemvalue="Python.landscaper" />
+      <item itemvalue="Python.rasterized_dem" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.rasterized-dem (1)" />
+        <item itemvalue="Python.building_placer" />
+        <item itemvalue="Python.rasterized_dem" />
         <item itemvalue="Python.landscaper" />
-        <item itemvalue="Python.rasterized-dem" />
+        <item itemvalue="Python.rasterized_dem" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-50da183f06c8-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13135.95" />
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-PY-241.14494.241" />
+        <option value="bundled-python-sdk-0509580d9d50-28c9f5db9ffe-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.14494.241" />
       </set>
     </attachedChunks>
   </component>
@@ -444,6 +559,27 @@
       <workItem from="1707327667704" duration="599000" />
       <workItem from="1707851191517" duration="599000" />
       <workItem from="1707852742957" duration="202000" />
+      <workItem from="1707853879266" duration="361000" />
+      <workItem from="1707934855877" duration="3545000" />
+      <workItem from="1708021190922" duration="48000" />
+      <workItem from="1708021369461" duration="613000" />
+      <workItem from="1708024676299" duration="130000" />
+      <workItem from="1708024812405" duration="1240000" />
+      <workItem from="1708029145494" duration="598000" />
+      <workItem from="1708030448845" duration="86000" />
+      <workItem from="1712978224535" duration="706000" />
+      <workItem from="1713810794746" duration="751000" />
+      <workItem from="1713830506672" duration="15000" />
+      <workItem from="1715178468645" duration="363000" />
+      <workItem from="1715179530679" duration="3936000" />
+      <workItem from="1715231005010" duration="3000" />
+      <workItem from="1717697180611" duration="17000" />
+      <workItem from="1717697740858" duration="8601000" />
+      <workItem from="1717706714964" duration="29186000" />
+      <workItem from="1717768136201" duration="1626000" />
+      <workItem from="1717788344871" duration="14527000" />
+      <workItem from="1717815905383" duration="596000" />
+      <workItem from="1717897014109" duration="7000" />
     </task>
     <task id="LOCAL-00001" summary="Minor refactor of directories">
       <option name="closed" value="true" />
@@ -525,11 +661,166 @@
       <option name="project" value="LOCAL" />
       <updated>1706659831628</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Add additional progressional layers and colorized DEM">
+      <option name="closed" value="true" />
+      <created>1707853953279</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1707853953279</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Import refactoring">
+      <option name="closed" value="true" />
+      <created>1707854024703</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1707854024703</updated>
+    </task>
+    <task id="LOCAL-00013" summary="minor xml file updates">
+      <option name="closed" value="true" />
+      <created>1707854051261</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1707854051261</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Colorization of DEM via direct Minecraft world adjustments instead of through TIFF">
+      <option name="closed" value="true" />
+      <created>1707854100559</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1707854100559</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Add additional progressional layers and colorized DEM">
+      <option name="closed" value="true" />
+      <created>1707854163208</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1707854163208</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Add project roadmap and update README.md">
+      <option name="closed" value="true" />
+      <created>1707944505280</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1707944505280</updated>
+    </task>
+    <task id="LOCAL-00017" summary="In-progress integration of LiDAR-DenseSeg into world">
+      <option name="closed" value="true" />
+      <created>1717720014451</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1717720014451</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Add STREETLIGHTS world layer">
+      <option name="closed" value="true" />
+      <created>1717720098267</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1717720098267</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Forest-Friends update">
+      <option name="closed" value="true" />
+      <created>1717720152452</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1717720152452</updated>
+    </task>
+    <task id="LOCAL-00020" summary="add .tif and related files to .gitignore">
+      <option name="closed" value="true" />
+      <created>1717720330545</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1717720330545</updated>
+    </task>
+    <task id="LOCAL-00021" summary="add .tif and related files to .gitignore">
+      <option name="closed" value="true" />
+      <created>1717720535229</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1717720535229</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Strengthen outlier rejection and decrease block types for visual purposes">
+      <option name="closed" value="true" />
+      <created>1717728715282</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1717728715282</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Add QGIS file to .gitignore">
+      <option name="closed" value="true" />
+      <created>1717734353660</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1717734353660</updated>
+    </task>
+    <task id="LOCAL-00024" summary=".las file processing and remaining building placement code">
+      <option name="closed" value="true" />
+      <created>1717734591698</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1717734591698</updated>
+    </task>
+    <task id="LOCAL-00025" summary="remove defunct reconstruction algorithms and building placement tools">
+      <option name="closed" value="true" />
+      <created>1717738219996</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1717738219996</updated>
+    </task>
+    <task id="LOCAL-00026" summary="refactoring of tools for streamlined automation">
+      <option name="closed" value="true" />
+      <created>1717742432041</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1717742432041</updated>
+    </task>
+    <task id="LOCAL-00027" summary="add /.idea/ to .gitignore">
+      <option name="closed" value="true" />
+      <created>1717742491023</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1717742491023</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Add Minecraft world with buildings">
+      <option name="closed" value="true" />
+      <created>1717743639669</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1717743639669</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Minor refactor of directories" />
@@ -540,11 +831,39 @@
     <MESSAGE value="DEM rasterization and land use rasterization scripts" />
     <MESSAGE value="rasterized-dem.py now places DEM successfully in Minecraft; world updated accordingly" />
     <MESSAGE value="Update code to 1.20.4" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update code to 1.20.4" />
+    <MESSAGE value="Import refactoring" />
+    <MESSAGE value="minor xml file updates" />
+    <MESSAGE value="Colorization of DEM via direct Minecraft world adjustments instead of through TIFF" />
+    <MESSAGE value="Add additional progressional layers and colorized DEM" />
+    <MESSAGE value="Add project roadmap and update README.md" />
+    <MESSAGE value="In-progress integration of LiDAR-DenseSeg into world" />
+    <MESSAGE value="Add STREETLIGHTS world layer" />
+    <MESSAGE value="Forest-Friends update" />
+    <MESSAGE value="add .tif and related files to .gitignore" />
+    <MESSAGE value="Strengthen outlier rejection and decrease block types for visual purposes" />
+    <MESSAGE value="Add QGIS file to .gitignore" />
+    <MESSAGE value=".las file processing and remaining building placement code" />
+    <MESSAGE value="remove defunct reconstruction algorithms and building placement tools" />
+    <MESSAGE value="refactoring of tools for streamlined automation" />
+    <MESSAGE value="add /.idea/ to .gitignore" />
+    <MESSAGE value="Add Minecraft world with buildings" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Minecraft world with buildings" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/buildings/building_placer.py</url>
+          <line>157</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/minecraftUBC$triangulated_dem.coverage" NAME="triangulated-dem Coverage Results" MODIFIED="1706285257472" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/minecraftUBC$building_placer.coverage" NAME="building_placer Coverage Results" MODIFIED="1717814624149" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/" />
     <SUITE FILE_PATH="coverage/minecraftUBC$landscaper.coverage" NAME="landscaper Coverage Results" MODIFIED="1706726653569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/geojson" />
+    <SUITE FILE_PATH="coverage/minecraftUBC$triangulated_dem.coverage" NAME="triangulated-dem Coverage Results" MODIFIED="1706285257472" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/minecraftUBC$rasterized_dem__1_.coverage" NAME="rasterized-dem (1) Coverage Results" MODIFIED="1706734536504" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
 </project>

@@ -100,12 +100,12 @@ def place_line_segment(line_segment, level, surface_material):
             )
 
 
-def place_trails():
+def place_trails(world_directory):
     """
     Places the trails in the Minecraft world.
     :return: None
     """
-    level = amulet.load_level(src.helpers.WORLD_DIRECTORY)
+    level = amulet.load_level(world_directory)
     with open(TRAIL_GEOJSON_PATH) as f:
         data = json.load(f)
     for feature in tqdm(data["features"]):
@@ -122,4 +122,4 @@ def place_trails():
 
 
 if __name__ == "__main__":
-    place_trails()
+    place_trails(src.helpers.WORLD_DIRECTORY)

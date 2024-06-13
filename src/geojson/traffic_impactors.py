@@ -66,6 +66,7 @@ ROAD_MATERIALS = [
 TRAFFIC_IMPACTOR_TRANSLATION = {
     "C": None,  # cul-de-sac
     # "L": TRAFFIC_LIGHT_CONFIGURATION,  # TODO removed for CVPR presentation for fully automated pipeline
+    "L": None,
     # This is a traffic light and needs to be handled differently; this will get caught in the main function here
     "O": None,  # overpass
     "R": YIELD_SIGN_CONFIGURATION,  # vehicles must yield to traffic in the roundabout

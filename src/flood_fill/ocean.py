@@ -10,7 +10,7 @@ from tqdm import tqdm
 from src.helpers import region_setup
 
 
-def main():
+def main(world_dir):
     """
     Places ocean at the appropriate y level and adds chunks as needed.
     :return: None
@@ -19,7 +19,7 @@ def main():
     # water from y = -63 to y = -58 (inclusive)
     bedrock_block = Block("minecraft", "bedrock")
     water_block = Block("minecraft", "water")
-    cx, cx2, cz, cz2, level = region_setup()
+    cx, cx2, cz, cz2, level = region_setup(world_dir)
 
     for chunk_x in tqdm(range(cx, cx2 + 1)):
         for chunk_z in range(cz, cz2 + 1):
@@ -39,7 +39,7 @@ def main():
                 for z in range(16):
                     if chunk.blocks[x, -64, z] == 0:
                         chunk.blocks[x, -64, z] = bedrock_id
-                    for y in range(-63, -57):
+                    for y in range(-63, -56):
                         if chunk.blocks[x, y, z] == 0:
                             chunk.blocks[x, y, z] = water_id
             level.put_chunk(chunk, "minecraft:overworld")

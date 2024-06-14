@@ -185,13 +185,13 @@ def bresenham_2d(x1, y1, x2, y2):
     return list_of_points
 
 
-def region_setup():
+def region_setup(world_dir):
     """
     Prompts the user for coordinates of the region to be analyzed. Loads the level and returns the level object and
     corresponding chunk coordinates.
     :return: chunk coordinates of the region to be analyzed, level object
     """
-    level = amulet.load_level(WORLD_DIRECTORY)
+    level = amulet.load_level(world_dir)
     start_coords = get_coords_from_prompt("starting coordinate: ")
     end_coords = get_coords_from_prompt("ending coordinate: ")
     chunk_start_x, chunk_start_z = block_coords_to_chunk_coords(start_coords[0], start_coords[1])

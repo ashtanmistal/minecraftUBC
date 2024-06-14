@@ -10,9 +10,9 @@ from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 from src.helpers import INVERSE_ROTATION_MATRIX, BLOCK_OFFSET_X, BLOCK_OFFSET_Z, HEIGHT_OFFSET
 
-DENSITY_THRESHOLD_LOW = 6
-DENSITY_THRESHOLD_HIGH = 30
-
+DENSITY_THRESHOLD_LOW = 3
+DENSITY_THRESHOLD_HIGH = 20
+LAS_DIRECTORY = r"C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\resources\las"
 
 def process_las(las_file, level):
     """
@@ -98,30 +98,37 @@ def process_points(points, level, basename):
                         if below_block == id_moss_block or below_block == id_grass_block:
                             chunk.blocks[x, y + height_offset, z] = id_grass
                     else:
-                        chunk.blocks[x, y + height_offset, z] = id_azalea
+                        # place until no longer air, max of 4m depth
+                        cond = True
+                        i = 0
+                        while chunk.blocks[x, y + height_offset - i, z] == 0 and cond:
+                            chunk.blocks[x, y + height_offset - i, z] = id_azalea
+                            i += 1
+                            if i == 4:
+                                cond = False
+
 
         chunk.changed = True
     print(f"Rejected {total_rejected} points in {basename} out of {len(points_x)}")
 
 
-def main(lidar_directory, world_directory):
+def main(world_directory):
     # start_from_scratch = True  # variable to assist with debugging. Set to True by default
     # if start_from_scratch:
     #     if os.path.exists("../world/SHRUBS"):
     #         shutil.rmtree("../world/SHRUBS")
     #     shutil.copytree("../world/TRAILS", "../world/SHRUBS")
 
-    for filename in os.listdir(lidar_directory):
+    for filename in os.listdir(LAS_DIRECTORY):
         if not filename.endswith(".las"):
             continue
         print(f"Processing {filename}")
         level = amulet.load_level(world_directory)
-        process_las(os.path.join(lidar_directory, filename), level)
+        process_las(os.path.join(LAS_DIRECTORY, filename), level)
         level.save()
         level.close()
 
 
 if __name__ == "__main__":
-    LAS_DIRECTORY = r"C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\resources\las"
     world_dir = r"C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\world\SHRUBS"
-    main(LAS_DIRECTORY, world_dir)
+    main(world_dir)

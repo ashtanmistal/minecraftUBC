@@ -207,13 +207,14 @@ def process_points(points, level, basename, extra_tooltips=False):
         print(f"Warning: Neighbour algorithm rejected more than 1% of the blocks in {basename}")
 
 
-def main(lidar_directory):
+def main(world_directory):
     """
     Main function to place buildings in the Minecraft world
-    :param lidar_directory: The directory containing the LAS files
+    :param world_directory: The directory to place the buildings in
     :return: None
     """
-    start_from_scratch = True  # variable to assist with debugging. Set to True by default
+    LAS_DIRECTORY = r"C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\resources\las"
+    start_from_scratch = False  # variable to assist with debugging. Set to True by default
     if start_from_scratch:
         if os.path.exists("../world/BUILDINGS"):
             shutil.rmtree("../world/BUILDINGS")
@@ -227,21 +228,20 @@ def main(lidar_directory):
             files_to_process.append(obj_file)
 
     for filename in tqdm(files_to_process):
-        level = amulet.load_level("../world/BUILDINGS")
+        level = amulet.load_level(world_directory)
         process_obj(filename, level)
         level.save()
         level.close()
 
     print("Buffer Buildings placed in world/BUILDINGS. Processing remaining buildings...")
 
-    las_files = ["merged_pip.las", "merged_raw.las"]
+    las_files = ["merged_all.las"]
     for filename in tqdm(las_files):
-        level = amulet.load_level("../world/BUILDINGS")
-        process_las(os.path.join(lidar_directory, filename), level)
+        level = amulet.load_level(world_directory)
+        process_las(os.path.join(LAS_DIRECTORY, filename), level)
         level.save()
         level.close()
 
 
 if __name__ == "__main__":
-    LAS_DIRECTORY = r"C:\Users\Ashtan Mistal\OneDrive - UBC\School\2023S\minecraftUBC\resources\las"
-    main(LAS_DIRECTORY)
+    main(os.path.join(src.helpers.PROJECT_DIRECTORY, "world/BUILDINGS"))

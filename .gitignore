@@ -6,3 +6,4 @@ src/landuse_raster.tif
 /src/landuse_raster.tif.aux.xml
 /mcubc-buildings-new.qgz
 /.idea/
+*.DS_Store

@@ -1,5 +1,11 @@
 """
-Places ocean at the appropriate y level and adds chunks as needed
+Places ocean at the appropriate y level and adds chunks as needed.
+
+This is the only script that still retains some semi-manual control in Version 3.0.
+Although we could use a GeoJSON polygon to represent the ocean bounds, this is
+already implemented and there are no significant improvements that such an
+automation would provide. For full automation one would  just need to hardcode the
+start and end positions (e.g. 2D bounding box) of the region of interest.
 """
 
 from amulet.api.block import Block

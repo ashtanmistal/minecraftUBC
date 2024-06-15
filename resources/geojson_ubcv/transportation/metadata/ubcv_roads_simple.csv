@@ -1,8 +1,0 @@
-Fieldname,Description,FieldValues,Type
-NAME,Name (road type abbrv.),,char(20)
-ROADNAME,"Name (full road type: Lane,Road, etc)",,char(140)
-RD_CLASS,Road class,"Major, Local, UEL, Ppath, PPathl",char(20)
-CREATED_USER,,,char(255)
-CREATED_DATE,,,date
-LAST_EDITED_USER,,,char(255)
-LAST_EDITED_DATE,,,date

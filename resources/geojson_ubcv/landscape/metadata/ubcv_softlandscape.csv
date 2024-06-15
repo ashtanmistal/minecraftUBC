@@ -1,9 +1,0 @@
-Fieldname,Description,FieldValues,Type
-TYPE,Type of bed ,"Planting Bed, Lawn, Planting bed on structure, Wild",char(16)
-BUILDINGNA,No longer maintained,,char(25)
-LOCATION,No longer maintained,,char(20)
-AREATYPE,No longer maintained,,char(20)
-STATUS,,,char(50)
-CCP_ADD,No longer maintained,,char(10)
-HAND_MOW,No longer maintained,coded_domain(Yes<solidus>No:char<openparen>5<closeparen>:Yes:Yes:No:No),coded_domain(Yes<solidus>No:char<openparen>5<closeparen>:Yes:Yes:No:No)
-BED_ID,"Unique id, used to join shrub data to this dataset",,integer

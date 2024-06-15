@@ -12,7 +12,6 @@ It's built by transforming LiDAR data, operational geospatial data, and various 
 
 If you're looking to check out the world on the server or want to chat about the project, please see the [Discord server](https://discord.gg/FqbDJNPgDu) where the IP address is shared.
 
-[//]: # (Those regular backups to GitHub are available in this repository in the [server auto backups branch]&#40;https://github.com/ashtanmistal/minecraftUBC/tree/server-auto-backups&#41;, under the `world/UBC` directory. The master branch holds the latest "stable" version in case of corruption or other issues with the server. The world is backed up approximately every 12 hours. )
 
 If you're looking for what the world looks like after various processing steps you can check out the `world/development_layers` directory in the latest release.
 

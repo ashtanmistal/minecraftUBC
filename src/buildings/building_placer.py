@@ -71,10 +71,10 @@ def process_las(las_file, level):
                                                        dataset.z]))
     xyz[1] = -xyz[1]  # match the Minecraft coordinate system
     points = np.vstack([xyz, dataset.red, dataset.green, dataset.blue]).T
-    process_points(points, level, os.path.basename(las_file), extra_tooltips=True)
+    process_points(points, level, os.path.basename(las_file), extra_tooltips=True, perform_outlier_detection=False)
 
 
-def process_points(points, level, basename, extra_tooltips=False):
+def process_points(points, level, basename, extra_tooltips=False, perform_outlier_detection=True):
     """
     This function processes the points in the point cloud to place the buildings in the level.
     :param extra_tooltips: Whether to print extra information for debugging
@@ -84,53 +84,55 @@ def process_points(points, level, basename, extra_tooltips=False):
     :return: None
     """
     size = len(points)
-    tree = cKDTree(points[:, :2], copy_data=False)
-    if extra_tooltips:
-        print(f"KDTree built for {basename}. Performing ball query for outlier detection")
 
-    # rejecting outlier points: for each point, find the nearest neighbours within a radius of 1.5 meters
-    # if the number of neighbours is less than OUTLIER_THRESHOLD, reject the point
+    if perform_outlier_detection:
+        tree = cKDTree(points[:, :2], copy_data=False)
+        if extra_tooltips:
+            print(f"KDTree built for {basename}. Performing ball query for outlier detection")
 
-    rejects = np.zeros(size, dtype=bool)
-    for i in range(size):
-        point = points[i]
-        neighbours = tree.query_ball_point(point[:2], OUTLIER_RADIUS, workers=-1, p=2, eps=1e-5)
-        if len(neighbours) < OUTLIER_THRESHOLD:
-            rejects[i] = True
+        # rejecting outlier points: for each point, find the nearest neighbours within a radius of 1.5 meters
+        # if the number of neighbours is less than OUTLIER_THRESHOLD, reject the point
 
-    if extra_tooltips:
-        print(f"Rejecting {np.sum(rejects)} points as outliers out of {size} points")
-    if np.sum(rejects) == size:
-        print(f"Warning: All points in {basename} were rejected during outlier detection")
-        return
+        rejects = np.zeros(size, dtype=bool)
+        for i in range(size):
+            point = points[i]
+            neighbours = tree.query_ball_point(point[:2], OUTLIER_RADIUS, workers=-1, p=2, eps=1e-5)
+            if len(neighbours) < OUTLIER_THRESHOLD:
+                rejects[i] = True
 
-    points = points[~rejects]
-    size = len(points)
+        if extra_tooltips:
+            print(f"Rejecting {np.sum(rejects)} points as outliers out of {size} points")
+        if np.sum(rejects) == size:
+            print(f"Warning: All points in {basename} were rejected during outlier detection")
+            return
 
-    tree = cKDTree(points[:, :3], copy_data=False)
-    if extra_tooltips:
-        print(f"Second KDTree built for {basename}. Performing truncation error check")
+        points = points[~rejects]
+        size = len(points)
 
-    # let's try to reject points that cause truncation errors.
-    # Check the neighbours within a 0.2m radius. If the majority get rounded to a different voxel, reject the point
-    rejects = np.zeros(size, dtype=bool)
-    for i in range(size):
-        point = points[i]
-        neighbours = tree.query_ball_point(point[:3], TRUNCATION_RADIUS, workers=-1, p=2, eps=1e-5)
-        neighbour_points = points[neighbours]
-        neighbour_points_rounded = np.round(neighbour_points[:, :3], 0)
-        rounded_point = np.round(point[:3], 0)
-        if np.sum(np.all(neighbour_points_rounded == rounded_point, axis=1)) < len(neighbours) * TRUNCATION_THRESHOLD:
-            rejects[i] = True
+        tree = cKDTree(points[:, :3], copy_data=False)
+        if extra_tooltips:
+            print(f"Second KDTree built for {basename}. Performing truncation error check")
 
-    if extra_tooltips:
-        print(f"Rejecting {np.sum(rejects)} points due to truncation errors out of {size} points")
-    points = points[~rejects]
-    size = len(points)
+        # let's try to reject points that cause truncation errors.
+        # Check the neighbours within a 0.2m radius. If the majority get rounded to a different voxel, reject the point
+        rejects = np.zeros(size, dtype=bool)
+        for i in range(size):
+            point = points[i]
+            neighbours = tree.query_ball_point(point[:3], TRUNCATION_RADIUS, workers=-1, p=2, eps=1e-5)
+            neighbour_points = points[neighbours]
+            neighbour_points_rounded = np.round(neighbour_points[:, :3], 0)
+            rounded_point = np.round(point[:3], 0)
+            if np.sum(np.all(neighbour_points_rounded == rounded_point, axis=1)) < len(neighbours) * TRUNCATION_THRESHOLD:
+                rejects[i] = True
 
-    if size == 0:
-        print(f"Warning: All points in {basename} were rejected during truncation error check")
-        return
+        if extra_tooltips:
+            print(f"Rejecting {np.sum(rejects)} points due to truncation errors out of {size} points")
+        points = points[~rejects]
+        size = len(points)
+
+        if size == 0:
+            print(f"Warning: All points in {basename} were rejected during truncation error check")
+            return
 
     # placing the buildings in the level
     # switch the Y and Z coordinates to match the Minecraft coordinate system
@@ -174,24 +176,25 @@ def process_points(points, level, basename, extra_tooltips=False):
                 if chunk_color_count[x, y, z] == 0:
                     continue
                 # check neighbouring blocks in the xz plane for stray blocks
-                if x > 0:  # no need to check y bounds; all points are above ground + height offset is not yet applied
-                    if z > 0:
-                        if np.sum(chunk_color_count[x - 1:x + 2, y - 1:y + 2, z - 1:z + 2] > 0) < 4:
-                            rejected += 1
-                            continue
-                    else:
+                if perform_outlier_detection:
+                    if x > 0:  # no need to check y bounds; all points are above ground + height offset is not yet applied
+                        if z > 0:
+                            if np.sum(chunk_color_count[x - 1:x + 2, y - 1:y + 2, z - 1:z + 2] > 0) < 4:
+                                rejected += 1
+                                continue
+                        else:
 
-                        if np.sum(chunk_color_count[x - 1:x + 2, y - 1:y + 2, z:z + 2] > 0) < 2:
-                            rejected += 1
-                            continue
-                else:
-                    if z > 0:
-                        if np.sum(chunk_color_count[x:x + 2, y - 1:y + 2, z - 1:z + 2] > 0) < 2:
-                            rejected += 1
-                            continue
+                            if np.sum(chunk_color_count[x - 1:x + 2, y - 1:y + 2, z:z + 2] > 0) < 2:
+                                rejected += 1
+                                continue
                     else:
-                        # along chunk boundary. can't reject
-                        pass
+                        if z > 0:
+                            if np.sum(chunk_color_count[x:x + 2, y - 1:y + 2, z - 1:z + 2] > 0) < 2:
+                                rejected += 1
+                                continue
+                        else:
+                            # along chunk boundary. can't reject
+                            pass
                 average_color = chunk_color_matrix[x, y, z] / chunk_color_count[x, y, z]
                 mapped_color = min(BUILDING_BLOCKS,
                                    key=lambda b: np.linalg.norm(BUILDING_BLOCKS_TEXTURES[b] - average_color))

@@ -13,7 +13,7 @@ dem_save_path = os.path.join(BASE_DIR, "src")
 
 
 def main():
-    # world_directory = os.path.join(PROJECT_DIRECTORY, "world/STREETLIGHTS")
+    world_directory = os.path.join(PROJECT_DIRECTORY, "world/STREETLIGHTS")
     # create_heightmap(dem_save_path, lidar_directory)
     # raster_dem_to_minecraft(dem_save_path, world_directory)
     # colorize_world()
@@ -21,21 +21,21 @@ def main():
     # streetlight_handler.streetlight_handler(world_directory)
     # uel_trail_placer.place_trails(world_directory)
     # traffic_impactors.main(world_directory)
-    # if os.path.exists(os.path.join(PROJECT_DIRECTORY, "world/BUILDINGS")):
-    #     shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "world/BUILDINGS"))
-    # shutil.copytree(world_directory, os.path.join(PROJECT_DIRECTORY, "world/BUILDINGS"))
-    # building_placer.main(os.path.join(PROJECT_DIRECTORY, "world/BUILDINGS"))
-    # if os.path.exists(os.path.join(PROJECT_DIRECTORY, "world/SHRUBS")):
-    #     shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "world/SHRUBS"))
-    # shutil.copytree(os.path.join(PROJECT_DIRECTORY, "world/BUILDINGS"), os.path.join(PROJECT_DIRECTORY, "world/SHRUBS"))
-    # shrubs_placer.main(os.path.join(PROJECT_DIRECTORY, "world/SHRUBS"))
-    # if os.path.exists(os.path.join(PROJECT_DIRECTORY, "world/TREES")):
-    #     shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "world/TREES"))
-    # shutil.copytree(os.path.join(PROJECT_DIRECTORY, "world/SHRUBS"), os.path.join(PROJECT_DIRECTORY, "world/TREES"))
-    # tree_placer.main(os.path.join(PROJECT_DIRECTORY, "world/TREES"))
-    # if os.path.exists(os.path.join(PROJECT_DIRECTORY, "world/FULL")):
-    #     shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "world/FULL"))
-    # shutil.copytree(os.path.join(PROJECT_DIRECTORY, "world/TREES"), os.path.join(PROJECT_DIRECTORY, "world/FULL"))
+    if os.path.exists(os.path.join(PROJECT_DIRECTORY, "world/BUILDINGS")):
+        shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "world/BUILDINGS"))
+    shutil.copytree(world_directory, os.path.join(PROJECT_DIRECTORY, "world/BUILDINGS"))
+    building_placer.main(os.path.join(PROJECT_DIRECTORY, "world/BUILDINGS"))
+    if os.path.exists(os.path.join(PROJECT_DIRECTORY, "world/SHRUBS")):
+        shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "world/SHRUBS"))
+    shutil.copytree(os.path.join(PROJECT_DIRECTORY, "world/BUILDINGS"), os.path.join(PROJECT_DIRECTORY, "world/SHRUBS"))
+    shrubs_placer.main(os.path.join(PROJECT_DIRECTORY, "world/SHRUBS"))
+    if os.path.exists(os.path.join(PROJECT_DIRECTORY, "world/TREES")):
+        shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "world/TREES"))
+    shutil.copytree(os.path.join(PROJECT_DIRECTORY, "world/SHRUBS"), os.path.join(PROJECT_DIRECTORY, "world/TREES"))
+    tree_placer.main(os.path.join(PROJECT_DIRECTORY, "world/TREES"))
+    if os.path.exists(os.path.join(PROJECT_DIRECTORY, "world/FULL")):
+        shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "world/FULL"))
+    shutil.copytree(os.path.join(PROJECT_DIRECTORY, "world/TREES"), os.path.join(PROJECT_DIRECTORY, "world/FULL"))
     ocean.main(os.path.join(PROJECT_DIRECTORY, "world/FULL"))
 
 

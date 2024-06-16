@@ -9,6 +9,7 @@ from amulet.api.errors import ChunkDoesNotExist
 from amulet.utils import block_coords_to_chunk_coords
 from tqdm import tqdm
 from src.helpers import INVERSE_ROTATION_MATRIX, BLOCK_OFFSET_X, BLOCK_OFFSET_Z, HEIGHT_OFFSET
+from amulet_nbt import StringTag
 
 DENSITY_THRESHOLD_LOW = 3
 DENSITY_THRESHOLD_HIGH = 20
@@ -39,7 +40,7 @@ def process_las(las_file, level):
     process_points(xyz, level, os.path.basename(las_file))
 
 def process_points(points, level, basename):
-    azalea_leaves = Block("minecraft", "flowering_azalea_leaves")
+    azalea_leaves = Block("minecraft", "flowering_azalea_leaves", {"persistent": StringTag("true")})
     grass = Block("minecraft", "short_grass")
     moss_block = Block("minecraft", "moss_block")
     grass_block = Block("minecraft", "grass_block")

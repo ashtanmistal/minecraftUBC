@@ -45,10 +45,10 @@ An exhaustive list of builders for Version 2.0 is available in the spreadsheet l
 
 The full album of screenshots is available in the [docs/screenshots](docs/screenshots) directory.
 
-![2023-07-15_12.58.24.png](docs/screenshots/Version-2.0/2023-07-15_12.58.24.png)
+![2023-07-15_12.58.24.png](docs/screenshots/Version-3.0/2024-06-14_10.54.44.png)
 
-![2023-07-15_13.17.35.png](docs/screenshots/Version-2.0/2023-07-15_13.17.35.png)
+![2023-07-15_13.17.35.png](docs/screenshots/Version-3.0/2024-06-14_11.31.28.png)
 
-![2023-07-15_14.06.13.png](docs/screenshots/Version-2.0/2023-07-15_14.06.13.png)
+![2023-07-15_14.06.13.png](docs/screenshots/Version-3.0/2024-06-17_20.45.29.png)
 
-![2023-07-15_14.32.38.png](docs/screenshots/Version-2.0/2023-07-15_14.32.38.png)
+![2023-07-15_14.32.38.png](docs/screenshots/Version-3.0/2024-06-17_20.53.18.png)

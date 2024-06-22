@@ -1,6 +1,9 @@
 # Transformation of LiDAR Data and Operational Geospatial Data to a 1:1 Minecraft World
 
+**This is how Version 1.0 and 2.0 were created. To learn more about Version 3.0, see the [CVPR Demo Poster](https://github.com/ashtanmistal/minecraftUBC/blob/master/MinecraftUBC-Poster.pdf) in the main section of the repo!**
+
 Table of Contents:
+
 - [First Iteration](#first-iteration)
   - [LiDAR Processing](#lidar-processing)
     - [Denoising the Dataset](#denoising-the-dataset)
@@ -42,6 +45,7 @@ ___
 # Second Iteration
 
 The first iteration was a moderate success, and created a playable world for people to use and build the remaining buildings. However, it was not perfect, and there were many things that could be improved, namely the following:
+
 - The ground was hollow in many places where there existed lots of tree or building data above, making it easy to fall out of the world
 - The trees were not realistic as they had no trunks or branches
 - Street data height calculation was not accurate given the lack of height data available for some trail points - this led to some sidewalks being placed far higher than they should have been
@@ -53,6 +57,7 @@ The second iteration aimed to resolve these errors through a geometric modelling
 ## Creation of a Voxelized and Colorized Digital Elevation Model
 
 In order for us to have an accurate, hole-free world, we need to write a surface reconstruction pipeline for processing the data into a voxelized DEM. A few options were considered for this, namely the creation of a triangulated irregular network (TIN) and voxelizing that. However, given the next step of voxelization right after, it was a waste of computational power to try and triangulate the mesh. As a result, a different surface reconstruction algorithm was created, which is outlined below:
+
 - For each chunk, we can calculate the 2d convex hull of the points within. This ensures that the beach and other edges are properly defined, and also filling in some of the smaller within-chunk holes in the data.
 - For points in the convex hull that *did* have associated height data, the blocks were placed accordingly. Otherwise, the height of a given point was calculated using a weighted nearest neighbours approach, where the 3 closest points in the chunk were selected. Beneath the maximum height all blocks until the minimum height were placed to fully close and fill in the mesh. 
 - A few denoising steps were performed to fill in the remaining holes in the mesh:
@@ -60,6 +65,7 @@ In order for us to have an accurate, hole-free world, we need to write a surface
   - A flood fill algorithm was implemented to fill in the larger holes that were not caught by the previous denoising algorithms. This catches things like the missing ground data beneath buildings, where entire chunks were sparse in data. This flood fill was expanded to a "region fill", which bounded a user-selected rectangular region and filled in all holes within that region. This flood fill was performed on the bulk of the campus, on areas where the chunks did not intersect the ocean. For the flood fill, the heights were calculated using the same approach, taking into account points that were added to the mesh during flood fill to prevent the mesh from being too jagged.
 
 The next significant step is taking the full DEM of campus and colorizing it. There are geospatial datasets outlining the land use of campus to a significant detail, which allowed for the colorization of the DEM. The following steps were taken to colorize the DEM:
+
 - The geospatial data was converted into a voxelized polygon, and the points inside the polygon were selected via a flood fill. The seed for the flood fill was determined through a simple ray cast, until a point guaranteed to be inside the polygon was found. The flood fill selected the remaining points inside the polygon, and the block type was set accordingly, either through a set block or a random selection. 
   - The flood fill worked for almost all polygons, except for ones that were skinny, where the flood fill would be stopped early due to the voxelization of the polygon. These cases were low in number and were faster to fix manually, though it could be fixed by selecting either a finer grain of voxelization prior to flood fill (and coarser after) or by using a different algorithm. 
 - Block types were selected based on various attributes of the polygon, such as land use, type, and material. See `scripts/geojson/landscaper.py` for the implementation details and the list of datasets used in the colorization process.
@@ -69,6 +75,7 @@ ___
 ## Road and Sidewalk Detailing
 
 The geospatial datasets that were used to colorize the DEM placed all of the roads and sidewalks, but there's a lot of additional data that we can use to further add detail to the world.
+
 - Streetlight data is used to place every outdoor light source on campus, lighting up the walkways, streets, and other areas. While this doesn't cover any indoor lighting, it makes for a much more beautiful nighttime experience.
 - Stop signs, yield signs, bollards, and crosswalks can be transformed and placed. The crosswalk data is from the same dataset as was used in the first iteration. 
 - The line segments that make up the hiking trails in Pacific Spirit Park can also be transformed and placed, adding a lot of detail to the park and also adding stairs down to Wreck Beach.
@@ -88,6 +95,7 @@ Trees are the most complex part of this transformation, as simply placing a bloc
 We will follow a mean shift clustering algorithm combined with a vertical strata analysis to differentiate between actual tree clusters and crown clusters. The algorithm chosen for this project is based on [this research paper](https://doi.org/10.3390/rs15051241), where we have optimized the algorithm for speed. 
 
 The basic outline is as follows:
+
 - Truncate the data to the nearest square meter and only consider unique values. (Note that improvements could be made by writing a weighted mean shift algorithm, but this is not implemented in this project)
 - Shift the data to ignore the height of the ground and base it on the distance away from the ground
 - Perform mean shift clustering to get the candidate cluster centers
@@ -95,6 +103,7 @@ The basic outline is as follows:
 - If a given cluster is a crown cluster, the points are re-distributed to the nearest tree cluster and the cluster centers re-calculated accordingly.
 
 Once the trunks are placed we want to place branches. We only need to branch together leaf *clusters*, and not every single leaf; as a result, a 3d DBSCAN algorithm was performed to create intra-tree clusters, with a high epsilon to take into account the truncation of the data to the nearest square meter. These clusters were then attached to the tree trunk using a constrained optimization line drawing, by minimizing the distance between the line and the points in the cluster. This line was constrained in that:
+
   - It must end up on the trunk, and
   - the vertical distance must be within a certain range of the cluster's height.
   - The line length must be small enough (a hard cutoff) to prevent the branches from being too long.
@@ -110,6 +119,7 @@ ___
 The second iteration of this project has led to a much more detailed and true-to-life representation of campus, and creates a much more immersive experience. Images and videos of the second iteration are available in the project's root README.
 
 There are further improvements that could have been made, however due to time constraints and the scope of the project, these were not implemented. These include:
+
 - Improvement on the polygon flood fill algorithm. This algorithm performed the flood fill after voxelization, and not before, and so blocks that were touching after the voxelization was done prevented the algorithm from being able to reach all areas of the polygon. This could be fixed by performing the flood fill before voxelization, or by running the algorithm again on a different area until the flood filled area was close to the computed polygon area (the computed areas available in the dataset itself). 
 - Optimizing the tree trunk placement algorithm for accuracy instead of speed. Due to computational resource constraints and the sheer size of data that was being processed, the tree trunk placement algorithm was optimized for speed. This led to some sacrifices in accuracy that would be improved by running the algorithm on a larger area, by implementing a weighted mean shift algorithm, or by considering numerous runs of the algorithm and taking the mean results as the research paper discussed. Further hyperparameter tuning would also lead to further accuracy improvements.
 - Improving the building placement algorithm through a learning model for block selection. Having the block selection be based entirely on the LiDAR data was not without its flaws, and utilizing available orthographic imagery to determine what block a specific roof is made out of would lead to higher color accuracy. A learning model would be needed due to trees, shadows, and other obstructions that hinder a direct matching approach. 

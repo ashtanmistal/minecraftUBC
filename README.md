@@ -2,6 +2,8 @@
 
 The UBC Minecraft Project is a project that aims to recreate the UBC Vancouver Campus inside a Minecraft world, in a 1:1 scale.
 
+A demonstration of this project was presented at CVPR 2024 in Seattle, receiving an [Honorable Mention for Best Demo](https://www.computer.org/press-room/cvpr-2024-cvpr-2024-breaks-paper-and-attendance-records).
+
 It's built by transforming LiDAR data, operational geospatial data, and various reference imagery through surface reconstruction, data processing, and deep learning algorithms. See the [CVPR Demo Poster](https://github.com/ashtanmistal/minecraftUBC/blob/master/MinecraftUBC-Poster.pdf) to learn more!
 
 **Note: This project uses submodules. If you want to clone the deep learning modules and related subprojects, please clone with `git clone --recurse-submodules https://github.com/ashtanmistal/minecraftUBC.git`** If you just want to download the world, there's no need to clone the submodules.

@@ -1,5 +1,7 @@
 # Building Info
 
+**Update: I am no longer looking for help with manual building in the project at this stage. All remaining work will be automated through mesh reconstruction and point cloud processing algorithms, plus deep learning pipelines where necessary.**
+
 Interested in helping build? Make sure you've joined the [Discord server](https://discord.gg/FqbDJNPgDu) and then read through this document to get started.
 
 ## The Building Process
